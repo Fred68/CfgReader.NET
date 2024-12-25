@@ -333,9 +333,14 @@ namespace Fred68.CfgReader
 						}
 					else if(t.Item1.Length>0)							// Se invece è stata indentificata un'assegnazione di variabile (non di sezione):
 						{
-						if( (section.Length==0) || ((section.Length>0) && (_sect[section])) )	// Se fuori sezione o in una sezione attiva, esegue l'assegnazione...
+						if( (section.Length==0) || ((section.Length>0) && (_sect[section])) )	// Se fuori sezione o in una sezione attiva...
 							{
-							TypeVar typ = Assign(t.Item1, t.Item2, (section.Length>0) ? section + CHR_SectionPrefixSeparator : "");	// ...anteponendo, se richiesto, la sezione come prefisso
+							string prefix = string.Empty;
+							if(_useSectPrefix && (section.Length>0))
+							{
+								prefix = section + CHR_SectionPrefixSeparator;	
+							}
+							TypeVar typ = Assign(t.Item1, t.Item2, prefix);	// ...esegue l'assegnazione anteponendo, se richiesto, la sezione come prefisso.
 							}
 						}
 

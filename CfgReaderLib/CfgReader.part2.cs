@@ -98,7 +98,7 @@ namespace Fred68.CfgReader
 		/// <summary>
 		/// Separatore tra prefisso di sezione e nome di variabile
 		/// </summary>
-		public string CHR_SectionPrefixSeparator = @"_";
+		public string  CHR_SectionPrefixSeparator {get; set; } = @"_";
 		///// <summary>
 		///// Inizio linea per terminare la lettura
 		///// </summary>
@@ -121,7 +121,7 @@ namespace Fred68.CfgReader
 			_cmds["DUMP"]	=new Func<string, bool>( arg => {_msg.AppendLine(DumpEntries()); return true;});	// Variabili
 			_cmds["LINES"]	=new Func<string, bool>( arg => {_msg.AppendLine(DumpLines()); return true;});		// Linee lette
 			_cmds["SECTIONPREFIXON"]	=new Func<string, bool>( arg => {_useSectPrefix = true; _msg.AppendLine("SECTION PREFIX ON"); return true;});
-			_cmds["SECTIONPREFIXOFF"]	=new Func<string, bool>( arg => {_useSectPrefix = true; _msg.AppendLine("SECTION PREFIX OFF"); return true;});
+			_cmds["SECTIONPREFIXOFF"]	=new Func<string, bool>( arg => {_useSectPrefix = false; _msg.AppendLine("SECTION PREFIX OFF"); return true;});
 			}
 		}
 	}
