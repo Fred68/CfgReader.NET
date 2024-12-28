@@ -9,13 +9,13 @@ using System.Text.RegularExpressions;		// Regex
 using StringExtension;                      // Funzioni extra
 using Fred68.GenDictionary;                 // Dizionario generico
 using System.Dynamic;						// Per usare dynamic e TryGetMember
-using System.Reflection;					// Reflection (per accedere ai membri pubblici di una classe derivata)
+using System.Reflection;
+using System.Globalization;                 // Reflection (per accedere ai membri pubblici di una classe derivata)
 
 
 namespace Fred68.CfgReader
 	{
 
-	#warning Completare DATE
 	#warning Aggiungere uso delle variabili (concatenazione, voce singola, somma, differenza)
 
 	/// <summary>
@@ -23,6 +23,9 @@ namespace Fred68.CfgReader
 	/// </summary>
 	public partial class CfgReader : DynamicObject
 		{
+		static CultureInfo cultureInfo = System.Globalization.CultureInfo.InvariantCulture;	// Cultura (per la conversione)
+		//static CultureInfo cultureInfo = CultureInfo.CreateSpecificCulture("it-IT");		// Cultura (per la conversione)
+		static DateTimeStyles dtStyles = DateTimeStyles.None;								// Stili di conversione
 
 		StringBuilder _msg;
 		bool ok;
@@ -573,7 +576,11 @@ namespace Fred68.CfgReader
 					}
 				case TypeVar.DATE:
 					{
-					throw new NotImplementedException("Tipo dato non ancora implementato");
+					DateTime x;
+					ok = DateTime.TryParse(txt,cultureInfo,dtStyles,out x); 
+					
+					//throw new NotImplementedException("Tipo dato non ancora implementato");
+					return x;
 					}
 				default:
 					{
@@ -615,7 +622,8 @@ namespace Fred68.CfgReader
 					}
 				case TypeVar.DATE:
 					{
-					throw new NotImplementedException("Tipo dato non implementato");
+					return new List<DateTime>();
+					//throw new NotImplementedException("Tipo dato non implementato");
 					}
 				case TypeVar.COLOR:
 					{
