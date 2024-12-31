@@ -426,14 +426,14 @@ namespace Fred68.CfgReader
 
 		/// <summary>
 		/// Separa la stringa in sottostringhe, divise dal separatore di lista,
-		/// escludendo i separatori racchiusi tra i delimitatori di stringhe (spazio)
+		/// escludendo i separatori racchiusi tra i delimitatori di stringhe CHR_StringDelimiter (spazio o altro carattere)
 		/// </summary>
 		/// <param name="txt"></param>
 		/// <returns></returns>
-		List<string> ArgList(string txt)
+		List<string> ArgList(string txt, out bool isList)
 			{
 			List<string> lst = new List<string>();
-
+			
 			List<int> indxs = txt.IndexOfOutside(CHR_ListSeparator,CHR_StringDelimiter,CHR_StringDelimiter);
 
 			string tmp;
@@ -455,6 +455,13 @@ namespace Fred68.CfgReader
 				tmp = txt.Substring(p1+1,p2-p1-1).Trim();	// Estrae tra i due indici e...
 				lst.Add(tmp);								// Aggiunge alla lista
 				}
+
+			isList = (lst.Count > 1);						// Se ha almeno due elementi, è una lista.
+			if(txt.EndsWith(CHR_ListSeparator) && isList)	// Se la lista ha almeno du elementi e termina con un separatore...
+			{												// ... allora è stato aggiunto un elemento nullo fittizio.
+				lst.RemoveAt(lst.Count - 1);				// Lo rimuove dalla lista
+			}
+
 			return lst;
 			}
 
@@ -503,8 +510,8 @@ namespace Fred68.CfgReader
 		TypeVar Assign(string var, string val, string prefix = "")
 			{ 
 			TypeVar typ = TypeVar.None;
-			
-			List<string> lst = ArgList(val);					// Ottiene i valori degli argomenti (lista)
+			bool isList;
+			List<string> lst = ArgList(val, out isList);		// Ottiene i valori degli argomenti (lista)
 			Tuple<TypeVar, string> t = VarNameAndType(var);		// Ottiene tipo e nome della variabile	
 			
 			#if false											// Mostra l'assegnazione (poi eliminare)
@@ -515,7 +522,7 @@ namespace Fred68.CfgReader
 			_msg.AppendLine($"{ddd}{clst1}{t.Item1}{clst2} {t.Item2} = {val}");
 			#endif
 
-			typ = ExecuteAssign(t.Item1, t.Item2, lst, prefix);		// Esegue l'assegnazione
+			typ = ExecuteAssign(t.Item1, t.Item2, lst, isList, prefix);		// Esegue l'assegnazione
 
 			return typ;
 			}
@@ -578,8 +585,6 @@ namespace Fred68.CfgReader
 					{
 					DateTime x;
 					ok = DateTime.TryParse(txt,cultureInfo,dtStyles,out x); 
-					
-					//throw new NotImplementedException("Tipo dato non ancora implementato");
 					return x;
 					}
 				default:
@@ -623,7 +628,6 @@ namespace Fred68.CfgReader
 				case TypeVar.DATE:
 					{
 					return new List<DateTime>();
-					//throw new NotImplementedException("Tipo dato non implementato");
 					}
 				case TypeVar.COLOR:
 					{
@@ -644,16 +648,16 @@ namespace Fred68.CfgReader
 		/// <param name="args"></param>
 		/// <param prefix="args"></param>
 		/// <returns></returns>
-		TypeVar ExecuteAssign(TypeVar typ, string name, List<string> args, string prefix = "")
+		TypeVar ExecuteAssign(TypeVar typ, string name, List<string> args, bool isList, string prefix = "")
 			{
 			TypeVar ret = TypeVar.None;							// Nessun tipo di default
 			bool ok;
 			int n = args.Count;
 			if( (n > 0) && (name.Length > 0) )					// Se nome e numero di elementi validi
 				{
-				if(n == 1)
+				if( (n == 1) && !isList)						// Se ha un solo elemento ma non è una lista
 					{
-					dynamic x = ConvertString(args[0], typ, out ok);
+					dynamic x = ConvertString(args[0], typ, out ok);	// Ammessa stringa nulla
 					if(ok)
 						{
 						_dict[prefix + name] = x;
