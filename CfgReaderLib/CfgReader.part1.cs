@@ -12,6 +12,9 @@ using System.Dynamic;						// Per usare dynamic e TryGetMember
 using System.Reflection;
 using System.Globalization;                 // Reflection (per accedere ai membri pubblici di una classe derivata)
 
+#pragma warning disable CS8602	// Dereferenziamento di un riferimento eventualmente Null.    
+#pragma warning disable CS8625	// Non è possibile convertire un valore letterale Null in un tipo riferimento che non ammette i valori Null.
+#pragma warning disable CS8765	// Il supporto dei valori Null di tipo di parametro non corrisponde al membro sottoposto a override (probabilmente a causa di attributi del supporto dei valori Null).	
 
 namespace Fred68.CfgReader
 	{
@@ -117,7 +120,7 @@ namespace Fred68.CfgReader
 			{
 			try
 				{
-				string line;
+				string? line;
 				string fn = Path.GetFullPath(filename);
 				if(!File.Exists(fn))
 					{
@@ -774,3 +777,9 @@ namespace Fred68.CfgReader
 	
 	
 	}	// fine namespace CfgReader
+	
+	#pragma warning restore CS8765	// Il supporto dei valori Null di tipo di parametro non corrisponde al membro sottoposto a override (probabilmente a causa di attributi del supporto dei valori Null).	
+	#pragma warning restore CS8625	// Non è possibile convertire un valore letterale Null in un tipo riferimento che non ammette i valori Null.
+	#pragma warning restore CS8602   // Dereferenziamento di un riferimento eventualmente Null.                                                            
+
+

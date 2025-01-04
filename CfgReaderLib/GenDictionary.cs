@@ -11,6 +11,12 @@ using System.Text;
 using System.Dynamic;
 #endif
 
+#pragma warning disable CS8602   // Dereferenziamento di un riferimento eventualmente Null.                                                            
+#pragma warning disable CS8618   // La variabile che non ammette i valori Null deve contenere un valore non Null quando si esce dal costruttore.                                                                                                                 
+#pragma warning disable CS8625	// Non è possibile convertire un valore letterale Null in un tipo riferimento che non ammette i valori Null.
+#pragma warning disable CS8765	// Il supporto dei valori Null di tipo di parametro non corrisponde al membro sottoposto a override (probabilmente a causa di attributi del supporto dei valori Null).	
+
+
 namespace Fred68.GenDictionary
 	{
 
@@ -153,3 +159,8 @@ namespace Fred68.GenDictionary
 		}
 
 	}
+
+#pragma warning restore CS8618   // La variabile che non ammette i valori Null deve contenere un valore non Null quando si esce dal costruttore.                                                                                                                 
+#pragma warning restore CS8602   // Dereferenziamento di un riferimento eventualmente Null.                                                            
+#pragma warning restore CS8625	// Non è possibile convertire un valore letterale Null in un tipo riferimento che non ammette i valori Null.
+#pragma warning restore CS8765	// Il supporto dei valori Null di tipo di parametro non corrisponde al membro sottoposto a override (probabilmente a causa di attributi del supporto dei valori Null).	
