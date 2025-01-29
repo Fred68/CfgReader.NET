@@ -194,5 +194,10 @@ namespace Fred68.GenDictionary
 					throw new NotImplementedException("Tipo dato non definito");
 				}
 			}
+
+		/// <summary>
+		/// TypeVar
+		/// </summary>
+		public TypeVar Type	{ get { return _t; } }
 		}
 	}
