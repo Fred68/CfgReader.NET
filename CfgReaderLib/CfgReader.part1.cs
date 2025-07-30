@@ -773,6 +773,13 @@ namespace Fred68.CfgReader
 			return ok;
 			}
 
+		public int CountUnusedDictEnties()
+		{
+			int count = 0;
+			if(_dict != null)	count = _dict.Count;
+			return count;
+		}
+
 		}	// Fine classe CfgReader
 	
 	
