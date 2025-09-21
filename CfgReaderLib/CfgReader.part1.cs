@@ -19,7 +19,7 @@ using System.Globalization;                 // Reflection (per accedere ai membr
 namespace Fred68.CfgReader
 	{
 
-	#warning Aggiungere uso delle variabili (concatenazione, voce singola, somma, differenza)
+	#warning Sostituire la chiamata dynamic CfgReader.ConvertString(...) con un parser di espressioni (con variabili): concatenazione, voce singola, somma, differenza)
 
 	/// <summary>
 	/// Config text file reader
@@ -460,7 +460,7 @@ namespace Fred68.CfgReader
 				}
 
 			isList = (lst.Count > 1);						// Se ha almeno due elementi, è una lista.
-			if(txt.EndsWith(CHR_ListSeparator) && isList)	// Se la lista ha almeno du elementi e termina con un separatore...
+			if(txt.EndsWith(CHR_ListSeparator) && isList)	// Se la lista ha almeno due elementi e termina con un separatore...
 			{												// ... allora è stato aggiunto un elemento nullo fittizio.
 				lst.RemoveAt(lst.Count - 1);				// Lo rimuove dalla lista
 			}
@@ -530,6 +530,7 @@ namespace Fred68.CfgReader
 			return typ;
 			}
 		
+		#warning ConvertString da sostituire con ExParser
 		/// <summary>
 		/// Converte una stringa nel tipo di dato specificato da un parametro
 		/// </summary>
