@@ -2,7 +2,7 @@
 
 using System.Text;
 using Fred68.CfgReader;
-
+using Fred68.GenDictionary;
 
 string filename = "esempio.txt";
 Console.WriteLine("Avvio programma.");
@@ -47,8 +47,27 @@ Console.WriteLine(cf2.Dump());						// Stampa le variabili (funzione della class
 Console.WriteLine(cf2.DumpEntries());				// Stampa il contenuto del dizionario
 cf2.Clear();										// Cancella tutti i dati letti (della classe base)
 
+
+Console.WriteLine(new string('-',20));
+Console.WriteLine("Analizzatore");
+Console.WriteLine(new string('-',20));
+
+Console.WriteLine("Prova ciclo su List<obj>");
+List<int> intL = new List<int>{10,20,30,40,50};
+List<double> dblL = new List<double>{1.1,2.2,3.3,4.4,5.5};
+
+Dat iDat = new Dat(intL);
+Dat dDat = new Dat(dblL);
+
+Console.WriteLine(iDat.ToString());
+Console.WriteLine(dDat.ToString(true));
+
+
 Console.WriteLine("Fine programma.");
 Console.ReadKey();
+
+
+
 
 class CfgR2 : CfgReader
 	{

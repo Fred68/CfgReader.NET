@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 //	using System.Linq;
 //	using System.Text;
 //	using System.Threading.Tasks;
 //	using System.Reflection;
 
 namespace Fred68.GenDictionary
-	{
+{
 
 	/// <summary>
 	/// Tipi di dati trattati
 	/// </summary>
 	public enum TypeVar
-		{
+	{
 		INT,
 		STR,
 		BOOL,
@@ -21,14 +22,14 @@ namespace Fred68.GenDictionary
 		DATE,
 		COLOR,				// ARGB
 		None				// Ultimo 
-		}
+	}
 
 	/// <summary>
 	/// Classe Dat: oggetto generico con associato il tipo di dato.
 	/// La classe non è generica, per poter esser contenuta in un unico raccoglitore
 	/// </summary>
 	public class Dat
-		{
+	{
 
 		static TypeVar[] _tc;
 
@@ -139,65 +140,214 @@ namespace Fred68.GenDictionary
 		/// <returns></returns>
 		/// <exception cref="Exception"></exception>
 		public dynamic Get()
-			{
+		{
 			switch(_t)
-				{
+			{
 				case TypeVar.INT:
-					{
+				{
 					if(_list)
 						return (List<int>)_obj;
 					else
 						return (int)_obj;
-					}
+				}
 					//break;
 				case TypeVar.STR:
-					{
+				{
 					if(_list)
 						return (List<string>)_obj;
 					else
 						return (string)_obj;
-					}
+				}
 					//break;
 				case TypeVar.BOOL:
-					{
+				{
 					if(_list)
 						return (List<bool>)_obj;
 					else
 						return (bool)_obj;
-					}
+				}
 					//break;
 				case TypeVar.FLOAT:
-					{
+				{
 					if(_list)
 						return (List<float>)_obj;
 					else
 						return (float)_obj;
-					}
+				}
 					//break;
 				case TypeVar.DOUBLE:
-					{
+				{
 					if(_list)
 						return (List<double>)_obj;
 					else
 						return (double)_obj;
-					}
+				}
 					//break;
 				case TypeVar.DATE:
-					{
+				{
 					if(_list)
 						return (List<DateTime>)_obj;
 					else
 						return (DateTime)_obj;
-					}
+				}
 				
 				default:
 					throw new NotImplementedException("Tipo dato non definito");
-				}
 			}
+		}
 
 		/// <summary>
 		/// TypeVar
 		/// </summary>
 		public TypeVar Type	{ get { return _t; } }
+
+		public override string ToString()
+		{
+			return ToString(false);
+		}
+
+		#warning CONTROLLARE !!!
+		public string ToString(bool expandList) 
+		{
+			StringBuilder sb = new StringBuilder();
+			if(_list )
+			{
+				switch(_t)
+				{
+				case TypeVar.INT:
+					{
+						List<int> l = (List<int>)_obj;
+						sb.Append($"{_t.ToString()}[{l.Count.ToString()}]");
+						if(expandList)
+						{	
+							sb.Append('{');
+							for(int i=0; i<l.Count; i++)
+							{
+								sb.Append(l[i].ToString() + ((i < l.Count-1) ? ' ' : '}'));
+							}
+						}
+					}
+					break;
+				case TypeVar.STR:
+					{
+						List<string> l = (List<string>)_obj;
+						sb.Append($"{_t.ToString()}[{l.Count.ToString()}]");
+						if(expandList)
+						{	
+							sb.Append('{');
+							for(int i=0; i<l.Count; i++)
+							{
+								sb.Append(l[i] + ((i < l.Count-1) ? ' ' : '}'));
+							}
+							sb.Append('}');
+						}
+					}
+					break;
+				case TypeVar.BOOL:
+					{
+						List<bool> l = (List<bool>)_obj;
+						sb.Append($"{_t.ToString()}[{l.Count.ToString()}]");
+						if(expandList)
+						{	
+							sb.Append('{');
+							for(int i=0; i<l.Count; i++)
+							{
+								sb.Append(l[i].ToString() + ((i < l.Count-1) ? ' ' : '}'));
+							}
+							sb.Append('}');
+						}
+					}
+					break;
+				case TypeVar.FLOAT:
+					{
+						List<float> l = (List<float>)_obj;
+						sb.Append($"{_t.ToString()}[{l.Count.ToString()}]");
+						if(expandList)
+						{	
+							sb.Append('{');
+							for(int i=0; i<l.Count; i++)
+							{
+								sb.Append(l[i].ToString() + ((i < l.Count-1) ? ' ' : '}'));
+							}
+							sb.Append('}');
+						}
+					}
+					break;
+				case TypeVar.DOUBLE:
+					{
+						List<double> l = (List<double>)_obj;
+						sb.Append($"{_t.ToString()}[{l.Count.ToString()}]");
+						if(expandList)
+						{	
+							sb.Append('{');
+							for(int i=0; i<l.Count; i++)
+							{
+								sb.Append(l[i].ToString() + ((i < l.Count-1) ? ' ' : '}'));
+							}
+							sb.Append('}');
+						}
+					}
+					break;
+				case TypeVar.DATE:
+					{
+						List<DateTime> l = (List<DateTime>)_obj;
+						sb.Append($"{_t.ToString()}[{l.Count.ToString()}]");
+						if(expandList)
+						{	
+							sb.Append('{');
+							for(int i=0; i<l.Count; i++)
+							{
+								sb.Append(l[i].ToString() + ((i < l.Count-1) ? ' ' : '}'));
+							}
+							sb.Append('}');
+						}
+					}
+					break;
+				default:
+					throw new NotImplementedException("Tipo dato non definito");
+				}
+
+			}
+			else
+			{
+				switch(_t)
+				{
+				case TypeVar.INT:
+					{
+						sb.Append(((int)_obj).ToString());
+					}
+					break;
+				case TypeVar.STR:
+					{
+						sb.Append((string)_obj);
+					}
+					break;
+				case TypeVar.BOOL:
+					{
+						sb.Append(((bool)_obj).ToString());
+					}
+					break;
+				case TypeVar.FLOAT:
+					{
+						sb.Append(((float)_obj).ToString());
+					}
+					break;
+				case TypeVar.DOUBLE:
+					{
+						sb.Append(((double)_obj).ToString());
+					}
+					break;
+				case TypeVar.DATE:
+					{
+						sb.Append(((DateTime)_obj).ToString());
+					}
+					break;
+				default:
+					throw new NotImplementedException("Tipo dato non definito");
+				}
+			
+			}
+		return sb.ToString();
 		}
 	}
+}

@@ -7,10 +7,12 @@ using System.Text;
 using System.IO;                            // Operazioni su file
 using System.Text.RegularExpressions;		// Regex
 using StringExtension;                      // Funzioni extra
-using Fred68.GenDictionary;                 // Dizionario generico
 using System.Dynamic;						// Per usare dynamic e TryGetMember
-using System.Reflection;
-using System.Globalization;                 // Reflection (per accedere ai membri pubblici di una classe derivata)
+using System.Reflection;					// Reflection (per accedere ai membri pubblici di una classe derivata)
+using System.Globalization;                 
+
+using Fred68.GenDictionary;                 // Dizionario generico
+using Fred68.Parser;						// Analizzatorei di espressioni
 
 #pragma warning disable CS8602	// Dereferenziamento di un riferimento eventualmente Null.    
 #pragma warning disable CS8625	// Non è possibile convertire un valore letterale Null in un tipo riferimento che non ammette i valori Null.
@@ -37,6 +39,7 @@ namespace Fred68.CfgReader
 		bool _useSectPrefix;								// Usa il nome di sezione come prefisso
 		GenDictionary.GenDictionary _dict;					// Dizionario generico
 		Dictionary<string, Func<string, bool>> _cmds;		// Dizionario dei comandi
+		StringEvaluator _strEval;									// Analizzatore delle espressioni
 
 		/// <summary>
 		/// Ctor
@@ -49,6 +52,8 @@ namespace Fred68.CfgReader
 			_dict = new GenDictionary.GenDictionary();
 			_msg = new StringBuilder();
 			_cmds = new Dictionary<string, Func<string, bool>>();
+			_strEval = new StringEvaluator(new StringEvaluator.Settings(_dict,strTrue,strFalse,cultureInfo,dtStyles));
+			
 			Clear();
 			CreateCommands();
 			}
@@ -530,7 +535,9 @@ namespace Fred68.CfgReader
 			return typ;
 			}
 		
-		#warning ConvertString da sostituire con ExParser
+
+		/// Spostato in ExParser
+		#if false
 		/// <summary>
 		/// Converte una stringa nel tipo di dato specificato da un parametro
 		/// </summary>
@@ -598,7 +605,7 @@ namespace Fred68.CfgReader
 					}
 				}
 			}	
-
+		#endif
 		/// <summary>
 		/// Crea una lista del tipo di dati specificato
 		/// </summary>
@@ -661,7 +668,7 @@ namespace Fred68.CfgReader
 				{
 				if( (n == 1) && !isList)						// Se ha un solo elemento ma non è una lista
 					{
-					dynamic x = ConvertString(args[0], typ, out ok);	// Ammessa stringa nulla
+					dynamic x = _strEval.ConvertString(args[0], typ, out ok);	// Ammessa stringa nulla
 					if(ok)
 						{
 						_dict[prefix + name] = x;
@@ -678,7 +685,7 @@ namespace Fred68.CfgReader
 					dynamic list = CreateList(typ);				// Crea la lista
 					foreach(string arg in args)					// Ripete per tutti gli argomenti
 						{
-						dynamic x = ConvertString(arg, typ, out ok);
+						dynamic x = _strEval.ConvertString(arg, typ, out ok);
 						if(ok)
 							{
 							list.Add(x);
