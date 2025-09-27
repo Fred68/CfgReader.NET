@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 //	using System.Linq;
 //	using System.Text;
@@ -32,6 +33,7 @@ namespace Fred68.GenDictionary
 	{
 
 		static TypeVar[] _tc;
+		static IFormatProvider _frm;
 
 		TypeVar _t;				// Tipo di dato
 		object _obj;			// Oggetto
@@ -40,6 +42,7 @@ namespace Fred68.GenDictionary
 		static Dat()
 			{
 			_tc = new TypeVar[((int)TypeVar.None)-1];
+			_frm = CultureInfo.InvariantCulture;
 			}
 
 		public static Type GetEqType(dynamic x)
@@ -47,6 +50,7 @@ namespace Fred68.GenDictionary
 			return x.GetType();
 			
 			}
+
 		/// <summary>
 		/// Ctor
 		/// </summary>
@@ -192,7 +196,7 @@ namespace Fred68.GenDictionary
 				}
 				
 				default:
-					throw new NotImplementedException("Tipo dato non definito");
+					throw new NotImplementedException("Tipo dato non definito.");
 			}
 		}
 
@@ -201,12 +205,24 @@ namespace Fred68.GenDictionary
 		/// </summary>
 		public TypeVar Type	{ get { return _t; } }
 
+		/// <summary>
+		/// Override di ToString()
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return ToString(false);
 		}
 
-		#warning CONTROLLARE !!!
+		// -> static CultureInfo cultureInfo = System.Globalization.CultureInfo.InvariantCulture;	// Cultura (per la conversione)
+		//static CultureInfo cultureInfo = CultureInfo.CreateSpecificCulture("it-IT");		// Cultura (per la conversione)
+		// -> static DateTimeStyles dtStyles = DateTimeStyles.None;								// Stili di conversione
+		/// <summary>
+		/// ToString(bool)
+		/// </summary>
+		/// <param name="expandList">Expand list element into output string</param>
+		/// <returns></returns>
+		/// <exception cref="NotImplementedException"></exception>
 		public string ToString(bool expandList) 
 		{
 			StringBuilder sb = new StringBuilder();
@@ -223,7 +239,7 @@ namespace Fred68.GenDictionary
 							sb.Append('{');
 							for(int i=0; i<l.Count; i++)
 							{
-								sb.Append(l[i].ToString() + ((i < l.Count-1) ? ' ' : '}'));
+								sb.Append(l[i].ToString(_frm) + ((i < l.Count-1) ? ' ' : '}'));
 							}
 						}
 					}
@@ -252,7 +268,7 @@ namespace Fred68.GenDictionary
 							sb.Append('{');
 							for(int i=0; i<l.Count; i++)
 							{
-								sb.Append(l[i].ToString() + ((i < l.Count-1) ? ' ' : '}'));
+								sb.Append(l[i].ToString(_frm) + ((i < l.Count-1) ? ' ' : '}'));
 							}
 							sb.Append('}');
 						}
@@ -267,7 +283,7 @@ namespace Fred68.GenDictionary
 							sb.Append('{');
 							for(int i=0; i<l.Count; i++)
 							{
-								sb.Append(l[i].ToString() + ((i < l.Count-1) ? ' ' : '}'));
+								sb.Append(l[i].ToString(_frm) + ((i < l.Count-1) ? ' ' : '}'));
 							}
 							sb.Append('}');
 						}
@@ -282,7 +298,7 @@ namespace Fred68.GenDictionary
 							sb.Append('{');
 							for(int i=0; i<l.Count; i++)
 							{
-								sb.Append(l[i].ToString() + ((i < l.Count-1) ? ' ' : '}'));
+								sb.Append(l[i].ToString(_frm) + ((i < l.Count-1) ? ' ' : '}'));
 							}
 							sb.Append('}');
 						}
@@ -297,14 +313,14 @@ namespace Fred68.GenDictionary
 							sb.Append('{');
 							for(int i=0; i<l.Count; i++)
 							{
-								sb.Append(l[i].ToString() + ((i < l.Count-1) ? ' ' : '}'));
+								sb.Append(l[i].ToString(_frm) + ((i < l.Count-1) ? ' ' : '}'));
 							}
 							sb.Append('}');
 						}
 					}
 					break;
 				default:
-					throw new NotImplementedException("Tipo dato non definito");
+					throw new NotImplementedException("Tipo dato non definito.");
 				}
 
 			}
@@ -314,7 +330,7 @@ namespace Fred68.GenDictionary
 				{
 				case TypeVar.INT:
 					{
-						sb.Append(((int)_obj).ToString());
+						sb.Append(((int)_obj).ToString(_frm));
 					}
 					break;
 				case TypeVar.STR:
@@ -324,26 +340,26 @@ namespace Fred68.GenDictionary
 					break;
 				case TypeVar.BOOL:
 					{
-						sb.Append(((bool)_obj).ToString());
+						sb.Append(((bool)_obj).ToString(_frm));
 					}
 					break;
 				case TypeVar.FLOAT:
 					{
-						sb.Append(((float)_obj).ToString());
+						sb.Append(((float)_obj).ToString(_frm));
 					}
 					break;
 				case TypeVar.DOUBLE:
 					{
-						sb.Append(((double)_obj).ToString());
+						sb.Append(((double)_obj).ToString(_frm));
 					}
 					break;
 				case TypeVar.DATE:
 					{
-						sb.Append(((DateTime)_obj).ToString());
+						sb.Append(((DateTime)_obj).ToString(_frm));
 					}
 					break;
 				default:
-					throw new NotImplementedException("Tipo dato non definito");
+					throw new NotImplementedException("Tipo dato non definito.");
 				}
 			
 			}

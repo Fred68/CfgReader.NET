@@ -1,14 +1,25 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿
+#define _CFG
+#undef _CFG
+
+#define _ANALZ
+// #undef _ANALZ
+
+// See https://aka.ms/new-console-template for more information
 
 using System.Text;
 using Fred68.CfgReader;
 using Fred68.GenDictionary;
+using Fred68.Parser;
 
 string filename = "esempio.txt";
 Console.WriteLine("Avvio programma.");
 
 // UTILIZZO SEMPLICE COME DIZIONARIO
 
+
+
+#if _CFG
 Console.WriteLine("Utilizzo come dizionario...");
 
 dynamic cfgR = new CfgReader();							// Crea l'oggetto della classe base
@@ -46,24 +57,54 @@ Console.WriteLine(cf2.ToString());					// Visualizza i messaggi (da classe base)
 Console.WriteLine(cf2.Dump());						// Stampa le variabili (funzione della classe derivata)
 Console.WriteLine(cf2.DumpEntries());				// Stampa il contenuto del dizionario
 cf2.Clear();										// Cancella tutti i dati letti (della classe base)
+#endif
 
-
+#if _ANALZ
 Console.WriteLine(new string('-',20));
 Console.WriteLine("Analizzatore");
-Console.WriteLine(new string('-',20));
-
-Console.WriteLine("Prova ciclo su List<obj>");
-List<int> intL = new List<int>{10,20,30,40,50};
-List<double> dblL = new List<double>{1.1,2.2,3.3,4.4,5.5};
-
-Dat iDat = new Dat(intL);
-Dat dDat = new Dat(dblL);
-
-Console.WriteLine(iDat.ToString());
-Console.WriteLine(dDat.ToString(true));
 
 
-Console.WriteLine("Fine programma.");
+//Console.WriteLine("Prova ciclo su List<obj>");
+//Dat iDat = new Dat(new List<int>{10,20,30,40,50});
+//Dat dDat = new Dat(new List<double>{1.1,2.2,3.3,4.4,5.5});
+//Console.WriteLine(iDat.ToString());
+//Console.WriteLine(dDat.ToString(true));
+//Console.WriteLine($"char.MinValue= {(int)char.MinValue}\tchar.MaxValue= {(int)char.MaxValue}");
+
+List<string> formule = new List<string>();
+
+//formule.Add("");
+formule.Add("2");
+formule.Add("2++");
+formule.Add("\"Pippo\"");
+formule.Add("2+1");
+formule.Add("(2+3^2)*(5+1)");
+formule.Add("{2.1+3.2^0.1}");
+
+formule.Add("0xFF");
+formule.Add("0b010+100");
+
+
+// formule.Add("(2+3^2))*(5+1)");
+// formule.Add("{2+3^2}*{(5+1)");
+
+Analizzatore analiz = new Fred68.Parser.Analizzatore();
+
+foreach(string f in formule)
+{
+	Console.WriteLine(new string('-',20));
+	List<Token> lt = analiz.Analizza(f);
+	Console.WriteLine($"Formula: {f}");
+	foreach(Token tk in lt)
+	{
+		Console.WriteLine(tk.ToString());
+	}
+}
+#endif
+
+
+
+Console.WriteLine("\nFine programma.");
 Console.ReadKey();
 
 

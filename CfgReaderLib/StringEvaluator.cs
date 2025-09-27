@@ -6,9 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-#warning Scrivere 1: Analisi di un'espressione (vd. https://www.youtube.com/watch?v=wrj3iuRdA-M ): numeri, stringhe, operatori, variabili, parentesi
-#warning Scrivere 2: Shunting yard per trasformare espressione in RPN (notazione polacca inversa) in coda e stack 
-#warning Scrivere 3: Valutazione di un'espressione in RPN inserita in coda e stack
 
 
 namespace Fred68.Parser

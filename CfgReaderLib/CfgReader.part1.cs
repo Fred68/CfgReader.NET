@@ -287,7 +287,7 @@ namespace Fred68.CfgReader
 						(_sect[section]) &&					// Sezione corrente attiva
 						sintassiAttiva)						// Sintassi attiva
 						{
-							throw new Exception("Errore di sintassi");	// ...genera un'eccezione.
+							throw new Exception("Errore di sintassi.");	// ...genera un'eccezione.
 						}
 
 					if(sect.Length > 0)									// Se ha identificato una sezione
@@ -601,7 +601,7 @@ namespace Fred68.CfgReader
 				default:
 					{
 					ok = false;
-					throw new NotImplementedException("Tipo dato non definito");
+					throw new NotImplementedException("Tipo dato non definito.");
 					}
 				}
 			}	
@@ -642,11 +642,11 @@ namespace Fred68.CfgReader
 					}
 				case TypeVar.COLOR:
 					{
-					throw new NotImplementedException("Lista di COLOR non ammessa");
+					throw new NotImplementedException("Lista di COLOR non ammessa.");
 					}
 				default:
 					{
-					throw new NotImplementedException("Tipo dato non definito");
+					throw new NotImplementedException("Tipo dato non definito.");
 					}
 				}
 			}
