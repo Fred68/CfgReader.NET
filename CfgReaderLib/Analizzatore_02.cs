@@ -24,9 +24,9 @@ namespace Fred68.Parser
 	{
 	
 		/// <summary>
-		/// Algoritmo Shunting yard
-		/// https://en.wikipedia.org/wiki/Shunting_yard_algorithm
-		/// </summary>
+		/// Classe che analizza una stringa
+		/// Parte 02: Riordina una lista di token da notazione infissa a notazione polacca inversa (RPN)
+		/// Utilizza l'algoritmo Shunting yard: https://en.wikipedia.org/wiki/Shunting_yard_algorithm
 		/// <param name="input">Lista di token di un'espressione</param>
 		/// <returns>Coda di toker in RPN (notazione polacca inversa)</returns>
 		public Queue<Token> RiordinaSY(List<Token> input)
