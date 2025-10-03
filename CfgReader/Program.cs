@@ -102,7 +102,8 @@ foreach(string f in formule)
 }
 #endif
 
-
+//Console.WriteLine(uint.MaxValue);
+//Console.WriteLine(int.MaxValue);
 
 Console.WriteLine("\nFine programma.");
 Console.ReadKey();

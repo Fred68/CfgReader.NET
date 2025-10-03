@@ -8,24 +8,57 @@ using static Fred68.Parser.Token;
 namespace Fred68.Parser
 {
 
-	class Operatori
+	public class Operatori
 	{
+
+		public const char chSpazio = ' ';	
+		public const char chZero =  '0';
+		public const char chParentesiAperta = '(';
+		public const char chParentesiChiusa = ')';
+		public const char chGraffaAperta = '{';
+		public const char chGraffaChiusa = '}';
+		public const char chVirgola = ',';
+		public const char chPuntoVirgola = ';';
+		public const char chStringaInizio = '\"';
+		public const char chStringaFine = '\"';
+		public const char chHex = 'x';
+		public const char chBin = 'b';
+		public const char chPuntoDecimale = '.';
+
 		/// <summary>
-		/// Struct Operatore
+		/// Class Operatore (deve esser nullable)
 		/// </summary>
-		public struct Operatore
+		public class Operatore
 		{
 			uint _args;
 			uint _prec;
 			
+			/// <summary>
+			/// Ctor
+			/// </summary>
+			/// <param name="argomenti">uint >0 se to errore</param>
+			/// <param name="precedenza">int ma >0, se no errore</param>
 			public Operatore(uint argomenti, uint precedenza)
 			{
+				if(!(argomenti > 0))				throw new Exception("[Operatori] argomenti > 0 in Ctor");
+				if(!(precedenza < int.MaxValue))	throw new Exception("[Operatori] precedenza < int.MaxValue 0 in Ctor");
 				_args = argomenti;
 				_prec = precedenza;
 			}
 
+			/// <summary>
+			/// Argomenti (> 0)
+			/// </summary>
 			public uint Argomenti {get {return _args;}}
+			/// <summary>
+			/// Precedenza (<  int.MaxValue)
+			/// </summary>
 			public uint Precedenza {get {return _prec;}}
+
+			/// <summary>
+			/// ToString() override
+			/// </summary>
+			/// <returns></returns>
 			public override string ToString() {return $"Args= {_args}, Prec= {_prec}";}
 		}
 
@@ -38,14 +71,23 @@ namespace Fred68.Parser
 		{
 			_opers = new Dictionary<string,Operatore>();
 
-			_opers.Add("+",new Operatore(2,10));
-			_opers.Add("-",new Operatore(2,10));
-			_opers.Add("*",new Operatore(2,20));
-			_opers.Add("/",new Operatore(2,20));
-			_opers.Add("++",new Operatore(1,20));
-			_opers.Add("--",new Operatore(1,20));
-			_opers.Add("=",new Operatore(2,20));
-			_opers.Add("^",new Operatore(2,20));
+			// Operatori unari
+			_opers.Add("++",new Operatore(1,40));
+			_opers.Add("--",new Operatore(1,40));
+
+			// Operatori binari alta precedenza
+			_opers.Add("^",new Operatore(2,30));
+			_opers.Add("*",new Operatore(2,30));
+			_opers.Add("/",new Operatore(2,30));
+			
+			// Operatori binari bassa precedenza
+			_opers.Add("+",new Operatore(2,20));
+			_opers.Add("-",new Operatore(2,20));
+			
+			_opers.Add("=",new Operatore(2,10));
+
+			// ERRORE: _opers.Add("xxx",new Operatore(0,2147483648));
+			
 		}
 
 		/// <summary>
@@ -58,10 +100,9 @@ namespace Fred68.Parser
 		/// <summary>
 		/// Indice
 		/// </summary>
-		/// <param name="opName">key</param>
-		/// <returns>Operatore</returns>
-		/// <exception cref="KeyNotFoundException"></exception>
-		public Operatore this[string opName]
+		/// <param name="opName">Testo dell'operatore</param>
+		/// <returns>Operatore (by value, è una struct). Null se non ha trovato il testo</returns>
+		public Operatore? this[string opName]
 			{		
 			get
 				{
@@ -71,7 +112,8 @@ namespace Fred68.Parser
 					}
 					else
 					{
-						throw new KeyNotFoundException();
+						return null;
+						//throw new KeyNotFoundException();
 					}
 
 				}
