@@ -21,7 +21,8 @@ namespace Fred68.Parser
 
 	/// <summary>
 	/// Classe che analizza una stringa
-	/// Un ringraziamento a One Lone Coder, algoritmo ispirato da https://github.com/OneLoneCoder
+	/// Un ringraziamento a One Lone Coder https://github.com/OneLoneCoder
+	/// Algoritmo copiato da: https://github.com/OneLoneCoder/Javidx9/blob/master/SimplyCode/OneLoneCoder_DIYLanguage_Tokenizer.cpp
 	/// Riconosce operatori, numeri di vario formato, parentesi, funzioni, virgole, stringhe
 	/// Riconosce (usando il namespace Fred68.GenDictionary) anche i nomi di variabili da un dizionario generalizzato
 	/// </summary>

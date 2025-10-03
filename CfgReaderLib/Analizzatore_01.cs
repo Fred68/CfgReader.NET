@@ -11,6 +11,7 @@ using Fred68.GenDictionary;			// Per usare Dat
 using StringExtension;
 
 
+// SimplyCode/OneLoneCoder_DIYLanguage_Tokenizer.cpp
 
 namespace Fred68.Parser
 {
