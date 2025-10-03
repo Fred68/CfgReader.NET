@@ -92,12 +92,28 @@ namespace Fred68.Parser
 					}
 					while(	(_ops.Count > 0) &&	(_ops.Peek().Tipo != Token.TipoTk.Parentesi_Aperta) )
 					{
-						
+						_out.Enqueue(_ops.Pop());		
 					}
-
+					if( (_ops.Count > 0) && (_ops.Peek().Tipo != Token.TipoTk.Parentesi_Aperta) )
+					{
+						throw new Exception("[RiordinaSY] Manca una parentesi aperta");
+					}
+					_ops.Pop();
+					if( (_ops.Count > 0) && (_ops.Peek().Tipo != Token.TipoTk.Funzione) )
+					{
+						_out.Enqueue(_ops.Pop());	
+					}
 				}
 
 			}
+			while(	_ops.Count > 0 )
+					{
+						if(_ops.Peek().Tipo == Token.TipoTk.Parentesi_Aperta)	
+						{
+							throw new Exception("[RiordinaSY] C'è una parentesi aperta di troppo");
+						}
+						_out.Enqueue(_ops.Pop());
+					}
 
 			return _out;
 		}

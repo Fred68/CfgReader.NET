@@ -13,7 +13,7 @@ using StringExtension;
 
 #warning Scrivere 3: Valutazione di un'espressione in RPN inserita in coda e stack
 #warning La notazione scientifica (es.: 2.4E+3) può essere trasfornmata in sequenza di token distinti, da riconoscere successivamente.
-
+#warning Valutare se mantenere le eccezioni o usare una classe per mantenere gli errori senza generare eccezioni
 
 namespace Fred68.Parser
 {
@@ -25,7 +25,7 @@ namespace Fred68.Parser
 	/// </summary>
 	public partial class Analizzatore
 	{
-		static Operatori operatori;
+		//static Operatori operatori;
 		
 		#if !_LU_TABLES_EXTENSION
 
@@ -39,7 +39,7 @@ namespace Fred68.Parser
 		static CharLuTable chtBin;
 		
 		// Caratteri per gli operatori (letti dalla classe)
-		static CharLuTable chtOperatori;
+		static CharLuTable? chtOperatori;
 		
 		// Caratteri per variabili, funzioni e parole chiave
 		static CharLuTable chtNomi;
@@ -51,7 +51,7 @@ namespace Fred68.Parser
 		/// </summary>
 		static Analizzatore()
 		{
-			operatori = new Operatori();
+			//operatori = new Operatori();
 
 			#if _LU_TABLES_EXTENSION
 			StringExtension.StringExtension.AddCharLuTable("Spazi","\t \n\r\v\f");
@@ -68,18 +68,28 @@ namespace Fred68.Parser
 			chtNumeriReali = new CharLuTable("0123456789.");
 			chtHex = new CharLuTable("0123456789abcdefABCDEF");
 			chtBin = new CharLuTable("01");
-			chtOperatori = new CharLuTable(operatori.UsedCharactes());	//	"!$%^&*+-=#@?|`/\\<>~"
+			//chtOperatori = new CharLuTable(operatori.UsedCharactes());	//	"!$%^&*+-=#@?|`/\\<>~"
 			chtNomi = new CharLuTable("abcdefghijklmnopqrstuvwxyz.ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
 			
 			#endif
 			
 		}
 
+		Operatori operatori;
+		Funzioni funzioni;
+
 		/// <summary>
 		/// Ctor
 		/// </summary>
 		public Analizzatore()
-		{}
+		{
+			operatori = new Operatori();
+			funzioni = new Funzioni();
+
+			#if !_LU_TABLES_EXTENSION
+			chtOperatori = new CharLuTable(operatori.UsedCharactes());  //	"!$%^&*+-=#@?|`/\\<>~"
+			#endif
+		}
 		
 	}
 }

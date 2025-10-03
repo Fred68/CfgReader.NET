@@ -115,10 +115,9 @@ namespace Fred68.Parser
 						}
 						else
 						{											// Non identificato: può essere una stringa simbolica generica
-							#warning VERIFICARE: linee probabilmente superflue, mantenere solo statTkNew= Token.TkStat.Simbolo;
 							strTkAttuale.Append(ch);				// Lo memorizza e passa al carattere successivo
 							i++;
-							statTkNew= Token.TkStat.Simbolo;
+							statTkNew= Token.TkStat.Simbolo;		// Imposta lo stato come simbolo generico
 						}
 
 					}
@@ -355,9 +354,15 @@ namespace Fred68.Parser
 						}
 						else
 						{
-							#warning AGGIUNGERE ricerca in dizionari di variabili, funzioni e parole chiave
-							tkAttuale = new Token(Token.TipoTk.Simbolo,strTkAttuale.ToString());	// Per ora considerato simbolo generico	
-							
+							#warning MANCA ricerca in dizionari di variabili e parole chiave
+							if(funzioni.Contains(strTkAttuale.ToString().ToUpper()))
+							{
+								tkAttuale = new Token(Token.TipoTk.Funzione,strTkAttuale.ToString().ToUpper());
+							}
+							else
+							{	// Sr non roconisciuto: classificato come simbolo generico
+								tkAttuale = new Token(Token.TipoTk.Simbolo,strTkAttuale.ToString());
+							}
 							statTkNew = Token.TkStat.TokenCompletato;
 						}
 					}
@@ -372,6 +377,7 @@ namespace Fred68.Parser
 
 					default:
 					{
+
 						throw new Exception("[Analizza] Token non riconosciuto in switch...case.");	
 					}
 				} // Fine switch(...)

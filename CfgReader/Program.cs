@@ -74,15 +74,35 @@ Console.WriteLine("Analizzatore");
 List<string> formule = new List<string>();
 
 //formule.Add("");
-formule.Add("2");
-formule.Add("2++");
-formule.Add("\"Pippo\"");
-formule.Add("2+1");
-formule.Add("(2+3^2)*(5+1)");
-formule.Add("{2.1+3.2^0.1}");
+//formule.Add("2");
+//formule.Add("2++");
+//formule.Add("\"Pippo\"");
+//formule.Add("2+1");
 
-formule.Add("0xFF");
-formule.Add("0b010+100");
+//formule.Add("3+4*2 / ( 1 − 5 ) ^ 2 ^ 3");
+//formule.Add("3+4*2");
+//formule.Add("(2+3^2)*(5+1)");
+//formule.Add("{2.1+3.2^0.1}");
+
+bool bCont = false;
+do
+{
+	bCont = false;
+	Console.Write("Inserire formula:");
+	string? inpf = Console.ReadLine();
+	if(inpf != null)
+	{
+		if(inpf.Length > 0)
+		{
+
+			formule.Add(inpf);
+			bCont = true;
+		}
+	}
+	
+} while(bCont);
+//formule.Add("0xFF");
+//formule.Add("0b010+100");
 
 
 // formule.Add("(2+3^2))*(5+1)");
@@ -92,10 +112,47 @@ Analizzatore analiz = new Fred68.Parser.Analizzatore();
 
 foreach(string f in formule)
 {
+	List<Token> lt = new List<Token>();
+	Queue<Token> qt = new Queue<Token>();
+
 	Console.WriteLine(new string('-',20));
-	List<Token> lt = analiz.Analizza(f);
+	
+	bool ok = true;
+	if(ok)
+	{
+		try
+		{
+			lt = analiz.Analizza(f);
+		}
+		catch(Exception ex)
+		{
+			ok = false;
+			Console.WriteLine(ex.Message);
+		}
+	}
+
+	if(ok)
+	{
+		try
+		{
+			qt = analiz.RiordinaSY(lt);
+		}
+		catch (Exception ex)
+		{
+			ok = false;
+			Console.WriteLine(ex.Message);
+		}
+	}
+	
 	Console.WriteLine($"Formula: {f}");
+	Console.WriteLine($"Token (infix):");
 	foreach(Token tk in lt)
+	{
+		Console.WriteLine(tk.ToString());
+	}
+	Console.WriteLine(new string('-',10));
+	Console.WriteLine($"Token (rpn):");
+	foreach(Token tk in qt)
 	{
 		Console.WriteLine(tk.ToString());
 	}

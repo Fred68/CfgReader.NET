@@ -26,7 +26,7 @@ namespace Fred68.Parser
 		public const char chPuntoDecimale = '.';
 
 		/// <summary>
-		/// Class Operatore (deve esser nullable)
+		/// Class Operatore
 		/// </summary>
 		public class Operatore
 		{
@@ -36,7 +36,7 @@ namespace Fred68.Parser
 			/// <summary>
 			/// Ctor
 			/// </summary>
-			/// <param name="argomenti">uint >0 se to errore</param>
+			/// <param name="argomenti">uint >0, se no errore</param>
 			/// <param name="precedenza">int ma >0, se no errore</param>
 			public Operatore(uint argomenti, uint precedenza)
 			{
@@ -47,7 +47,7 @@ namespace Fred68.Parser
 			}
 
 			/// <summary>
-			/// Argomenti (> 0)
+			/// Argomenti
 			/// </summary>
 			public uint Argomenti {get {return _args;}}
 			/// <summary>
@@ -77,8 +77,8 @@ namespace Fred68.Parser
 
 			// Operatori binari alta precedenza
 			_opers.Add("^",new Operatore(2,30));
-			_opers.Add("*",new Operatore(2,30));
-			_opers.Add("/",new Operatore(2,30));
+			_opers.Add("*",new Operatore(2,29));
+			_opers.Add("/",new Operatore(2,28));
 			
 			// Operatori binari bassa precedenza
 			_opers.Add("+",new Operatore(2,20));
@@ -100,8 +100,8 @@ namespace Fred68.Parser
 		/// <summary>
 		/// Indice
 		/// </summary>
-		/// <param name="opName">Testo dell'operatore</param>
-		/// <returns>Operatore (by value, è una struct). Null se non ha trovato il testo</returns>
+		/// <param name="opName">Nome dell'operatore</param>
+		/// <returns>Operatore, null se non ha trovato il testo</returns>
 		public Operatore? this[string opName]
 			{		
 			get
