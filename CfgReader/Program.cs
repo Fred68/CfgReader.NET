@@ -83,85 +83,98 @@ List<string> formule = new List<string>();
 //formule.Add("3+4*2");
 //formule.Add("(2+3^2)*(5+1)");
 //formule.Add("{2.1+3.2^0.1}");
-
-bool bCont = false;
+bool ripeti = true;
 do
 {
-	bCont = false;
-	Console.Write("Inserire formula:");
-	string? inpf = Console.ReadLine();
-	if(inpf != null)
+	bool bCont = false;
+	do
 	{
-		if(inpf.Length > 0)
+		bCont = false;
+		Console.Write("Inserire formula:");
+		string? inpf = Console.ReadLine();
+		if(inpf != null)
 		{
+			if(inpf.Length > 0)
+			{
 
-			formule.Add(inpf);
-			bCont = true;
+				formule.Add(inpf);
+				bCont = true;
+			}
 		}
-	}
 	
-} while(bCont);
-//formule.Add("0xFF");
-//formule.Add("0b010+100");
+	} while(bCont);
+	//formule.Add("0xFF");
+	//formule.Add("0b010+100");
 
 
-// formule.Add("(2+3^2))*(5+1)");
-// formule.Add("{2+3^2}*{(5+1)");
+	// formule.Add("(2+3^2))*(5+1)");
+	// formule.Add("{2+3^2}*{(5+1)");
 
-Analizzatore analiz = new Fred68.Parser.Analizzatore();
+	Analizzatore analiz = new Fred68.Parser.Analizzatore();
 
-foreach(string f in formule)
-{
-	List<Token> lt = new List<Token>();
-	Queue<Token> qt = new Queue<Token>();
+	foreach(string f in formule)
+	{
+		List<Token> lt = new List<Token>();
+		Queue<Token> qt = new Queue<Token>();
 
-	Console.WriteLine(new string('-',20));
+		Console.WriteLine(new string('-',20));
 	
-	bool ok = true;
-	if(ok)
-	{
-		try
+		bool ok = true;
+		if(ok)
 		{
-			lt = analiz.Analizza(f);
+			try
+			{
+				lt = analiz.Analizza(f);
+			}
+			catch(Exception ex)
+			{
+				ok = false;
+				Console.WriteLine(ex.Message);
+			}
 		}
-		catch(Exception ex)
-		{
-			ok = false;
-			Console.WriteLine(ex.Message);
-		}
-	}
 
-	if(ok)
-	{
-		try
+		if(ok)
 		{
-			qt = analiz.RiordinaSY(lt);
+			try
+			{
+				qt = analiz.RiordinaSY(lt);
+			}
+			catch (Exception ex)
+			{
+				ok = false;
+				Console.WriteLine(ex.Message);
+			}
 		}
-		catch (Exception ex)
-		{
-			ok = false;
-			Console.WriteLine(ex.Message);
-		}
-	}
 	
-	Console.WriteLine($"Formula: {f}");
-	Console.WriteLine($"Token (infix):");
-	foreach(Token tk in lt)
-	{
-		Console.WriteLine(tk.ToString());
+		Console.WriteLine($"Formula: {f}");
+		Console.WriteLine($"Token (infix):");
+		foreach(Token tk in lt)
+		{
+			Console.WriteLine(tk.ToString());
+		}
+		Console.WriteLine(new string('-',10));
+		Console.WriteLine($"Token (rpn):");
+		foreach(Token tk in qt)
+		{
+			Console.WriteLine(tk.ToString());
+		}
 	}
-	Console.WriteLine(new string('-',10));
-	Console.WriteLine($"Token (rpn):");
-	foreach(Token tk in qt)
-	{
-		Console.WriteLine(tk.ToString());
-	}
-}
-#endif
+	#endif
 
-//Console.WriteLine(uint.MaxValue);
-//Console.WriteLine(int.MaxValue);
+	ripeti = false;
+	Console.Write("\nNuove formule ?");
+	string? inpf2 = Console.ReadLine();
+	if(inpf2 != null)
+		{
+			if((inpf2.ToUpper()=="S") || (inpf2.ToUpper()=="Y"))
+			{
+				ripeti = true;
+			}
+		}
 
+	//Console.WriteLine(uint.MaxValue);
+	//Console.WriteLine(int.MaxValue);
+} while(ripeti);
 Console.WriteLine("\nFine programma.");
 Console.ReadKey();
 

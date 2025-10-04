@@ -39,11 +39,13 @@ namespace Fred68.Parser
 				if(t.isValore)
 				{
 					_out.Enqueue(t);
+					
 				}
 
 				else if(t.isFunzione)
 				{
-					_ops.Push(t);	
+					_ops.Push(t);
+					
 				}
 
 				else if(t.isOperatore)
@@ -60,6 +62,7 @@ namespace Fred68.Parser
 								if(opStack.Precedenza >= opAttuale.Precedenza)
 								{
 									_out.Enqueue(_ops.Pop());
+									
 								}
 								else
 								{
@@ -69,19 +72,22 @@ namespace Fred68.Parser
 						}
 					} // Fine while
 					_ops.Push(t);
+					
 				}
 
 				else if(t.Tipo == Token.TipoTk.Separatore)
 				{
 					while(	(_ops.Count > 0) && (_ops.Peek().Tipo != Token.TipoTk.Parentesi_Aperta) )
 					{
-						_out.Enqueue(_ops.Pop());		
+						_out.Enqueue(_ops.Pop());
+						
 					}
 				}
 
 				else if(t.Tipo == Token.TipoTk.Parentesi_Aperta)	
 				{
-					_ops.Push(t);	
+					_ops.Push(t);
+					
 				}
 
 				else if(t.Tipo == Token.TipoTk.Parentesi_Chiusa)
@@ -92,28 +98,45 @@ namespace Fred68.Parser
 					}
 					while(	(_ops.Count > 0) &&	(_ops.Peek().Tipo != Token.TipoTk.Parentesi_Aperta) )
 					{
-						_out.Enqueue(_ops.Pop());		
+						_out.Enqueue(_ops.Pop());
+						
 					}
-					if( (_ops.Count > 0) && (_ops.Peek().Tipo != Token.TipoTk.Parentesi_Aperta) )
+
+					if(_ops.Count == 0 )
 					{
-						throw new Exception("[RiordinaSY] Manca una parentesi aperta");
+						throw new Exception("[RiordinaSY] Parentesi aperta mancante");	
 					}
-					_ops.Pop();
-					if( (_ops.Count > 0) && (_ops.Peek().Tipo != Token.TipoTk.Funzione) )
+
+					if( (_ops.Count > 0) && (_ops.Peek().Tipo == Token.TipoTk.Parentesi_Aperta) )
 					{
-						_out.Enqueue(_ops.Pop());	
+						_ops.Pop();	
 					}
+
+
+
+					//if( (_ops.Count > 0) && (_ops.Peek().Tipo != Token.TipoTk.Parentesi_Aperta) )
+					//{
+					//	throw new Exception("[RiordinaSY] Manca una parentesi aperta");
+					//}
+					//if(_ops.Count > 0 )
+					//{
+					//	_ops.Pop();
+					//}
+					//if( (_ops.Count > 0) && (_ops.Peek().Tipo != Token.TipoTk.Funzione) )
+					//{
+					//	_out.Enqueue(_ops.Pop());	
+					//}
 				}
 
 			}
 			while(	_ops.Count > 0 )
+				{
+					if(_ops.Peek().Tipo == Token.TipoTk.Parentesi_Aperta)	
 					{
-						if(_ops.Peek().Tipo == Token.TipoTk.Parentesi_Aperta)	
-						{
-							throw new Exception("[RiordinaSY] C'è una parentesi aperta di troppo");
-						}
-						_out.Enqueue(_ops.Pop());
+						throw new Exception("[RiordinaSY] C'è una parentesi aperta di troppo");
 					}
+					_out.Enqueue(_ops.Pop());
+				}
 
 			return _out;
 		}
