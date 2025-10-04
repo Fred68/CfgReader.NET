@@ -44,6 +44,7 @@ namespace Fred68.Parser
 			StringBuilder strTkAttuale = new StringBuilder();		// Testo del token attuale
 			
 			bool bPuntoDecimale = false;							// Ha trovato il punto decimale
+			bool bCifra = false;									// Ha trovato una cifra (evita numeri con solo punto o suffisso)
 			Token.TipoNum tpNum = Token.TipoNum.Indefinito;			// Suffisso per il tipo di numero (float o double)
 			int nParentesi = 0;										// Contatore di parentesi
 			int nBlocchi = 0;										// Contatore di blocchi
@@ -64,6 +65,7 @@ namespace Fred68.Parser
 						//tkAttuale = new Token();					// Nuovo token indefinito (restituito così se l'analisi è incompleta).
 						bPuntoDecimale = false;
 						tpNum = Token.TipoNum.Indefinito;
+						bCifra = false;
 
 						if(ch.isIn(chtSpazi))						// Se il carattere è uno spazio...				
 						{
@@ -182,19 +184,25 @@ namespace Fred68.Parser
 									bPuntoDecimale = true;
 								}
 							}
+							else
+							{
+								bCifra = true;
+							}
 
 							strTkAttuale.Append(ch);				// Memorizza il carattere e prosegue la lettura
 							i++;
 							statTkNew= Token.TkStat.Numero;
 						}
-						else if(									// Se suffisso di un numero in virgola mobile...
-								(ch == Token.chSuffissoFloat) ||
-								(ch == Token.chSuffissoDouble)
-								)	
+						else if((ch == Token.chSuffissoFloat)||(ch == Token.chSuffissoDouble))	// Suffisso per virgola mobile
 						{
 							if(tpNum != Token.TipoNum.Indefinito)
 							{
 								throw new Exception("[Analizza] Suffisso di tipo di numero doppio.");
+							}
+							else if(!bCifra)
+							{
+								// Numero scritto come ".f" o ".d". Il solo suffisso 'f' o 'd' viene considerato un simbolo 
+								throw new Exception("[Analizza] Suffisso di tipo di numero privo di cifre.");
 							}
 							else
 							{
@@ -217,9 +225,18 @@ namespace Fred68.Parser
 						}
 						else
 						{											// Se ok, termina il token, ma non incrementa (i++)
-							tkAttuale = new Token(Token.TipoTk.Numero,tpNum,strTkAttuale.ToString());
-							statTkNew = Token.TkStat.TokenCompletato;
-							tpNum = Token.TipoNum.Indefinito;
+							if(bCifra)
+							{
+								tkAttuale = new Token(Token.TipoTk.Numero,tpNum,strTkAttuale.ToString());
+								strTkAttuale.Clear();
+								statTkNew = Token.TkStat.TokenCompletato;
+								tpNum = Token.TipoNum.Indefinito;
+								bCifra = false;
+							}
+							else
+							{
+								throw new Exception("[Analizza] Numero reale senza cifre.");
+							}
 							//char xxx = ch;
 						}
 						

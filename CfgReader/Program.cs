@@ -87,6 +87,7 @@ bool ripeti = true;
 do
 {
 	bool bCont = false;
+	formule.Clear();
 	do
 	{
 		bCont = false;
