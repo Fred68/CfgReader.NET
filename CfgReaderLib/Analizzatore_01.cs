@@ -43,7 +43,8 @@ namespace Fred68.Parser
 			Token tkAttuale = new Token();							// Nuovo token, inizializzato per sicurezza 
 			StringBuilder strTkAttuale = new StringBuilder();		// Testo del token attuale
 			
-			bool bPuntoDecimale = false;							// Flag: ha già trovato il punto decimale
+			bool bPuntoDecimale = false;							// Ha trovato il punto decimale
+			Token.TipoNum tpNum = Token.TipoNum.Indefinito;			// Suffisso per il tipo di numero (float o double)
 			int nParentesi = 0;										// Contatore di parentesi
 			int nBlocchi = 0;										// Contatore di blocchi
 			
@@ -56,35 +57,37 @@ namespace Fred68.Parser
 				char ch = (i < input.Length) ? input[i] : Operatori.chSpazio;	// Legge il carattere, se entro il limite
 				switch(statTk)
 				{
-					case Token.TkStat.TokenNuovo:						// Se inizia un nuovo token:...
+					/*********************************************************/
+					case Token.TkStat.TokenNuovo:					// Se inizia un nuovo token:...
 					{
 						strTkAttuale.Clear();						// Azzera tutto
 						//tkAttuale = new Token();					// Nuovo token indefinito (restituito così se l'analisi è incompleta).
 						bPuntoDecimale = false;
+						tpNum = Token.TipoNum.Indefinito;
 
-						if(ch.isIn(chtSpazi))					// Se il carattere è uno spazio...				
+						if(ch.isIn(chtSpazi))						// Se il carattere è uno spazio...				
 						{
-							i++;										// Passa al carattere successivo e...
-							statTkNew = Token.TkStat.TokenNuovo;           // ...mantiene lo stato precedente
+							i++;									// Passa al carattere successivo e...
+							statTkNew = Token.TkStat.TokenNuovo;    // ...mantiene lo stato precedente
 						}
 						else if(ch.isIn(chtNumeriReali))			// Se il carattere è di un numero reale...
 						{
-							if(ch == Operatori.chZero)					// Se inizia per '0': può essere decimale, binario o esadecimale
+							if(ch == Operatori.chZero)				// Se inizia per '0': può essere decimale, binario o esadecimale
 							{
 								statTkNew = Token.TkStat.NumeroIndef;   // Imposta lo stato non definito (decimale, esadecimale o binario)
 								strTkAttuale.Append(ch);
 								i++;
 							}
 							else
-							{                                           // Se no...
-								statTkNew = Token.TkStat.Numero;			// Imposta lo stato in Numero
+							{										// Se no...
+								statTkNew = Token.TkStat.Numero;	// Imposta lo stato in Numero
 							}
 						}
-						else if(ch.isIn(chtOperatori))		// Operatore...
+						else if(ch.isIn(chtOperatori))				// Operatore...
 						{
 							statTkNew= Token.TkStat.Operatore;				
 						}
-						else if(ch == Operatori.chParentesiAperta)					// Parentesi / blocchi
+						else if(ch == Operatori.chParentesiAperta)		// Parentesi / blocchi
 						{
 							statTkNew = Token.TkStat.ParentesiAperta;
 						}
@@ -100,11 +103,11 @@ namespace Fred68.Parser
 						{
 							statTkNew = Token.TkStat.BloccoChiuso;
 						}
-						else if(ch == Operatori.chVirgola)					// Separatore / fine comando
+						else if(ch == Operatori.chVirgola)				// Separatore
 						{
 							statTkNew = Token.TkStat.Separatore;
 						}
-						else if(ch == Operatori.chPuntoVirgola)
+						else if(ch == Operatori.chPuntoVirgola)			// fine comando
 						{
 							statTkNew = Token.TkStat.FineComando;
 						}
@@ -122,28 +125,28 @@ namespace Fred68.Parser
 
 					}
 					break;
-
+					/*********************************************************/
 					case Token.TkStat.Stringa:						// Se sta leggendo una stringa:...
 					{
-						if(ch == Operatori.chStringaFine)				// Se fine stringa: token completato...
+						if(ch == Operatori.chStringaFine)			// Se fine stringa: token completato...
 						{
 							i++;
 							statTkNew = Token.TkStat.TokenCompletato;
 							tkAttuale = new Token(Token.TipoTk.Stringa,strTkAttuale.ToString());
 						}
 						else
-						{												// ...se no: memorizza il carattere.
+						{											// ...se no: memorizza il carattere.
 							strTkAttuale.Append(ch);
 							i++;
 						}
 					}
 					break;
-					
+					/*********************************************************/					
 					case Token.TkStat.NumeroIndef:					// Se sta leggendo il numero ancora indefinito (il primo carattere è '0')...
 					{
 						if(ch == Operatori.chHex)					// Riconosciuto secondo carattere: formato esadecimale...
 						{
-							strTkAttuale.Append((char)ch);		// Memorizza
+							strTkAttuale.Append((char)ch);			// Memorizza
 							i++;										// Passa al carattere successivo
 							statTkNew = Token.TkStat.Esadecimale;		// Imposta esadecimale
 						}
@@ -163,10 +166,10 @@ namespace Fred68.Parser
 						}
 					}
 					break;
-
+					/*********************************************************/
 					case Token.TkStat.Numero:						// Se sta leggendo un numero reale
 					{
-						if(ch.isIn(chtNumeriReali))				// Se cifra di un numero decimale...
+						if(ch.isIn(chtNumeriReali))					// Se cifra di un numero decimale...
 						{
 							if(ch == Operatori.chPuntoDecimale)		// Verifica il punto decimale
 							{
@@ -184,25 +187,48 @@ namespace Fred68.Parser
 							i++;
 							statTkNew= Token.TkStat.Numero;
 						}
-						else
-						{                                               // Se altro carattere...
-							if(ch.isIn(chtNomi))                  // Non deve essere un carattere di un nome (lettera o altro...)
+						else if(									// Se suffisso di un numero in virgola mobile...
+								(ch == Token.chSuffissoFloat) ||
+								(ch == Token.chSuffissoDouble)
+								)	
+						{
+							if(tpNum != Token.TipoNum.Indefinito)
 							{
-								throw new Exception("[Analizza] Numero reale con carattere errato.");
+								throw new Exception("[Analizza] Suffisso di tipo di numero doppio.");
 							}
 							else
-							{											// Se ok, termina il token, ma non incrementa (i++)
-								statTkNew = Token.TkStat.TokenCompletato;
-								tkAttuale = new Token(Token.TipoTk.Numero,strTkAttuale.ToString());
-								//char xxx = ch;
+							{
+								switch(ch)
+								{
+									case Token.chSuffissoFloat:
+										tpNum = Token.TipoNum.Float;
+									break;
+									case Token.chSuffissoDouble:
+										tpNum= Token.TipoNum.Double;
+									break;
+								}
+
 							}
+							i++;
 						}
+						else if(ch.isIn(chtNomi))					// Non deve essere un carattere di un nome (lettera o altro...)
+						{
+							throw new Exception("[Analizza] Numero reale con carattere errato.");
+						}
+						else
+						{											// Se ok, termina il token, ma non incrementa (i++)
+							tkAttuale = new Token(Token.TipoTk.Numero,tpNum,strTkAttuale.ToString());
+							statTkNew = Token.TkStat.TokenCompletato;
+							tpNum = Token.TipoNum.Indefinito;
+							//char xxx = ch;
+						}
+						
 					}
 					break;
-
+					/*********************************************************/
 					case Token.TkStat.Esadecimale:					// Se sta leggendo un numero esadecimale
 					{
-						if(ch.isIn(chtHex))						// Se cifra di un numero esadecimale
+						if(ch.isIn(chtHex))							// Se cifra di un numero esadecimale
 						{
 							strTkAttuale.Append(ch);				// Memorizza il carattere e prosegue la lettura
 							i++;
@@ -215,17 +241,17 @@ namespace Fred68.Parser
 								throw new Exception("[Analizza] Numero esadecimale con carattere errato.");
 							}
 							else
-							{											// Se ok, termina il token, ma non incrementa (i++)
+							{										// Se ok, termina il token, ma non incrementa (i++)
 								statTkNew = Token.TkStat.TokenCompletato;
 								tkAttuale = new Token(Token.TipoTk.Esadecimale,strTkAttuale.ToString());
 							}	
 						}
 					}
 					break;
-
-					case Token.TkStat.Binario:						// Se sta leggendo un numero binario...
+					/*********************************************************/
+					case Token.TkStat.Binario:						// Se sta leggendo un numero binario
 					{
-						if(ch.isIn(chtBin))						// Se cifra di un numero binario
+						if(ch.isIn(chtBin))							// Se cifra di un numero binario
 						{
 							strTkAttuale.Append(ch);				// Memorizza il carattere e prosegue la lettura
 							i++;
@@ -238,21 +264,21 @@ namespace Fred68.Parser
 								throw new Exception("[Analizza] Numero binario con carattere errato.");
 							}
 							else
-							{											// Se ok, termina il token, ma non incrementa (i++)
+							{										// Se ok, termina il token, ma non incrementa (i++)
 								statTkNew = Token.TkStat.TokenCompletato;
 								tkAttuale = new Token(Token.TipoTk.Binario,strTkAttuale.ToString());
 							}	
 						}
 					}
 					break;
-
+					/*********************************************************/
 					case Token.TkStat.Operatore:					// Se sta leggendo un operatore...
 					{
 						if(ch.isIn(chtOperatori))					// Carattere di operatore:...
 						{															// La stringa attuale + il carattere operatore...
 							if(operatori.Contains(strTkAttuale.ToString()+ch.ToString()))		// ...è ancora un operatore valido ?							{
 							{																		
-								strTkAttuale.Append(ch);						// Sì: memorizza il carattere
+								strTkAttuale.Append(ch);			// Sì: memorizza il carattere
 								i++;
 							}
 							else
@@ -264,13 +290,13 @@ namespace Fred68.Parser
 								}
 								else
 								{
-									strTkAttuale.Append(ch);					// Se non è un operatore: memorizza il carattere
+									strTkAttuale.Append(ch);		// Se non è un operatore: memorizza il carattere
 									i++;	
 								}
 							}
 						}
 						else
-						{													// Carattere non di operatore:...
+						{											// Carattere non di operatore:...
 							if(operatori.Contains(strTkAttuale.ToString()))		// Se la stringa attuale è un operatore, lo memorizza
 							{
 								statTkNew = Token.TkStat.TokenCompletato;
@@ -283,10 +309,10 @@ namespace Fred68.Parser
 						}
 					}
 					break;
-
-					case Token.TkStat.ParentesiAperta:				// Se sta leggendo una parentesi aperta: crea subito un token
+					/*********************************************************/
+					case Token.TkStat.ParentesiAperta:				// Se sta leggendo una parentesi aperta:...
 					{
-						strTkAttuale.Append(ch);
+						strTkAttuale.Append(ch);					// ... crea subito un token
 						i++;										// Passa al carattere successivo
 						nParentesi++;								// Conta le parentesi
 						statTkNew = Token.TkStat.TokenCompletato;
@@ -294,7 +320,7 @@ namespace Fred68.Parser
 
 					}
 					break;
-
+					/*********************************************************/
 					case Token.TkStat.ParentesiChiusa:				// Idem con parentesi chiusa
 					{
 						strTkAttuale.Append(ch);
@@ -305,7 +331,7 @@ namespace Fred68.Parser
 
 					}
 					break;
-
+					/*********************************************************/
 					case Token.TkStat.BloccoAperto:					// Idem con inizio blocco
 					{
 						strTkAttuale.Append(ch);
@@ -316,7 +342,7 @@ namespace Fred68.Parser
 
 					}
 					break;
-
+					/*********************************************************/
 					case Token.TkStat.BloccoChiuso:					// Idem con fine blocco
 					{
 						strTkAttuale.Append(ch);
@@ -326,7 +352,7 @@ namespace Fred68.Parser
 						tkAttuale = new Token(Token.TipoTk.Blocco_Chiuso,strTkAttuale.ToString());
 					}
 					break;
-
+					/*********************************************************/
 					case Token.TkStat.Separatore:					// Idem con separatore
 					{
 						strTkAttuale.Append(ch);
@@ -335,7 +361,7 @@ namespace Fred68.Parser
 						tkAttuale = new Token(Token.TipoTk.Separatore,strTkAttuale.ToString());
 					}
 					break;
-
+					/*********************************************************/
 					case Token.TkStat.FineComando:					// Idem con fine comando
 					{
 						strTkAttuale.Append(ch);
@@ -344,7 +370,7 @@ namespace Fred68.Parser
 						tkAttuale = new Token(Token.TipoTk.Fine_Comando,strTkAttuale.ToString());
 					}
 					break;
-
+					/*********************************************************/
 					case Token.TkStat.Simbolo:
 					{
 						if(ch.isIn(chtNomi))
@@ -355,26 +381,27 @@ namespace Fred68.Parser
 						else
 						{
 							#warning MANCA ricerca in dizionari di variabili e parole chiave
+
 							if(funzioni.Contains(strTkAttuale.ToString().ToUpper()))
 							{
 								tkAttuale = new Token(Token.TipoTk.Funzione,strTkAttuale.ToString().ToUpper());
 							}
 							else
-							{	// Sr non roconisciuto: classificato come simbolo generico
+							{	// Se non roconisciuto: classificato come simbolo generico
 								tkAttuale = new Token(Token.TipoTk.Simbolo,strTkAttuale.ToString());
 							}
 							statTkNew = Token.TkStat.TokenCompletato;
 						}
 					}
 					break;
-					
+					/*********************************************************/					
 					case Token.TkStat.TokenCompletato:			// Token completato: lo aggiunge alla lista e inizia con ricerca di nuovo token
 					{
 						tokens.Add(tkAttuale);
 						statTkNew = Token.TkStat.TokenNuovo;
 					}
 					break;
-
+					/*********************************************************/
 					default:
 					{
 

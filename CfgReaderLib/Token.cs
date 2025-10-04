@@ -7,14 +7,21 @@ using System.Threading.Tasks;
 
 namespace Fred68.Parser
 {
+
+	
+
 	public class Token
 	{
+
+		public const char chSuffissoFloat = 'f';
+		public const char chSuffissoDouble = 'd';
+
 		/// <summary>
 		/// Tipo di token
 		/// </summary>
 		public enum TipoTk
 		{
-			Indefinito,
+			Indefinito = 0,
 			Numero,				// 100 0.2
 			Esadecimale,		// 0x2AbF
 			Binario,			// 0b10100
@@ -32,6 +39,14 @@ namespace Fred68.Parser
 			Parola_chiave
 		}
 		
+		public enum TipoNum
+		{
+			Indefinito = 0,
+			Intero,				//
+			Float,				// f
+			Double				// d
+
+		}
 		/// <summary>
 		/// Stato della macchina a stati
 		/// </summary>
@@ -73,6 +88,7 @@ namespace Fred68.Parser
 		#endregion
 
 		TipoTk	_tipo;
+		TipoNum _tNum;
 		string	_testo = "";
 		Dat?	_dat;
 
@@ -141,9 +157,23 @@ namespace Fred68.Parser
 		public Token(TipoTk tipo, string testo)
 		{
 			_tipo = tipo;
+			_tNum = TipoNum.Indefinito;
 			_testo = testo;
 			_dat = null;
-			#warning AGGIUNGERE _dat, SE CALCOLABILE
+		}
+
+		/// <summary>
+		/// Ctor
+		/// </summary>
+		/// <param name="tipo">Tipo</param>
+		/// <param name="tpN">TipoNum</param>
+		/// <param name="testo">Contenuto (string)</param>
+		public Token(TipoTk tipo, TipoNum tpN, string testo)
+		{
+			_tipo = tipo;
+			_tNum = tpN;
+			_testo = testo;
+			_dat = null;
 		}
 
 		/// <summary>
@@ -152,24 +182,47 @@ namespace Fred68.Parser
 		public void Clear()
 		{
 			_tipo = TipoTk.Indefinito;
+			_tNum = TipoNum.Indefinito;
 			_testo = "";
 			_dat = null;
 		}
 
-
+		/// <summary>
+		/// ToString() override
+		/// Include carattere per indicare se fload o double
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString() 
 		{
 			string val;
+			string ext = "";
 			if(_dat != null)
 			{
 				val = _dat.ToString();	//_dat.Get().ToString(out val);
+				
+
 			}
 			else
 			{
 				val = "";	
 			}
 			
-			return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo} {val}";
+			if(_tipo == TipoTk.Numero)
+				{
+					switch(_tNum)
+					{
+						case TipoNum.Float:
+							ext = "f";
+							break;
+						case TipoNum.Double:
+							ext = "d";
+							break;
+						default:
+						break;
+					}
+				}
+
+			return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo}{ext} {val}";
 		}
 	}
 }
