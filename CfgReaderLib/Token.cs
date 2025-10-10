@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace Fred68.Parser
 
 		public const char chSuffissoFloat = 'f';
 		public const char chSuffissoDouble = 'd';
+		// Nota: il carattere dell'esponenziale 'E' (notazione scientifica) è incluso tra gli operatori binari
 
 		/// <summary>
 		/// Tipo di token
@@ -42,7 +44,7 @@ namespace Fred68.Parser
 		public enum TipoNum
 		{
 			Indefinito = 0,
-			Intero,				//
+			Intero,				// vuoto
 			Float,				// f
 			Double				// d
 
@@ -87,15 +89,20 @@ namespace Fred68.Parser
 		}
 		#endregion
 
+		#warning E' conveniente usare un rif. all'operatore (identificandolo prima nel dizionario) ? No
+
 		TipoTk	_tipo;
 		TipoNum _tNum;
 		string	_testo = "";
 		Dat?	_dat;
+		//Operatori.Operatore? _oper;
 
 		#region PROPRIETA
 		public TipoTk Tipo { get { return _tipo; } }
 		public string Testo { get { return _testo; } }
 		public Dat? Dato { get { return _dat; } }
+		public TipoNum? TipoNumero { get { return _tNum; } }
+		//Operatori.Operatore? Operatore { get { return _oper; } }
 		
 		/// <summary>
 		/// E' un valore numerico, una stringa o una variabile ?
@@ -123,6 +130,21 @@ namespace Fred68.Parser
 				return (	(_tipo==TipoTk.Numero) ||
 							(_tipo==TipoTk.Esadecimale) ||
 							(_tipo==TipoTk.Binario)
+						);
+				}
+		}
+
+		/// <summary>
+		/// E' un numero o una stringa ?
+		/// </summary>
+		public bool isNumeroStringa
+		{
+			get
+				{
+				return (	(_tipo==TipoTk.Numero) ||
+							(_tipo==TipoTk.Esadecimale) ||
+							(_tipo==TipoTk.Binario) ||
+							(_tipo==TipoTk.Stringa)
 						);
 				}
 		}
@@ -154,12 +176,13 @@ namespace Fred68.Parser
 		/// </summary>
 		/// <param name="tipo">Tipo</param>
 		/// <param name="testo">Contenuto (string)</param>
-		public Token(TipoTk tipo, string testo)
+		public Token(TipoTk tipo, string testo = "", Operatori? ops = null)
 		{
 			_tipo = tipo;
 			_tNum = TipoNum.Indefinito;
 			_testo = testo;
 			_dat = null;
+			//_oper = GetOper(ops, testo);
 		}
 
 		/// <summary>
@@ -168,12 +191,13 @@ namespace Fred68.Parser
 		/// <param name="tipo">Tipo</param>
 		/// <param name="tpN">TipoNum</param>
 		/// <param name="testo">Contenuto (string)</param>
-		public Token(TipoTk tipo, TipoNum tpN, string testo)
+		public Token(TipoTk tipo, TipoNum tpN, string testo, Operatori? ops = null)
 		{
 			_tipo = tipo;
 			_tNum = tpN;
 			_testo = testo;
 			_dat = null;
+			//_oper = GetOper(ops, testo);
 		}
 
 		/// <summary>
@@ -188,6 +212,28 @@ namespace Fred68.Parser
 		}
 
 		/// <summary>
+		/// Modifica il testo dell'operatore un unario speciale,
+		/// anteponendogli un carattere speciale
+		/// </summary>
+		public void RendiOperatoreSpeciale()
+		{
+			if( (_tipo == TipoTk.Operatore) && (!_testo.StartsWith(Operatori.chUnary)) )
+			{
+				_testo = Operatori.chUnary + _testo;
+			}
+		}
+		//private Operatori.Operatore? GetOper(Operatori? ops, string testo)
+		//{
+		//	Operatori.Operatore? op = null;
+		//	if( (testo.Length > 0) && ops != null )
+		//	{
+		//		op = ops[testo];
+		//	}
+
+		//	return op;
+		//}
+
+		/// <summary>
 		/// ToString() override
 		/// Include carattere per indicare se fload o double
 		/// </summary>
@@ -196,11 +242,10 @@ namespace Fred68.Parser
 		{
 			string val;
 			string ext = "";
+			//string op = "";
 			if(_dat != null)
 			{
 				val = _dat.ToString();	//_dat.Get().ToString(out val);
-				
-
 			}
 			else
 			{
@@ -208,21 +253,28 @@ namespace Fred68.Parser
 			}
 			
 			if(_tipo == TipoTk.Numero)
+			{
+				switch(_tNum)
 				{
-					switch(_tNum)
-					{
-						case TipoNum.Float:
-							ext = "f";
-							break;
-						case TipoNum.Double:
-							ext = "d";
-							break;
-						default:
+					case TipoNum.Float:
+						ext = "f";
 						break;
-					}
+					case TipoNum.Double:
+						ext = "d";
+						break;
+					default:
+					break;
 				}
+			}
 
+			//if((_tipo == TipoTk.Operatore) && _oper != null)
+			//{
+			//	op = _oper.ToString();
+			//}
+
+			//return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo}{ext} {op} {val}";
 			return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo}{ext} {val}";
+
 		}
 	}
 }

@@ -42,16 +42,20 @@ namespace Fred68.Parser
 			
 			Token tkAttuale = new Token();							// Nuovo token, inizializzato per sicurezza 
 			StringBuilder strTkAttuale = new StringBuilder();		// Testo del token attuale
-			
-			bool bPuntoDecimale = false;							// Ha trovato il punto decimale
-			bool bCifra = false;									// Ha trovato una cifra (evita numeri con solo punto o suffisso)
+
+																	// Ha trovato...
+			bool bPuntoDecimale = false;							// ...il punto decimale
+			bool bCifra = false;									// ...una cifra (evita numeri con solo punto o suffisso)
+			//bool bExp = false;										// ...il carattere dell'esponenziale in un numero
+
 			Token.TipoNum tpNum = Token.TipoNum.Indefinito;			// Suffisso per il tipo di numero (float o double)
 			int nParentesi = 0;										// Contatore di parentesi
 			int nBlocchi = 0;										// Contatore di blocchi
 			
 			if(input.Length < 1)									// Verifica iniziale
 				throw new Exception("[Analizza] Stringa da analizzare nulla.");
-
+			if(chtOperatori == null)
+				throw new Exception("[Analizza] CharLuTable chtOperatori è null.");
 			
 			for(int i=0; i<input.Length+1;)							// Percorre tutti i caratteri (come ciclo while) ed uno aggiuntivo
 			{
@@ -61,8 +65,8 @@ namespace Fred68.Parser
 					/*********************************************************/
 					case Token.TkStat.TokenNuovo:					// Se inizia un nuovo token:...
 					{
-						strTkAttuale.Clear();						// Azzera tutto
-						//tkAttuale = new Token();					// Nuovo token indefinito (restituito così se l'analisi è incompleta).
+						#warning IN QUESTO case DEVE RILEVARE L'OPERATORE 'E'
+						strTkAttuale.Clear();						// Azzera tutto, tranne flag se esponenziale
 						bPuntoDecimale = false;
 						tpNum = Token.TipoNum.Indefinito;
 						bCifra = false;
@@ -85,7 +89,7 @@ namespace Fred68.Parser
 								statTkNew = Token.TkStat.Numero;	// Imposta lo stato in Numero
 							}
 						}
-						else if(ch.isIn(chtOperatori))				// Operatore...
+						else if(ch.isIn(chtOperatori))			// Operatore (o notazione scientifica)
 						{
 							statTkNew= Token.TkStat.Operatore;				
 						}
@@ -171,7 +175,8 @@ namespace Fred68.Parser
 					/*********************************************************/
 					case Token.TkStat.Numero:						// Se sta leggendo un numero reale
 					{
-						if(ch.isIn(chtNumeriReali))					// Se cifra di un numero decimale...
+						// Se è una cifra di un numero decimale (numero o punto decimale...):...
+						if(ch.isIn(chtNumeriReali))
 						{
 							if(ch == Operatori.chPuntoDecimale)		// Verifica il punto decimale
 							{
@@ -193,7 +198,8 @@ namespace Fred68.Parser
 							i++;
 							statTkNew= Token.TkStat.Numero;
 						}
-						else if((ch == Token.chSuffissoFloat)||(ch == Token.chSuffissoDouble))	// Suffisso per virgola mobile
+						// Se è una lettera suffissa per un numerio in virgola mobile ('f' oppure 'd'):...
+						else if((ch == Token.chSuffissoFloat)||(ch == Token.chSuffissoDouble))	
 						{
 							if(tpNum != Token.TipoNum.Indefinito)
 							{
@@ -217,16 +223,18 @@ namespace Fred68.Parser
 								}
 
 							}
-							i++;
+							i++;	// Salta il carattere senza memorizzarlo
 						}
-						else if(ch.isIn(chtNomi))					// Non deve essere un carattere di un nome (lettera o altro...)
+						// Se è un carattere di un nome (lettera o altro...) ma non è l'esponenziale:...
+						else if( ch.isIn(chtNomi) && (ch != Operatori.chEsponenziale) )
 						{
 							throw new Exception("[Analizza] Numero reale con carattere errato.");
 						}
+						// Se è un altro carattere, ed è già stata trovata una cifra decimale:....
 						else
-						{											// Se ok, termina il token, ma non incrementa (i++)
-							if(bCifra)
-							{
+						{						
+							if(bCifra)		// ...completa il token, ma non incrementa il carattere (i++), verrà analizzato al ciclo succ.
+							{ 
 								tkAttuale = new Token(Token.TipoTk.Numero,tpNum,strTkAttuale.ToString());
 								strTkAttuale.Clear();
 								statTkNew = Token.TkStat.TokenCompletato;
@@ -292,7 +300,7 @@ namespace Fred68.Parser
 					case Token.TkStat.Operatore:					// Se sta leggendo un operatore...
 					{
 						if(ch.isIn(chtOperatori))					// Carattere di operatore:...
-						{															// La stringa attuale + il carattere operatore...
+						{											// La stringa attuale + il carattere operatore...
 							if(operatori.Contains(strTkAttuale.ToString()+ch.ToString()))		// ...è ancora un operatore valido ?							{
 							{																		
 								strTkAttuale.Append(ch);			// Sì: memorizza il carattere
