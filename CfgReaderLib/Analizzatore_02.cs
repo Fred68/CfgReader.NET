@@ -69,8 +69,12 @@ namespace Fred68.Parser
 							)								// per esempio: ) - 2  oppure  ) + "A"	oppure  1.2 E - 2
 						   )
 						{
+							//Token tmp = t;
 							t.RendiOperatoreSpeciale();		// ...allora modifica il testo in operatore unario speciale
+							//tmp = t;
 						}									// Le eventuali incompatibilità verranno analizzate dopo.
+
+
 						
 					}
 

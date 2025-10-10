@@ -89,8 +89,6 @@ namespace Fred68.Parser
 		}
 		#endregion
 
-		#warning E' conveniente usare un rif. all'operatore (identificandolo prima nel dizionario) ? No
-
 		TipoTk	_tipo;
 		TipoNum _tNum;
 		string	_testo = "";
@@ -176,13 +174,12 @@ namespace Fred68.Parser
 		/// </summary>
 		/// <param name="tipo">Tipo</param>
 		/// <param name="testo">Contenuto (string)</param>
-		public Token(TipoTk tipo, string testo = "", Operatori? ops = null)
+		public Token(TipoTk tipo, string testo = "")
 		{
 			_tipo = tipo;
 			_tNum = TipoNum.Indefinito;
 			_testo = testo;
 			_dat = null;
-			//_oper = GetOper(ops, testo);
 		}
 
 		/// <summary>
@@ -191,7 +188,7 @@ namespace Fred68.Parser
 		/// <param name="tipo">Tipo</param>
 		/// <param name="tpN">TipoNum</param>
 		/// <param name="testo">Contenuto (string)</param>
-		public Token(TipoTk tipo, TipoNum tpN, string testo, Operatori? ops = null)
+		public Token(TipoTk tipo, TipoNum tpN, string testo)
 		{
 			_tipo = tipo;
 			_tNum = tpN;
@@ -222,16 +219,6 @@ namespace Fred68.Parser
 				_testo = Operatori.chUnary + _testo;
 			}
 		}
-		//private Operatori.Operatore? GetOper(Operatori? ops, string testo)
-		//{
-		//	Operatori.Operatore? op = null;
-		//	if( (testo.Length > 0) && ops != null )
-		//	{
-		//		op = ops[testo];
-		//	}
-
-		//	return op;
-		//}
 
 		/// <summary>
 		/// ToString() override

@@ -15,15 +15,6 @@ using StringExtension;
 #warning Valutare se mantenere le eccezioni o usare una classe per mantenere gli errori senza generare eccezioni
 #warning Aggiungere funzione per controllare gli operatori, in numero di argomenti ed i dati.
 
-#warning Aggiungere riconoscomento operatori unari: vedi casi...
-/*
-	+num -num		a inizio espressione
-	(+num (-num		dopo una parentesi aperta
-	E+num E-num		dopo l'operatore esponenziale (notaz. scientifica)
-*/
-#warning Aggiungere riconoscomento operatori esponenziale 
-#warning Valutare se il riconoscimento va fatto prima o durante la trasformazione in RPN
-
 namespace Fred68.Parser
 {
 	

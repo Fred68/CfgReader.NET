@@ -88,8 +88,8 @@ namespace Fred68.Parser
 			Add("--",new Operatore(1,40));
 			
 			// Speciali (stesso testo di altri operatori, ma ricodificati come unari)
-			AddSpecial("+",new Operatore(1,50));
-			AddSpecial("-",new Operatore(1,50));
+			AddSpecial("+",new Operatore(1,110));
+			AddSpecial("-",new Operatore(1,110));
 
 			// Operatori binari alta precedenza
 			Add("^",new Operatore(2,30));

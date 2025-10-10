@@ -65,7 +65,6 @@ namespace Fred68.Parser
 					/*********************************************************/
 					case Token.TkStat.TokenNuovo:					// Se inizia un nuovo token:...
 					{
-						#warning IN QUESTO case DEVE RILEVARE L'OPERATORE 'E'
 						strTkAttuale.Clear();						// Azzera tutto, tranne flag se esponenziale
 						bPuntoDecimale = false;
 						tpNum = Token.TipoNum.Indefinito;
