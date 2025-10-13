@@ -11,13 +11,11 @@ using Fred68.GenDictionary;			// Per usare Dat
 using StringExtension;
 
 
-// SimplyCode/OneLoneCoder_DIYLanguage_Tokenizer.cpp
 
 namespace Fred68.Parser
 {
 	
 	/// <summary>
-	/// Classe che analizza una stringa
 	/// Parte 01: trasforma un'espressione in una lista di token
 	/// Riconosce operatori, numeri di vario formato, parentesi, funzioni, virgole, stringhe
 	/// Riconosce (usando il namespace Fred68.GenDictionary) anche i nomi di variabili da un dizionario generalizzato
@@ -233,7 +231,11 @@ namespace Fred68.Parser
 						else
 						{						
 							if(bCifra)		// ...completa il token, ma non incrementa il carattere (i++), verrà analizzato al ciclo succ.
-							{ 
+							{
+								if(tpNum == Token.TipoNum.Indefinito)	// Se non + stato ancora chiarito il tipo di numero...
+								{										// ...imposta intero o virgola mobile standard in base... 
+									tpNum = bPuntoDecimale ? floatStd : Token.TipoNum.Intero;	// ...al punto decimale
+								}
 								tkAttuale = new Token(Token.TipoTk.Numero,tpNum,strTkAttuale.ToString());
 								strTkAttuale.Clear();
 								statTkNew = Token.TkStat.TokenCompletato;

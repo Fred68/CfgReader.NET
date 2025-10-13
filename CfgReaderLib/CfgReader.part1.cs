@@ -39,7 +39,7 @@ namespace Fred68.CfgReader
 		bool _useSectPrefix;								// Usa il nome di sezione come prefisso
 		GenDictionary.GenDictionary _dict;					// Dizionario generico
 		Dictionary<string, Func<string, bool>> _cmds;		// Dizionario dei comandi
-		StringEvaluator _strEval;									// Analizzatore delle espressioni
+		StringEvaluator _strEval;							// Analizzatore delle espressioni
 
 		/// <summary>
 		/// Ctor

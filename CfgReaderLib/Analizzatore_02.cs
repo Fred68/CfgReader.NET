@@ -14,19 +14,16 @@ using StringExtension;
 
 namespace Fred68.Parser
 {
-	
 	/// <summary>
-	/// Classe che analizza una stringa
-	/// Riconosce operatori, numeri di vario formato, parentesi, funzioni, virgole, stringhe
-	/// Riconosce (usando il namespace Fred68.GenDictionary) anche i nomi di variabili da un dizionario generalizzato
+	/// Parte 02: Riordina una lista di token da notazione infissa a notazione polacca inversa (RPN)
+	/// Utilizza l'algoritmo Shunting yard: https://en.wikipedia.org/wiki/Shunting_yard_algorithm
+	/// Considera anche gli operatori unari + e -, cha hanno la stessa stringa degli operatori binari
 	/// </summary>
 	public partial class Analizzatore
 	{
 	
 		/// <summary>
-		/// Classe che analizza una stringa
-		/// Parte 02: Riordina una lista di token da notazione infissa a notazione polacca inversa (RPN)
-		/// Utilizza l'algoritmo Shunting yard: https://en.wikipedia.org/wiki/Shunting_yard_algorithm
+		/// Classe che riordina in RPN una lista di token
 		/// <param name="input">Lista di token di un'espressione</param>
 		/// <returns>Coda di toker in RPN (notazione polacca inversa)</returns>
 		public Queue<Token> RiordinaSY(List<Token> input)

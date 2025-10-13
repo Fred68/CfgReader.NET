@@ -112,11 +112,13 @@ do
 	// formule.Add("{2+3^2}*{(5+1)");
 
 	Analizzatore analiz = new Fred68.Parser.Analizzatore();
+	analiz.FloatStd = Token.TipoNum.Double;
 
 	foreach(string f in formule)
 	{
 		List<Token> lt = new List<Token>();
 		Queue<Token> qt = new Queue<Token>();
+		Token res = new Token();
 
 		Console.WriteLine(new string('-',20));
 	
@@ -146,6 +148,19 @@ do
 				Console.WriteLine(ex.Message);
 			}
 		}
+
+		if(ok)
+		{
+			try
+			{
+				res = analiz.ElaboraRPN(qt);
+			}
+			catch (Exception ex)
+			{
+				ok = false;
+				Console.WriteLine(ex.Message);
+			}
+		}
 	
 		Console.WriteLine($"Formula: {f}");
 		Console.WriteLine($"Token (infix):");
@@ -159,6 +174,9 @@ do
 		{
 			Console.WriteLine(tk.ToString());
 		}
+		Console.WriteLine(new string('-',10));
+		Console.WriteLine($"Risultato:");
+		Console.WriteLine(res);
 	}
 	#endif
 

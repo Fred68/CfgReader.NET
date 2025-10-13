@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 namespace Fred68.Parser
 {
 
-	
-
 	public class Token
 	{
 
@@ -93,7 +91,6 @@ namespace Fred68.Parser
 		TipoNum _tNum;
 		string	_testo = "";
 		Dat?	_dat;
-		//Operatori.Operatore? _oper;
 
 		#region PROPRIETA
 		public TipoTk Tipo { get { return _tipo; } }
@@ -236,7 +233,7 @@ namespace Fred68.Parser
 			}
 			else
 			{
-				val = "";	
+				val = "null";	
 			}
 			
 			if(_tipo == TipoTk.Numero)
@@ -244,13 +241,17 @@ namespace Fred68.Parser
 				switch(_tNum)
 				{
 					case TipoNum.Float:
-						ext = "f";
+						ext = " [f]";
 						break;
 					case TipoNum.Double:
-						ext = "d";
+						ext = " [d]";
+						break;
+					case TipoNum.Intero:
+						ext = " [i]";
 						break;
 					default:
-					break;
+						ext = " [?]";
+						break;
 				}
 			}
 

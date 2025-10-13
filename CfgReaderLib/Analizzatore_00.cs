@@ -11,48 +11,44 @@ using Fred68.GenDictionary;			// Per usare Dat
 using StringExtension;
 
 
-#warning Scrivere 3: Valutazione di un'espressione in RPN inserita in coda e stack
 #warning Valutare se mantenere le eccezioni o usare una classe per mantenere gli errori senza generare eccezioni
-#warning Aggiungere funzione per controllare gli operatori, in numero di argomenti ed i dati.
 
 namespace Fred68.Parser
-{
-	
+{	
 
 	/// <summary>
 	/// Classe che analizza una stringa
+	/// Parte 01: trasforma un'espressione in una lista di token
+	/// Riconosce operatori, numeri di vario formato, parentesi, funzioni, virgole, stringhe
+	/// Riconosce (usando il namespace Fred68.GenDictionary) anche i nomi di variabili da un dizionario generalizzato
+	/// Un ringraziamento a One Lone Coder https://github.com/OneLoneCoder
+	/// Algoritmo copiato da: https://github.com/OneLoneCoder/Javidx9/blob/master/SimplyCode/OneLoneCoder_DIYLanguage_Tokenizer.cpp
+
 	/// Parte 00: membri statici e costruttore
 	/// </summary>
 	public partial class Analizzatore
 	{
-		//static Operatori operatori;
-		
+		#warning Dopo le prove, impostare a 3
+		const int ini_arg_array_sz = 1;				// Dimensione dell'array degli argomenti
+
+
 		#if !_LU_TABLES_EXTENSION
-
-		// Caratteri vuoti da ignorare
-		static CharLuTable chtSpazi;
-
-		// Caratteri per i numeri
-		static CharLuTable chtNumeri;
+		
+		static CharLuTable chtSpazi;				// Caratteri vuoti da ignorare
+		static CharLuTable chtNumeri;				// Caratteri per numeri di vari formati
 		static CharLuTable chtNumeriReali;
 		static CharLuTable chtHex;
 		static CharLuTable chtBin;
-		
-		// Caratteri per gli operatori (letti dalla classe)
-		static CharLuTable? chtOperatori;
-		
-		// Caratteri per variabili, funzioni e parole chiave
-		static CharLuTable chtNomi;
+		static CharLuTable? chtOperatori;			// Caratteri per gli operatori
+		static CharLuTable chtNomi;					// Caratteri per variabili, funzioni e parole chiave
+
 		#endif
-		
 		
 		/// <summary>
 		/// static Ctor
 		/// </summary>
 		static Analizzatore()
 		{
-			//operatori = new Operatori();
-
 			#if _LU_TABLES_EXTENSION
 			StringExtension.StringExtension.AddCharLuTable("Spazi","\t \n\r\v\f");
 			StringExtension.StringExtension.AddCharLuTable("Numeri","0123456789");
@@ -77,6 +73,16 @@ namespace Fred68.Parser
 
 		Operatori operatori;
 		Funzioni funzioni;
+		Token.TipoNum floatStd;
+
+		/// <summary>
+		/// Tipo standard per numero in virgola mobile
+		/// </summary>
+		public Token.TipoNum FloatStd
+		{
+			get {return floatStd;}
+			set {floatStd = value;}
+		}
 
 		/// <summary>
 		/// Ctor
@@ -85,6 +91,7 @@ namespace Fred68.Parser
 		{
 			operatori = new Operatori();
 			funzioni = new Funzioni();
+			floatStd = Token.TipoNum.Float;
 
 			#if !_LU_TABLES_EXTENSION
 			chtOperatori = new CharLuTable(operatori.UsedCharactes());  //	"!$%^&*+-=#@?|`/\\<>~"
