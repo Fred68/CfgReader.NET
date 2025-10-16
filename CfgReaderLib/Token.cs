@@ -241,10 +241,48 @@ namespace Fred68.Parser
 			{
 				switch(_tipo)
 				{
-					case TipoTk.Numero:
+					#warning COMPLETARE (dopo gli altri stili), usando anche il tipo di numero
+					case TipoTk.Numero:		
 					{
-						#warning COMPLETARE (dopo gli altri stili), usando anche il tipo di numero
-						throw new NotImplementedException();
+						switch(_tNum)
+						{
+							case TipoNum.Indefinito:
+								throw new Exception("TipoNum.Indefinito");
+							//break;
+							case TipoNum.Intero:
+							{
+								int x;
+								ok = int.TryParse(_testo, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out x);
+								if(ok)
+								{
+									_dat = new Dat(x);
+								}
+							}
+							break;
+							case TipoNum.Float:
+							{
+								float x;
+								ok = float.TryParse(_testo, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x);
+								if(ok)
+								{
+									_dat = new Dat(x);
+								}
+							}
+							break;
+							case TipoNum.Double:
+							{
+								double x;
+								ok = double.TryParse(_testo, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x);
+								if(ok)
+								{
+									_dat = new Dat(x);
+								}
+							}
+							break;
+							default:
+								throw new NotSupportedException("TipoNum default");
+							//break;
+						}
 					}
 					break;
 
