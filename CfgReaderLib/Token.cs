@@ -97,7 +97,7 @@ namespace Fred68.Parser
 		public string Testo { get { return _testo; } }
 		public Dat? Dato { get { return _dat; } }
 		public TipoNum? TipoNumero { get { return _tNum; } }
-		//Operatori.Operatore? Operatore { get { return _oper; } }
+		public bool isDatNotNull { get {return (_dat!=null); }}
 		
 		/// <summary>
 		/// E' un valore numerico, una stringa o una variabile ?
@@ -205,6 +205,93 @@ namespace Fred68.Parser
 			_dat = null;
 		}
 
+		/*
+				(nota 1): Funzione ValutaValore che riceve un token in referenne e, a seconda del tipo e se dat è nullo,
+				ne valuta il testo e lo mette in dat. Restituisce true se l'ha valutato, se no o se errore: false
+				Indefinito				false
+				* Numero,				valuta e crea un float, int o altro
+				* Esadecimale,			valuta e converte in int
+				* Binario,				idem
+				* Stringa,				crea stringa
+				Parentesi_Aperta,		false
+				Parentesi_Chiusa,		false
+				Blocco_Aperto,			false
+				Blocco_Chiuso,			false
+				Fine_Comando,			false
+				Separatore,				false
+				Operatore,				false
+				Simbolo,				false
+				* Variabile,			Ricava il tipo di dato [per ora NOT IMPLEMENTED EXCEPTION]
+				Funzione,				false
+				Parola_chiave			false
+
+			*/
+
+		/// <summary>
+		/// Valuta il testo del token e lo mette in _dat, se non è null
+		/// Valuta solo se di tipo: numero, esadecimale, binario, stringa o variabile)
+		/// </summary>
+		/// <param name="bRivaluta">Forza la valutazione anche se _dat non è nullo</param>
+		/// <returns></returns>
+		/// <exception cref="NotImplementedException"></exception>
+		public bool ValutaVal(bool bRivaluta = false)
+		{
+			bool ok = false;
+			if(( _dat == null) || bRivaluta)
+			{
+				switch(_tipo)
+				{
+					case TipoTk.Numero:
+					{
+						#warning COMPLETARE (dopo gli altri stili), usando anche il tipo di numero
+						throw new NotImplementedException();
+					}
+					break;
+
+					case TipoTk.Esadecimale:		// Valuta come intero
+					{
+						int x;
+						ok = int.TryParse(_testo, System.Globalization.NumberStyles.AllowHexSpecifier, System.Globalization.CultureInfo.InvariantCulture, out x);
+						if(ok)
+						{
+							_dat = new Dat(x);
+						}
+					}
+					break;
+
+					case TipoTk.Binario:			// Valuta come intero
+					{
+						int x;
+						ok = int.TryParse(_testo, System.Globalization.NumberStyles.AllowBinarySpecifier, System.Globalization.CultureInfo.InvariantCulture, out x);
+						if(ok)
+						{
+							_dat = new Dat(x);
+						}
+					}
+					break;
+
+					case TipoTk.Stringa:			// Ricopia la stringa
+					{
+						_dat = new Dat(_testo);
+					}
+					break;
+
+					case TipoTk.Variabile:
+					{
+						throw new NotImplementedException("Valutazione di variabile non ancora implementata.");
+					}
+					//break;
+
+					default:
+					{}
+					break;
+				}
+			}
+			
+			return ok;
+		}
+
+
 		/// <summary>
 		/// Modifica il testo dell'operatore un unario speciale,
 		/// anteponendogli un carattere speciale
@@ -261,7 +348,7 @@ namespace Fred68.Parser
 			//}
 
 			//return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo}{ext} {op} {val}";
-			return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo}{ext} {val}";
+			return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo}{ext} {{{val}}}";
 
 		}
 	}

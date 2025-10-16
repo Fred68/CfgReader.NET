@@ -269,7 +269,7 @@ namespace Fred68.Parser
 							else
 							{										// Se ok, termina il token, ma non incrementa (i++)
 								statTkNew = Token.TkStat.TokenCompletato;
-								tkAttuale = new Token(Token.TipoTk.Esadecimale,strTkAttuale.ToString());
+								tkAttuale = new Token(Token.TipoTk.Esadecimale,strTkAttuale.ToString(2,strTkAttuale.Length-2));
 							}	
 						}
 					}
@@ -292,7 +292,7 @@ namespace Fred68.Parser
 							else
 							{										// Se ok, termina il token, ma non incrementa (i++)
 								statTkNew = Token.TkStat.TokenCompletato;
-								tkAttuale = new Token(Token.TipoTk.Binario,strTkAttuale.ToString());
+								tkAttuale = new Token(Token.TipoTk.Binario,strTkAttuale.ToString(2,strTkAttuale.Length-2));
 							}	
 						}
 					}

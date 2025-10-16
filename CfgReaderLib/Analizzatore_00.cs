@@ -11,7 +11,9 @@ using Fred68.GenDictionary;			// Per usare Dat
 using StringExtension;
 
 
-#warning Valutare se mantenere le eccezioni o usare una classe per mantenere gli errori senza generare eccezioni
+#warning Valutare se mantenere le eccezioni attuali
+#warning oppure creareu nal classe ParseException personalizzata (magari con info extra)
+#warning oppure usare una classe per mantenere gli errori senza generare eccezioni
 
 namespace Fred68.Parser
 {	

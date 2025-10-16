@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Fred68.GenDictionary;			// Per usare Dat
+using StringExtension;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Data;
@@ -6,10 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-
-using Fred68.GenDictionary;			// Per usare Dat
-using StringExtension;
+using static System.Net.Mime.MediaTypeNames;
 
 
 
@@ -44,7 +43,7 @@ namespace Fred68.Parser
 				Legge il token
 
 				Se è un numero:
-					se dat è null, lo valuta (se è intero, float, binario ecc...).
+					se dat è null, lo valuta (nota 1): se è intero, float, binario ecc...
 					lo inserisce nello stack
 
 				Se è un operatore:
@@ -60,11 +59,18 @@ namespace Fred68.Parser
 					mette il token nello stack
 
 				Se è una funzione: idem
-
-
+				
+				
+			
 			*/
+
+			
 			foreach(Token t in input)
 			{
+
+				t.ValutaVal();
+
+
 				if(t.isNumeroStringa)
 				{
 					#warning Elabora il contenuto (valuta il testo e lo mette in Dat)
@@ -83,6 +89,5 @@ namespace Fred68.Parser
 
 			return _out;
 		}
-
 	}
 }
