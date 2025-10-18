@@ -18,7 +18,7 @@ namespace Fred68.Parser
 	/// Parte 03: wlabora una coda di Token in RPN e calcola il risultato
 	/// </summary>
 
-	public partial class Analizzatore
+	public partial class Parser
 	{
 			
 		/// <summary>
@@ -26,7 +26,7 @@ namespace Fred68.Parser
 		/// </summary>
 		/// <param name="input"></param>
 		/// <returns></returns>
-		public Token ElaboraRPN(Queue<Token> input)
+		public Token EvaluateRPN(Queue<Token> input)
 		{
 			Token _out = new Token();							// Token finale con il risultato
 			Stack<Token> _stack = new Stack<Token>();			// Stack temporanei per i token letti dalla coda di input
@@ -41,11 +41,9 @@ namespace Fred68.Parser
 				Ciclo per tutti i token della coda di input
 
 				Legge il token
-
+				Lo valuta, se è intero, float, binario ecc...
 				Se è un numero:
-					se dat è null, lo valuta (nota 1): se è intero, float, binario ecc...
 					lo inserisce nello stack
-
 				Se è un operatore:
 					legge il testo
 					risale all'operatore
@@ -55,7 +53,7 @@ namespace Fred68.Parser
 						estrae un token dallo stack (se lo stack è vuoto: errore)
 						controlla che sia un numero o una stringa [in base all'operatore] e che dat non sia nullo
 						lo mette nell'array alla posizione 'i'
-					al termine chiama il puntatore a funzione che accetta un array di token, che restituisce un nuov token
+					al termine chiama il puntatore a funzione che accetta un array di token, che restituisce un nuovo token
 					mette il token nello stack
 
 				Se è una funzione: idem
@@ -66,21 +64,57 @@ namespace Fred68.Parser
 
 			
 			foreach(Token t in input)
-			{
-
+			{	
 				t.ValutaVal();
-
-
 				if(t.isNumeroStringa)
 				{
-					#warning Elabora il contenuto (valuta il testo e lo mette in Dat)
 					_stack.Push(t);
 				}
 				else if(t.isOperatore)
 				{
-					if(operatori.Contains(t.Testo))
+					if(operatori.Contains(t.Testo,true))		// Anche operatori speciali (es.: u+)
 					{
+						Operators.Operator? op = operatori[t.Testo];
+						if( op != null)
+						{
+							uint nargs = op.Argomenti;
+							if(nargs > _args.Length)			// Ridimensiona l'array, se necessario
+							{
+								Array.Resize(ref _args, (int)nargs);
+							}
+							for(int i=0; i < nargs;	i++)
+							{
+								if(input.Count > 0)
+								{
+									Token tkq = input.Dequeue();
+									if((tkq.isNumeroStringa)&&(tkq.isDatNotNull))
+									{
+										_args[i] = tkq;
+									}
+									else
+									{
+										if(!tkq.isNumeroStringa)
+											throw new Exception("Il token sullo stack non è un valore: errano numero di argomenti");
+										else if(!tkq.isDatNotNull)
+											throw new Exception("Il token sullo stack non è stato valutato");
+									}
+								}
+								else
+								{
+									throw new Exception("Wrong argument numbers");
+								}
 
+							}
+						}
+						else
+						{
+							throw new Exception("Operatore non trovato");	
+						}
+					}
+					else if(funzioni.Contains(t.Testo))
+					{
+						#warning Operatori e Funzioni sono simili, derivarle da un'unica classe ed unificare l'algoritmo
+						throw new NotImplementedException("Funzioni non ancora disponibili");
 					}
 
 				}

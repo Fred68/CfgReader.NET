@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CfgReaderLib\CfgReaderLib.csproj" />
+    <ProjectReference Include="..\ParserLib\ParserLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

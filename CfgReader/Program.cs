@@ -111,7 +111,7 @@ do
 	// formule.Add("(2+3^2))*(5+1)");
 	// formule.Add("{2+3^2}*{(5+1)");
 
-	Analizzatore analiz = new Fred68.Parser.Analizzatore();
+	Parser analiz = new Fred68.Parser.Parser();
 	analiz.FloatStd = Token.TipoNum.Double;
 
 	foreach(string f in formule)
@@ -127,7 +127,7 @@ do
 		{
 			try
 			{
-				lt = analiz.Analizza(f);
+				lt = analiz.Parse(f);
 			}
 			catch(Exception ex)
 			{
@@ -140,7 +140,7 @@ do
 		{
 			try
 			{
-				qt = analiz.RiordinaSY(lt);
+				qt = analiz.ShuntingYardReorder(lt);
 			}
 			catch (Exception ex)
 			{
@@ -153,7 +153,7 @@ do
 		{
 			try
 			{
-				res = analiz.ElaboraRPN(qt);
+				res = analiz.EvaluateRPN(qt);
 			}
 			catch (Exception ex)
 			{

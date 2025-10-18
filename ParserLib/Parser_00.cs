@@ -11,8 +11,7 @@ using Fred68.GenDictionary;			// Per usare Dat
 using StringExtension;
 
 
-#warning Valutare se mantenere le eccezioni attuali
-#warning oppure creareu nal classe ParseException personalizzata (magari con info extra)
+#warning Creare una classe personalizzata per lanciare ParseException oppure 
 #warning oppure usare una classe per mantenere gli errori senza generare eccezioni
 
 namespace Fred68.Parser
@@ -28,11 +27,10 @@ namespace Fred68.Parser
 
 	/// Parte 00: membri statici e costruttore
 	/// </summary>
-	public partial class Analizzatore
+	public partial class Parser
 	{
 		#warning Dopo le prove, impostare a 3
 		const int ini_arg_array_sz = 1;				// Dimensione dell'array degli argomenti
-
 
 		#if !_LU_TABLES_EXTENSION
 		
@@ -49,7 +47,7 @@ namespace Fred68.Parser
 		/// <summary>
 		/// static Ctor
 		/// </summary>
-		static Analizzatore()
+		static Parser()
 		{
 			#if _LU_TABLES_EXTENSION
 			StringExtension.StringExtension.AddCharLuTable("Spazi","\t \n\r\v\f");
@@ -73,8 +71,10 @@ namespace Fred68.Parser
 			
 		}
 
-		Operatori operatori;
-		Funzioni funzioni;
+		//OperatorsOld operatori;
+		//FunctionsOld funzioni;
+		Operators operatori;
+
 		Token.TipoNum floatStd;
 
 		/// <summary>
@@ -89,14 +89,15 @@ namespace Fred68.Parser
 		/// <summary>
 		/// Ctor
 		/// </summary>
-		public Analizzatore()
+		public Parser()
 		{
-			operatori = new Operatori();
-			funzioni = new Funzioni();
+			//operatori = new OperatorsOld();
+			//funzioni = new FunctionsOld();
+			operatori = new Operators();
 			floatStd = Token.TipoNum.Float;
 
 			#if !_LU_TABLES_EXTENSION
-			chtOperatori = new CharLuTable(operatori.UsedCharactes());  //	"!$%^&*+-=#@?|`/\\<>~"
+			chtOperatori = new CharLuTable(operatori.UsedCharactes(Operators.TipoOp.Operatore));  //	"!$%^&*+-=#@?|`/\\<>~"
 			#endif
 		}
 		

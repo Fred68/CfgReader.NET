@@ -6,4 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="CharLuTable.cs" />
+    <Compile Remove="Functions.cs" />
+    <Compile Remove="GenOperator.cs" />
+    <Compile Remove="Operators.cs" />
+    <Compile Remove="Parser_00.cs" />
+    <Compile Remove="Parser_01.cs" />
+    <Compile Remove="Parser_02.cs" />
+    <Compile Remove="Parser_03.cs" />
+    <Compile Remove="Token.cs" />
+  </ItemGroup>
+
 </Project>

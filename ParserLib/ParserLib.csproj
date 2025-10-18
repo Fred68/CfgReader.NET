@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="FunctionsOld.cs" />
+    <Compile Remove="OperatorsOld.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\CfgReaderLib\Dat.cs" Link="Dat.cs" />
+    <Compile Include="..\CfgReaderLib\GenDictionary.cs" Link="GenDictionary.cs" />
+    <Compile Include="..\CfgReaderLib\StringExtension.cs" Link="StringExtension.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="FunctionsOld.cs" />
+    <None Include="OperatorsOld.cs" />
+  </ItemGroup>
+
+</Project>

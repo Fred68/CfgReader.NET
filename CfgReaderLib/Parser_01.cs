@@ -22,7 +22,7 @@ namespace Fred68.Parser
 	/// Un ringraziamento a One Lone Coder https://github.com/OneLoneCoder
 	/// Algoritmo copiato da: https://github.com/OneLoneCoder/Javidx9/blob/master/SimplyCode/OneLoneCoder_DIYLanguage_Tokenizer.cpp
 	/// </summary>
-	public partial class Analizzatore
+	public partial class Parser
 	{
 		
 		/// <summary>
@@ -31,7 +31,7 @@ namespace Fred68.Parser
 		/// <param name="input"></param>
 		/// <returns></returns>
 		/// <exception cref="Exception"></exception>
-		public List<Token> Analizza(string input)
+		public List<Token> Parse(string input)
 		{
 			List<Token> tokens = new List<Token>();					// Lista dei Token da restituire
 						
@@ -57,7 +57,7 @@ namespace Fred68.Parser
 			
 			for(int i=0; i<input.Length+1;)							// Percorre tutti i caratteri (come ciclo while) ed uno aggiuntivo
 			{
-				char ch = (i < input.Length) ? input[i] : Operatori.chSpazio;	// Legge il carattere, se entro il limite
+				char ch = (i < input.Length) ? input[i] : Operators.chSpazio;	// Legge il carattere, se entro il limite
 				switch(statTk)
 				{
 					/*********************************************************/
@@ -75,7 +75,7 @@ namespace Fred68.Parser
 						}
 						else if(ch.isIn(chtNumeriReali))			// Se il carattere è di un numero reale...
 						{
-							if(ch == Operatori.chZero)				// Se inizia per '0': può essere decimale, binario o esadecimale
+							if(ch == Operators.chZero)				// Se inizia per '0': può essere decimale, binario o esadecimale
 							{
 								statTkNew = Token.TkStat.NumeroIndef;   // Imposta lo stato non definito (decimale, esadecimale o binario)
 								strTkAttuale.Append(ch);
@@ -90,31 +90,31 @@ namespace Fred68.Parser
 						{
 							statTkNew= Token.TkStat.Operatore;				
 						}
-						else if(ch == Operatori.chParentesiAperta)		// Parentesi / blocchi
+						else if(ch == Operators.chParentesiAperta)		// Parentesi / blocchi
 						{
 							statTkNew = Token.TkStat.ParentesiAperta;
 						}
-						else if(ch == Operatori.chParentesiChiusa)
+						else if(ch == Operators.chParentesiChiusa)
 						{
 							statTkNew = Token.TkStat.ParentesiChiusa;
 						}
-						else if(ch == Operatori.chGraffaAperta)
+						else if(ch == Operators.chGraffaAperta)
 						{
 							statTkNew = Token.TkStat.BloccoAperto;
 						}
-						else if(ch == Operatori.chGraffaChiusa)
+						else if(ch == Operators.chGraffaChiusa)
 						{
 							statTkNew = Token.TkStat.BloccoChiuso;
 						}
-						else if(ch == Operatori.chVirgola)				// Separatore
+						else if(ch == Operators.chVirgola)				// Separatore
 						{
 							statTkNew = Token.TkStat.Separatore;
 						}
-						else if(ch == Operatori.chPuntoVirgola)			// fine comando
+						else if(ch == Operators.chPuntoVirgola)			// fine comando
 						{
 							statTkNew = Token.TkStat.FineComando;
 						}
-						else if(ch == Operatori.chStringaInizio)		// Stringa (inizio...)
+						else if(ch == Operators.chStringaInizio)		// Stringa (inizio...)
 						{
 							i++;										// Passa al carattere successivo e...
 							statTkNew = Token.TkStat.Stringa;			// ...imposta lo stato
@@ -131,7 +131,7 @@ namespace Fred68.Parser
 					/*********************************************************/
 					case Token.TkStat.Stringa:						// Se sta leggendo una stringa:...
 					{
-						if(ch == Operatori.chStringaFine)			// Se fine stringa: token completato...
+						if(ch == Operators.chStringaFine)			// Se fine stringa: token completato...
 						{
 							i++;
 							statTkNew = Token.TkStat.TokenCompletato;
@@ -147,13 +147,13 @@ namespace Fred68.Parser
 					/*********************************************************/					
 					case Token.TkStat.NumeroIndef:					// Se sta leggendo il numero ancora indefinito (il primo carattere è '0')...
 					{
-						if(ch == Operatori.chHex)					// Riconosciuto secondo carattere: formato esadecimale...
+						if(ch == Operators.chHex)					// Riconosciuto secondo carattere: formato esadecimale...
 						{
 							strTkAttuale.Append((char)ch);			// Memorizza
 							i++;										// Passa al carattere successivo
 							statTkNew = Token.TkStat.Esadecimale;		// Imposta esadecimale
 						}
-						else if(ch == Operatori.chBin)					// Idem con formato binario
+						else if(ch == Operators.chBin)					// Idem con formato binario
 						{
 							strTkAttuale.Append((char)ch);
 							i++;
@@ -175,7 +175,7 @@ namespace Fred68.Parser
 						// Se è una cifra di un numero decimale (numero o punto decimale...):...
 						if(ch.isIn(chtNumeriReali))
 						{
-							if(ch == Operatori.chPuntoDecimale)		// Verifica il punto decimale
+							if(ch == Operators.chPuntoDecimale)		// Verifica il punto decimale
 							{
 								if(bPuntoDecimale)
 								{
@@ -223,7 +223,7 @@ namespace Fred68.Parser
 							i++;	// Salta il carattere senza memorizzarlo
 						}
 						// Se è un carattere di un nome (lettera o altro...) ma non è l'esponenziale:...
-						else if( ch.isIn(chtNomi) && (ch != Operatori.chEsponenziale) )
+						else if( ch.isIn(chtNomi) && (ch != Operators.chEsponenziale) )
 						{
 							throw new Exception("[Analizza] Numero reale con carattere errato.");
 						}

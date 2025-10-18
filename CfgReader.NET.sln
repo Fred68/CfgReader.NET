@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfgReaderLib", "CfgReaderLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CfgReader", "CfgReader\CfgReader.csproj", "{2E62225B-C454-4C71-9762-9C12D88B80D5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserLib", "ParserLib\ParserLib.csproj", "{58CEE2F1-744E-4B2A-B59D-C5B6F995BE1E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2E62225B-C454-4C71-9762-9C12D88B80D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E62225B-C454-4C71-9762-9C12D88B80D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E62225B-C454-4C71-9762-9C12D88B80D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58CEE2F1-744E-4B2A-B59D-C5B6F995BE1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58CEE2F1-744E-4B2A-B59D-C5B6F995BE1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58CEE2F1-744E-4B2A-B59D-C5B6F995BE1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58CEE2F1-744E-4B2A-B59D-C5B6F995BE1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

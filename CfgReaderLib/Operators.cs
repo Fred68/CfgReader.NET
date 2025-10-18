@@ -10,7 +10,7 @@ using static Fred68.Parser.Token;
 namespace Fred68.Parser
 {
 
-	public class Operatori
+	public class Operators
 	{
 
 		public const char chSpazio = ' ';	
@@ -32,7 +32,7 @@ namespace Fred68.Parser
 		/// <summary>
 		/// Class Operatore
 		/// </summary>
-		public class Operatore
+		public class Operator
 		{
 			uint _args;
 			uint _prec;
@@ -42,7 +42,7 @@ namespace Fred68.Parser
 			/// </summary>
 			/// <param name="argomenti">uint >0, se no errore</param>
 			/// <param name="precedenza">int ma >0, se no errore</param>
-			public Operatore(uint argomenti, uint precedenza)
+			public Operator(uint argomenti, uint precedenza)
 			{
 				if(!(argomenti > 0))
 					throw new Exception("[Operatori] argomenti > 0 in Ctor");
@@ -54,7 +54,7 @@ namespace Fred68.Parser
 			}
 
 			/// <summary>
-			/// Argomenti
+			/// Numero di argomenti
 			/// </summary>
 			public uint Argomenti {get {return _args;}}
 			/// <summary>
@@ -69,39 +69,39 @@ namespace Fred68.Parser
 			public override string ToString() {return $"Args= {_args}, Prec= {_prec}";}
 		}
 
-		Dictionary<string,Operatore> _opers;		// Dizionario degli operatori
-		List<string>				_specOp;		// Lista operatori speciali
+		Dictionary<string,Operator> _opers;		// Dizionario degli operatori
+		List<string>				_specOp;	// Lista operatori speciali
 
 		/// <summary>
 		/// Ctor
 		/// </summary>
-		public Operatori()
+		public Operators()
 		{
-			_opers = new Dictionary<string,Operatore>();
+			_opers = new Dictionary<string,Operator>();
 			_specOp = new List<string>();
 
 			// Operatore per numeri in notazione esponenziale
-			Add(chEsponenziale.ToString(),new Operatore(2,100));
+			Add(chEsponenziale.ToString(),new Operator(2,100));
 
 			// Operatori unari
-			Add("++",new Operatore(1,40));
-			Add("--",new Operatore(1,40));
+			Add("++",new Operator(1,40));
+			Add("--",new Operator(1,40));
 			
 			// Speciali (stesso testo di altri operatori, ma ricodificati come unari)
-			AddSpecial("+",new Operatore(1,110));
-			AddSpecial("-",new Operatore(1,110));
+			AddSpecial("+",new Operator(1,110));
+			AddSpecial("-",new Operator(1,110));
 
 			// Operatori binari alta precedenza
-			Add("^",new Operatore(2,30));
-			Add("*",new Operatore(2,29));
-			Add("/",new Operatore(2,28));
+			Add("^",new Operator(2,30));
+			Add("*",new Operator(2,29));
+			Add("/",new Operator(2,28));
 			
 			// Operatori binari bassa precedenza
-			Add("+",new Operatore(2,20));
-			Add("-",new Operatore(2,20));
+			Add("+",new Operator(2,20));
+			Add("-",new Operator(2,20));
 			
 			// Operatore di assegnazione
-			Add("=",new Operatore(2,10));
+			Add("=",new Operator(2,10));
 					
 		}
 		
@@ -110,7 +110,7 @@ namespace Fred68.Parser
 		/// </summary>
 		/// <param name="opName"></param>
 		/// <param name="op"></param>
-		public void Add(string opName, Operatore op)
+		public void Add(string opName, Operator op)
 		{
 			_opers.Add(opName,op);
 		}
@@ -120,7 +120,7 @@ namespace Fred68.Parser
 		/// </summary>
 		/// <param name="opName"></param>
 		/// <param name="op"></param>
-		public void AddSpecial(string opName, Operatore op)
+		public void AddSpecial(string opName, Operator op)
 		{
 			_opers.Add((string)(chUnary+opName),op);
 			_specOp.Add((string)(chUnary+opName));
@@ -162,7 +162,7 @@ namespace Fred68.Parser
 		/// </summary>
 		/// <param name="opName">Nome dell'operatore</param>
 		/// <returns>Operatore, null se non ha trovato il testo</returns>
-		public Operatore? this[string opName]
+		public Operator? this[string opName]
 			{		
 			get
 				{
@@ -173,9 +173,7 @@ namespace Fred68.Parser
 					else
 					{
 						return null;
-						//throw new KeyNotFoundException();
 					}
-
 				}
 			}
 		

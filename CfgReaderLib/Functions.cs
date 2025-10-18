@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Fred68.Parser.Operatori;
+using static Fred68.Parser.Operators;
 
 namespace Fred68.Parser
 {
-	public class Funzioni
+	public class Functions
 	{
 
 		/// <summary>
 		/// Class Funzione
 		/// </summary>
-		public class Funzione
+		public class Function
 		{
 			uint _args;
 
@@ -22,9 +22,10 @@ namespace Fred68.Parser
 			/// </summary>
 			/// <param name="argomenti">uint > 0, se no errore</param>
 			/// <exception cref="Exception"></exception>
-			public Funzione(uint argomenti)
+			public Function(uint argomenti)
 			{
-				if(!(argomenti > 0))				throw new Exception("[Funzioni] argomenti > 0 in Ctor");
+				if(!(argomenti > 0))
+					throw new Exception("[Funzioni] argomenti > 0 in Ctor");
 				_args = argomenti;
 			}
 
@@ -40,18 +41,18 @@ namespace Fred68.Parser
 			public override string ToString() {return $"Args= {_args}";}
 		}
 
-		Dictionary<string,Funzione> _funcs;		// Dizionario delle funzioni
+		Dictionary<string,Function> _funcs;		// Dizionario delle funzioni
 
 		/// <summary>
 		/// Ctor
 		/// </summary>
-		public Funzioni()
+		public Functions()
 		{
-			_funcs = new Dictionary<string,Funzione>();
+			_funcs = new Dictionary<string,Function>();
 
 			// Funzioni con un argomento
-			_funcs.Add("sin".ToUpper(),new Funzione(1));
-			_funcs.Add("max".ToUpper(),new Funzione(2));
+			_funcs.Add("sin".ToUpper(),new Function(1));
+			_funcs.Add("max".ToUpper(),new Function(2));
 		}
 
 		/// <summary>
@@ -67,7 +68,7 @@ namespace Fred68.Parser
 		/// </summary>
 		/// <param name="fnName">Nome della funzione</param>
 		/// <returns>Funzione, null se non ha trovato il testo</returns>
-		public Funzione? this[string fnName]
+		public Function? this[string fnName]
 			{		
 			get
 				{

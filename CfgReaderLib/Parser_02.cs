@@ -19,14 +19,14 @@ namespace Fred68.Parser
 	/// Utilizza l'algoritmo Shunting yard: https://en.wikipedia.org/wiki/Shunting_yard_algorithm
 	/// Considera anche gli operatori unari + e -, cha hanno la stessa stringa degli operatori binari
 	/// </summary>
-	public partial class Analizzatore
+	public partial class Parser
 	{
 	
 		/// <summary>
 		/// Classe che riordina in RPN una lista di token
 		/// <param name="input">Lista di token di un'espressione</param>
 		/// <returns>Coda di toker in RPN (notazione polacca inversa)</returns>
-		public Queue<Token> RiordinaSY(List<Token> input)
+		public Queue<Token> ShuntingYardReorder(List<Token> input)
 		{
 			Queue<Token> _out = new Queue<Token>();		// Coda (di uscita)
 			Stack<Token> _ops = new Stack<Token>();		// Pila (di operatori)
@@ -80,8 +80,8 @@ namespace Fred68.Parser
 					{									
 						if(_ops.Peek().isOperatore)		// ...e c'é un operatore...
 						{
-							Operatori.Operatore? opAttuale = operatori[t.Testo];			// Cerca l'operatore attuale...
-							Operatori.Operatore? opStack = operatori[_ops.Peek().Testo];	// ... e quello sullo stack
+							Operators.Operator? opAttuale = operatori[t.Testo];			// Cerca l'operatore attuale...
+							Operators.Operator? opStack = operatori[_ops.Peek().Testo];	// ... e quello sullo stack
 
 
 							if( (opAttuale != null) && (opStack != null) )

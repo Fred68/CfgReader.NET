@@ -327,7 +327,6 @@ namespace Fred68.Parser
 		{
 			string val;
 			string ext = "";
-			//string op = "";
 			if(_dat != null)
 			{
 				val = _dat.ToString();	//_dat.Get().ToString(out val);
@@ -356,12 +355,6 @@ namespace Fred68.Parser
 				}
 			}
 
-			//if((_tipo == TipoTk.Operatore) && _oper != null)
-			//{
-			//	op = _oper.ToString();
-			//}
-
-			//return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo}{ext} {op} {val}";
 			return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo}{ext} {{{val}}}";
 
 		}
