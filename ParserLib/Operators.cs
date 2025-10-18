@@ -136,7 +136,10 @@ namespace Fred68.Parser
 			_opers = new Dictionary<string,OpBase>();
 			_specOp = new List<string>();
 			
-			#warning COMPLETARE con aggiunta operatori, funzioni, nomi op speciali
+
+			/////////////////////////////////////////////////////////
+			/// Operatori
+			/////////////////////////////////////////////////////////
 
 			// Operatore per numeri in notazione esponenziale
 			Add(chEsponenziale.ToString(),new Operator(2,100));
@@ -161,6 +164,9 @@ namespace Fred68.Parser
 			// Operatore di assegnazione
 			Add("=",new Operator(2,10));
 
+			/////////////////////////////////////////////////////////
+			/// Funzioni
+			/////////////////////////////////////////////////////////
 
 			// Funzioni con un argomento
 			Add("sin".ToUpper(),new Function(1));
@@ -208,7 +214,12 @@ namespace Fred68.Parser
 		/// <returns></returns>
 		private bool Contains(string opName, bool includiSpeciali = false)
 		{
-			return (includiSpeciali ? _opers.ContainsKey(opName) : (!_specOp.Contains(opName) && _opers.ContainsKey(opName)));
+			bool isIn = _opers.ContainsKey(opName);
+			if(!includiSpeciali)	isIn = isIn && (!_specOp.Contains(opName));
+			return isIn;
+
+			// La versione precedente è meno efficiente, fa due volte la ricerca nel dizionario:
+			// return (includiSpeciali ? _opers.ContainsKey(opName) : (!_specOp.Contains(opName) && _opers.ContainsKey(opName)));
 		}
 
 		/// <summary>
@@ -262,7 +273,7 @@ namespace Fred68.Parser
 		/// <param name="tipoOp">Ricerca dei caratteri di Operatori, Funzioni o entrambi</param>
 		/// <param name="removeOperatorSpecialCh">Non considera il carattere speciale</param>
 		/// <returns></returns>
-		public string UsedCharactes(TipoOp tipoOp, bool removeOperatorSpecialCh = true)
+		public string UsedCharacters(TipoOp tipoOp, bool removeOperatorSpecialCh = true)
 		{
 			StringBuilder sb = new StringBuilder();	
 			List<char> chars = new List<char>();
@@ -281,9 +292,15 @@ namespace Fred68.Parser
 								add = false;	
 							}
 
-							if(add && (!chars.Contains(ch)))		// Lo aggiunge, se non c'é ancora.
+							if(add && (!chars.Contains(ch)))	// Lo aggiunge, se non c'é ancora.
 							{
-								chars.Add(ch);
+								// Corretto contro errore occasionale nella trasformazione in RPN.
+								// Con formule simili a: 1+2*(3+4--) talvolta veniva trascurato l'ultimo operatore.
+								// Necessario lock su List<char> chars a cui i processi possono accedere contemporaneamente.
+								lock (chars)	// Deve usare lock, operazioni in parallelo !!!
+								{
+									chars.Add(ch);
+								}
 							}
 						}
 

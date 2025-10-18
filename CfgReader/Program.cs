@@ -15,9 +15,6 @@ using Fred68.Parser;
 string filename = "esempio.txt";
 Console.WriteLine("Avvio programma.");
 
-// UTILIZZO SEMPLICE COME DIZIONARIO
-
-
 
 #if _CFG
 Console.WriteLine("Utilizzo come dizionario...");

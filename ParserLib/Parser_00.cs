@@ -29,7 +29,9 @@ namespace Fred68.Parser
 	/// </summary>
 	public partial class Parser
 	{
-		#warning Dopo le prove, impostare a 3
+		
+	#warning Dopo le prove, impostare a 5 (verrà ridimensionato solo con funzioni particolari)
+
 		const int ini_arg_array_sz = 1;				// Dimensione dell'array degli argomenti
 
 		#if !_LU_TABLES_EXTENSION
@@ -49,15 +51,15 @@ namespace Fred68.Parser
 		/// </summary>
 		static Parser()
 		{
-			#if _LU_TABLES_EXTENSION
-			StringExtension.StringExtension.AddCharLuTable("Spazi","\t \n\r\v\f");
-			StringExtension.StringExtension.AddCharLuTable("Numeri","0123456789");
-			StringExtension.StringExtension.AddCharLuTable("NumeriReali","0123456789.");	// Aggiungere 'e' ed 'E' per notaz. scientifica
-			StringExtension.StringExtension.AddCharLuTable("Operatori","+*-/");				// "!$%^&*+-=#@?|`/\\<>~"
-			StringExtension.StringExtension.AddCharLuTable("Nomi","abcdefghijklmnopqrstuvwxyz.ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
-			StringExtension.StringExtension.AddCharLuTable("Hex","0123456789abcdefABCDEF");
-			StringExtension.StringExtension.AddCharLuTable("Bin","01");
-			#else
+			//#if _LU_TABLES_EXTENSION
+			//StringExtension.StringExtension.AddCharLuTable("Spazi","\t \n\r\v\f");
+			//StringExtension.StringExtension.AddCharLuTable("Numeri","0123456789");
+			//StringExtension.StringExtension.AddCharLuTable("NumeriReali","0123456789.");	// Aggiungere 'e' ed 'E' per notaz. scientifica
+			//StringExtension.StringExtension.AddCharLuTable("Operatori","+*-/");				// "!$%^&*+-=#@?|`/\\<>~"
+			//StringExtension.StringExtension.AddCharLuTable("Nomi","abcdefghijklmnopqrstuvwxyz.ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
+			//StringExtension.StringExtension.AddCharLuTable("Hex","0123456789abcdefABCDEF");
+			//StringExtension.StringExtension.AddCharLuTable("Bin","01");
+			//#else
 
 			chtSpazi = new CharLuTable("\t \n\r\v\f");
 			chtNumeri = new CharLuTable("0123456789");
@@ -67,7 +69,7 @@ namespace Fred68.Parser
 			//chtOperatori = new CharLuTable(operatori.UsedCharactes());	//	"!$%^&*+-=#@?|`/\\<>~"
 			chtNomi = new CharLuTable("abcdefghijklmnopqrstuvwxyz.ABCDEFGHIJKLMNOPQRSTUVWXYZ_0123456789");
 			
-			#endif
+			//#endif
 			
 		}
 
@@ -96,9 +98,9 @@ namespace Fred68.Parser
 			operatori = new Operators();
 			floatStd = Token.TipoNum.Float;
 
-			#if !_LU_TABLES_EXTENSION
-			chtOperatori = new CharLuTable(operatori.UsedCharactes(Operators.TipoOp.Operatore));  //	"!$%^&*+-=#@?|`/\\<>~"
-			#endif
+			//#if !_LU_TABLES_EXTENSION
+			chtOperatori = new CharLuTable(operatori.UsedCharacters(Operators.TipoOp.Operatore));  //	"!$%^&*+-=#@?|`/\\<>~"
+			//#endif
 		}
 		
 	}

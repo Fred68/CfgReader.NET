@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Fred68.GenDictionary;			// Per usare Dat
+using StringExtension;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Data;
@@ -6,11 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Fred68.GenDictionary;			// Per usare Dat
-using StringExtension;
-
-
+using static Fred68.Parser.Operators;
 
 namespace Fred68.Parser
 {

@@ -17,9 +17,4 @@
     <Compile Include="..\CfgReaderLib\StringExtension.cs" Link="StringExtension.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="FunctionsOld.cs" />
-    <None Include="OperatorsOld.cs" />
-  </ItemGroup>
-
 </Project>

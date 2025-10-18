@@ -1,5 +1,5 @@
-﻿#define _LU_TABLES_EXTENSION
-#undef _LU_TABLES_EXTENSION
+﻿//#define _LU_TABLES_EXTENSION
+//#undef _LU_TABLES_EXTENSION
 
 
 using System;
@@ -14,89 +14,89 @@ namespace StringExtension
 {
 	public static class StringExtension
 	{
+
+		//#region LOOK UP TABLES
+
+		//#if _LU_TABLES_EXTENSION
+		///// <summary>
+		///// ASCII character lookup table
+		///// </summary>
+		//protected class CharLuTable
+		//{
+		//	const int chMin = 32;
+		//	const int chMax = 127;
+		//	bool[] _chars = new bool[chMax-chMin];
 		
-		#region LOOK UP TABLES
+		//	/// <summary>
+		//	/// Ctor
+		//	/// </summary>
+		//	/// <param name="chList">Lista caratteri ASCII accettati</param>
+		//	public CharLuTable(string chList)
+		//	{
+		//		foreach(char ch in chList)
+		//		{
+		//			if( (ch >= chMin) && (ch<chMax))	_chars[ch] = true;
+		//		}
+		//	}
 		
-		#if _LU_TABLES_EXTENSION
-		/// <summary>
-		/// ASCII character lookup table
-		/// </summary>
-		protected class CharLuTable
-		{
-			const int chMin = 32;
-			const int chMax = 127;
-			bool[] _chars = new bool[chMax-chMin];
-		
-			/// <summary>
-			/// Ctor
-			/// </summary>
-			/// <param name="chList">Lista caratteri ASCII accettati</param>
-			public CharLuTable(string chList)
-			{
-				foreach(char ch in chList)
-				{
-					if( (ch >= chMin) && (ch<chMax))	_chars[ch] = true;
-				}
-			}
-		
-			/// <summary>
-			/// Is ASCII character ch accepted ?
-			/// </summary>
-			/// <param name="ch"></param>
-			/// <returns>bool</returns>
-			public bool isIn(char ch)
-			{
-				if( (ch >= chMin) && (ch<chMax))
-					return _chars[ch-chMin];
-				else
-					return false;
-			}
-		}
+		//	/// <summary>
+		//	/// Is ASCII character ch accepted ?
+		//	/// </summary>
+		//	/// <param name="ch"></param>
+		//	/// <returns>bool</returns>
+		//	public bool isIn(char ch)
+		//	{
+		//		if( (ch >= chMin) && (ch<chMax))
+		//			return _chars[ch-chMin];
+		//		else
+		//			return false;
+		//	}
+		//}
 
-		// Static members
-		static Dictionary<string, CharLuTable> _luTables;			// CharLuTables dictionary
+		//// Static members
+		//static Dictionary<string, CharLuTable> _luTables;			// CharLuTables dictionary
 
-		/// <summary>
-		/// Static CTOR
-		/// </summary>
-		static StringExtension()
-		{
-			_luTables = new Dictionary<string, CharLuTable>();
-		}
+		///// <summary>
+		///// Static CTOR
+		///// </summary>
+		//static StringExtension()
+		//{
+		//	_luTables = new Dictionary<string, CharLuTable>();
+		//}
 
-		/// <summary>
-		/// Add new CharLuTable
-		/// </summary>
-		/// <param name="name"></param>
-		/// <param name="chars"></param>
-		public static void AddCharLuTable(string name, string chars)
-		{
-			_luTables.Add(name, new CharLuTable(chars));
-		}
+		///// <summary>
+		///// Add new CharLuTable
+		///// </summary>
+		///// <param name="name"></param>
+		///// <param name="chars"></param>
+		//public static void AddCharLuTable(string name, string chars)
+		//{
+		//	_luTables.Add(name, new CharLuTable(chars));
+		//}
 
-		/// <summary>
-		/// Cleat CharLuTables dictionary
-		/// </summary>
-		public static void ClearCharLuTables()
-		{
-			_luTables.Clear();
-		}
+		///// <summary>
+		///// Cleat CharLuTables dictionary
+		///// </summary>
+		//public static void ClearCharLuTables()
+		//{
+		//	_luTables.Clear();
+		//}
 
-		/// <summary>
-		/// Check if a char is in a CharLuTable
-		/// </summary>
-		/// <param name="ch">this char</param>
-		/// <param name="charLuTableName">CharLuTable name</param>
-		/// <returns></returns>
-		public static bool isIn(this char ch, string charLuTableName)
-		{
-			return _luTables[charLuTableName].isIn(ch);
-		}
-		#endif
-		#endregion
-		
+		///// <summary>
+		///// Check if a char is in a CharLuTable
+		///// </summary>
+		///// <param name="ch">this char</param>
+		///// <param name="charLuTableName">CharLuTable name</param>
+		///// <returns></returns>
+		//public static bool isIn(this char ch, string charLuTableName)
+		//{
+		//	return _luTables[charLuTableName].isIn(ch);
+		//}
+		//#endif
+		//#endregion
 
-		#region STRING ANALYSIS
+
+		//#region STRING ANALYSIS
 
 		/// <summary>
 		/// Find the indexes of the string txt
@@ -181,7 +181,7 @@ namespace StringExtension
 			return str;
 			}
 		#endif
-		#endregion
+		//#endregion
 
 	}
 }

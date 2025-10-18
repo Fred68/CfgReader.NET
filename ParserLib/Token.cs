@@ -154,6 +154,7 @@ namespace Fred68.Parser
 		/// </summary>
 		public bool isOperatore { get {return (_tipo==TipoTk.Operatore);} }
 		
+		public bool isOperatoreFunzione { get {return ((_tipo==TipoTk.Operatore)||(_tipo==TipoTk.Funzione));} }
 		#endregion
 
 
