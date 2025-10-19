@@ -44,7 +44,7 @@ namespace Fred68.Parser
 				Lo valuta, se è intero, float, binario ecc...
 				Se è un numero:
 					lo inserisce nello stack
-				Se è un operatore:
+				Se è un operatore (o una funzione):
 					legge il testo
 					risale all'operatore
 					legge il numero di operandi
@@ -56,13 +56,8 @@ namespace Fred68.Parser
 					al termine chiama il puntatore a funzione che accetta un array di token, che restituisce un nuovo token
 					mette il token nello stack
 
-				Se è una funzione: idem
-				
-				
-			
 			*/
 
-			
 			foreach(Token t in input)
 			{	
 				t.ValutaVal();
@@ -72,29 +67,30 @@ namespace Fred68.Parser
 				}
 				else if(t.isOperatoreFunzione)
 				{
-					if(operatori.Contains(t.Testo,Operators.TipoOp.Operatore,true))		// Anche operatori speciali, es.: u+
+					if(operatori.Contains(t.Testo,Operators.TipoOp.Indefinito,true))		// Funzione o operatore speciale
 					{
-						Operators.OpBase? op = operatori[t.Testo,Operators.TipoOp.Operatore];
+						Operators.OpBase? op = operatori[t.Testo,Operators.TipoOp.Indefinito];	// Ottiene operatore o funzione
 						if( op != null)
 						{
 							uint nargs = op.Argomenti;
-							if(nargs > _args.Length)			// Ridimensiona l'array, se necessario
+							if(nargs > _args.Length)					// Ridimensiona l'array, se necessario
 							{
 								Array.Resize(ref _args, (int)nargs);
 							}
-							for(int i=0; i < nargs;	i++)
+							
+							for(int i=0; i < nargs;	i++)				// Estrae il numero di argomenti dalla coda di input...
 							{
 								if(input.Count > 0)
 								{
 									Token tkq = _stack.Pop();
 									if((tkq.isNumeroStringa)&&(tkq.isDatNotNull))
 									{
-										_args[i] = tkq;
+										_args[i] = tkq;					// ...e li mette nell'array degli argomenti
 									}
 									else
 									{
 										if(!tkq.isNumeroStringa)
-											throw new Exception("Il token sullo stack non è un valore: errano numero di argomenti");
+											throw new Exception("Il token sullo stack non è un valore: errato numero di argomenti");
 										else if(!tkq.isDatNotNull)
 											throw new Exception("Il token sullo stack non è stato valutato");
 									}
@@ -105,16 +101,16 @@ namespace Fred68.Parser
 								}
 
 							}
+
+							Token tslv = op.Solve(_args);	// Esegue in calcolo dell'operatore
+							_stack.Push(tslv);
 						}
 						else
 						{
-							throw new Exception("Operatore non trovato");	
+							throw new Exception("Operatore o funzione non trovato");	
 						}
 					}
-					else if(operatori.Contains(t.Testo,Operators.TipoOp.Funzione))
-					{
-						throw new NotImplementedException("Funzioni non ancora disponibili");
-					}
+					
 
 				}
 			}

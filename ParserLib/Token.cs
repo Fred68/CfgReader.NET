@@ -39,7 +39,7 @@ namespace Fred68.Parser
 			Parola_chiave
 		}
 		
-		public enum TipoNum
+		public enum TipoNum		// Mantenere l'ordine: da meno preciso a più preciso
 		{
 			Indefinito = 0,
 			Intero,				// vuoto
@@ -70,20 +70,47 @@ namespace Fred68.Parser
 			}
 
 		#region STATIC
-		static int _tipoStrLength;		// Lunghezza massima della descrizione, per ToString()	
+		static int _tipoStrLength;			// Lunghezza massima della descrizione, per ToString()	
+		static TipoNum[,]	_pT;			// Tabella di promozione dei tipi numerici
 
 		/// <summary>
 		/// Static Ctor
 		/// </summary>
 		static Token()
 		{
-			int lmax = 0;										// Imposta la lunghezza massima della descrizione
+			// Imposta la lunghezza massima della descrizione
+			int lmax = 0;										
 			foreach(TipoTk tp in Enum.GetValues(typeof(TipoTk)))
 			{
 				if(tp.ToString().Length > lmax)
 					lmax = tp.ToString().Length;
 			}
 			_tipoStrLength = lmax+1;
+
+			// Crea la tabella di promozione
+			int szpt = Enum.GetNames(typeof(TipoNum)).Length;
+			_pT = new TipoNum[szpt,szpt];
+			for(int i = 0; i < szpt; i++)								// Se uno degli operandi numerici è indefinito...
+				{
+				_pT[(int)TipoNum.Indefinito,i] = TipoNum.Indefinito;	// ...il risultato è indefinito
+				_pT[i,(int)TipoNum.Indefinito] = TipoNum.Indefinito;
+				}
+			for(int i=1; i < szpt; i++)									// Tra due operandi di precisione diversa... 
+				for(int j=1; j < szpt; j++)
+					{
+						_pT[i,j] = (TipoNum)int.Max(i,j);				// ...la precisione del risultato è quella maggiore
+					}
+		}
+
+		/// <summary>
+		/// TipoNum restituoto dall'operazione tra due numeri
+		/// </summary>
+		/// <param name="t1"></param>
+		/// <param name="t2"></param>
+		/// <returns></returns>
+		public static TipoNum ResTipoNum(TipoNum? t1, TipoNum? t2)
+		{
+			return ((t1 == null)||(t2 == null)) ? TipoNum.Indefinito : _pT[(int)t1,(int)t2];
 		}
 		#endregion
 
@@ -126,6 +153,16 @@ namespace Fred68.Parser
 							(_tipo==TipoTk.Esadecimale) ||
 							(_tipo==TipoTk.Binario)
 						);
+				}
+		}
+		/// <summary>
+		/// E' una stringa ?
+		/// </summary>
+		public bool isStringa
+		{
+			get
+				{
+				return (_tipo==TipoTk.Stringa);
 				}
 		}
 

@@ -34,24 +34,28 @@ namespace Fred68.Parser
 		// Caratteri speciali
 		public const char chUnary = 'u';
 
+		public delegate Token pSolver(Token[] argArray);	// Delegate
 
+		/*******************************************************************************/
 		#region CLASSI Operator e Function (+OpBase)
 		public class OpBase
 		{
 			uint _args;
 			TipoOp _tOp;
+			pSolver _pSolve;
 
 			/// <summary>
 			/// Ctor
 			/// </summary>
 			/// <param name="argomenti"></param>
 			/// <exception cref="Exception"></exception>
-			protected OpBase(uint argomenti,TipoOp tOp)
+			protected OpBase(uint argomenti,TipoOp tOp,pSolver pSolve)
 			{
 				if(!(argomenti > 0))
 					throw new Exception("[GenOperator] argomenti > 0 in Ctor");
 				_args = argomenti;
 				_tOp = tOp;
+				_pSolve = pSolve;
 			}
 
 			/// <summary>
@@ -62,7 +66,7 @@ namespace Fred68.Parser
 			public bool IsOperator {get {return _tOp == TipoOp.Operatore;}}
 			public bool IsFunction {get {return _tOp == TipoOp.Funzione;}}
 			public TipoOp Type {get {return _tOp;} }
-
+			
 			/// <summary>
 			/// E' un operatore del tipo richiesto ?
 			/// Se richiesto indefinito, restituisce true
@@ -79,13 +83,23 @@ namespace Fred68.Parser
 			/// </summary>
 			/// <returns></returns>
 			public override string ToString() {return $"Args={_args}";}
+			
+			/// <summary>
+			/// Solve
+			/// </summary>
+			/// <param name="argArray"></param>
+			/// <returns>Token</returns>
+			public Token Solve(Token[] argArray)
+			{
+				return _pSolve(argArray);
+			}
 		}
 
 		public class Operator : OpBase
 		{
 			uint _prec = 0;
 
-			public Operator(uint argomenti, uint precedenza) : base(argomenti,TipoOp.Operatore)
+			public Operator(uint argomenti, uint precedenza, pSolver pSolve) : base(argomenti,TipoOp.Operatore,pSolve)
 			{
 				if(!(precedenza < int.MaxValue))
 					throw new Exception("[Operatori] precedenza < int.MaxValue 0 in Ctor");
@@ -111,7 +125,7 @@ namespace Fred68.Parser
 			/// Ctor
 			/// </summary>
 			/// <param name="argomenti"></param>
-			public Function(uint argomenti) : base(argomenti,TipoOp.Funzione)
+			public Function(uint argomenti, pSolver pSolve) : base(argomenti,TipoOp.Funzione,pSolve)
 			{}
 
 			/// <summary>
@@ -123,7 +137,7 @@ namespace Fred68.Parser
 
 		}
 		#endregion
-
+		/*******************************************************************************/
 
 		Dictionary<string,OpBase>	_opers;		// Dizionario di operatori e funzioni
 		List<string>				_specOp;	// Lista dei nomi degli operatori speciali
@@ -135,43 +149,166 @@ namespace Fred68.Parser
 		{
 			_opers = new Dictionary<string,OpBase>();
 			_specOp = new List<string>();
-			
+			FillOpFuncDictionary();
+		}
 
+		/*******************************************************************************/
+		#region FUNZIONI di calcolo degli operatori Token _func(Token[] argArray)
+
+		Token _notImplemented(Token[] argArray)
+		{
+			throw new NotImplementedException("Operatore o funzione non implementato, al momento...");
+			//return (Token) null;
+		}
+
+		Token _sottrazione(Token[] argArray)
+		{
+			Token? tk = CreateTkFromTipoNum(argArray,2);		// Token incompleto (mancano Dat e testo)
+			if( (a1.isNumero) && (a2.isNumero))
+			{
+				#warning Creare Dat del tipo corrispondente a tpN
+				#warning Eseguire l'operazione tra a1.Dato e a2.Dato.
+				#warning Possibili eccezioni matematiche (overflow...)
+				#warning Mettere il risultato in Dat e metterlo nel Token da restituire
+			}
+			else
+				throw new Exception("Sottrazione tra due tipi non numerici");
+			return new Token();
+		}
+
+		#endregion
+		/*******************************************************************************/
+
+		/// <summary>
+		/// Crea un Token in base agli argomenti dell'array, in base alla tabella di promozione.
+		/// Considera anche le stringhe.
+		/// Solo per operatori binari. Se unari, mantiene il Token.
+		/// Se errore, restituisce null
+		/// </summary>
+		/// <param name="argArray"></param>
+		/// <param name="nargs"></param>
+		/// <returns></returns>
+		private Token? CreateTkFromTipoNum(Token[] argArray, int nargs)
+		{
+			
+			Token? tk = null;				// Token restituito (incompleto, senza testo né valore)
+			int numOk = nargs;				// Numero di argomenti (1 o 2), messo a 0 negli altri casi
+			Token? a1, a2;					// Token 1° e 2° argomento
+			a1 = a2 = null;
+			Token.TipoTk tp = Token.TipoTk.Indefinito;		// Tipo di token in output
+			Token.TipoNum tn = Token.TipoNum.Indefinito;
+			
+			switch(numOk)					// Verifica il numero di argomenti: uno e due soltanto
+			{
+				case 1:
+					a1 = argArray[0];
+					if(a1 == null)
+					{
+						numOk = 0;
+						throw new Exception("Argomento null");
+					}
+					break;
+				case 2:
+					a1 = argArray[0];
+					a2 = argArray[1];
+					if((a1 == null)||(a2 == null))
+					{
+						numOk = 0;
+						throw new Exception("Argomento null");
+					}
+					break;
+				default:
+					numOk = 0;
+					break;
+			}
+			switch(numOk)					// Verifica i tipi di dato (numero o stringa) e il tipo di numero
+			{								// a1 e a2 non sono null
+				case 1:
+					if(a1.isNumero)
+					{
+						tp = Token.TipoTk.Numero;
+						tn = (Token.TipoNum)a1.TipoNumero;
+					}
+					else if(a1.isStringa)
+					{
+						tp = Token.TipoTk.Stringa;
+					}
+					else
+					{
+						throw new Exception("Operazione unaria su token non numerico né stringa");
+					}
+					tk = new Token(tp,tn,"");
+					break;
+				case 2:
+					if((a1.isNumero)&&(a2.isNumero))
+					{
+						tp = Token.TipoTk.Numero;
+						tn = Token.ResTipoNum(a1.TipoNumero, a2.TipoNumero);	// Tabella di promozione
+					}
+					else if(a1.isStringa)
+					{
+						tp = Token.TipoTk.Stringa;
+					}
+					else
+					{
+						throw new Exception("Operazione tra token non numerici né stringa oppure incompatibili");
+					}
+					tk = new Token(tp,tn,"");
+					break;
+				default:
+					break;
+			}
+			return tk;
+		}
+
+		/// <summary>
+		/// Crea tutti gli operatori e le funzioni
+		/// </summary>
+		private void FillOpFuncDictionary()
+		{
 			/////////////////////////////////////////////////////////
 			/// Operatori
 			/////////////////////////////////////////////////////////
 
 			// Operatore per numeri in notazione esponenziale
-			Add(chEsponenziale.ToString(),new Operator(2,100));
+			// TipoTk: Num, TipoNum: I,F,D. Promozione.
+			// Verifica segni ? Eccezione standard durante il calcolo
+			Add(chEsponenziale.ToString(),new Operator(2,100,_notImplemented));
 
 			// Operatori unari
-			Add("++",new Operator(1,40));
-			Add("--",new Operator(1,40));
+			// TipoTk: Num, TipoNum: I,F,D.
+			Add("++",new Operator(1,40,_notImplemented));
+			Add("--",new Operator(1,40,_notImplemented));
 			
 			// Speciali (stesso testo di altri operatori, ma ricodificati come unari)
-			AddSpecial("+",new Operator(1,110));
-			AddSpecial("-",new Operator(1,110));
+			// TipoTk: Num, TipoNum: I,F,D.
+			AddSpecial("+",new Operator(1,110,_notImplemented));
+			AddSpecial("-",new Operator(1,110,_notImplemented));
 
 			// Operatori binari alta precedenza
-			Add("^",new Operator(2,30));
-			Add("*",new Operator(2,29));
-			Add("/",new Operator(2,28));
+			// TipoTk: Num, TipoNum: I,F,D. Promozione.
+			Add("^",new Operator(2,30,_notImplemented));
+			Add("*",new Operator(2,29,_notImplemented));
+			Add("/",new Operator(2,28,_notImplemented));
 			
 			// Operatori binari bassa precedenza
-			Add("+",new Operator(2,20));
-			Add("-",new Operator(2,20));
+			// TipoTk: Num, TipoNum: I,F,D. Promozione.
+			// TipoTk.Stringa (+ concatena, - toglie i caratteri)
+			Add("+",new Operator(2,20,_notImplemented));	
+			Add("-",new Operator(2,20,_sottrazione));
 			
 			// Operatore di assegnazione
-			Add("=",new Operator(2,10));
+			// TipoTk: Num, TipoNum: I,F,D. Promozione + conversione 
+			// TipoTk.Stringa
+			Add("=",new Operator(2,10,_notImplemented));
 
 			/////////////////////////////////////////////////////////
 			/// Funzioni
 			/////////////////////////////////////////////////////////
 
 			// Funzioni con un argomento
-			Add("sin".ToUpper(),new Function(1));
-			Add("max".ToUpper(),new Function(2));
-
+			Add("sin".ToUpper(),new Function(1,_notImplemented));
+			Add("max".ToUpper(),new Function(2,_notImplemented));
 		}
 
 		/// <summary>
@@ -236,7 +373,6 @@ namespace Fred68.Parser
 			if(Contains(opName,includiSpeciali))
 			{
 				ret = _opers[opName].IsTypeOf(tOp);
-
 			}
 			return ret;
 		}
