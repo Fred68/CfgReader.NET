@@ -101,18 +101,14 @@ namespace Fred68.Parser
 								}
 
 							}
-
 							Token tslv = op.Solve(_args);	// Esegue in calcolo dell'operatore
-
-							_stack.Push(tslv);
+							_stack.Push(tslv);				// Rimette il risultato nello stack
 						}
 						else
 						{
 							throw new Exception("Operatore o funzione non trovato");	
 						}
 					}
-					
-
 				}
 			}
 

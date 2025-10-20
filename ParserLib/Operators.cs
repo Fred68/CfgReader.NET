@@ -178,6 +178,7 @@ namespace Fred68.Parser
 			Token.TipoTk tp;
 			Token.TipoNum tn;
 
+			#warning Aggiungere l'indice della tabella di promozione da usare
 			if(CreateTkFromTipoNum(argArray,2, out tp, out tn))
 			{
 				switch(tp)
@@ -194,16 +195,84 @@ namespace Fred68.Parser
 							}
 							break;
 							case Token.TipoNum.Float:
-								throw new NotImplementedException("Sottrazione float non implementata da implementare a breve...");
+								{
+								float x = argArray[1].Dato.Get()-argArray[0].Dato.Get();
+								_out.Dato = new Dat(x);
+								}
 							break;
 							case Token.TipoNum.Double:
-								throw new NotImplementedException("Sottrazione double non implementata da implementare a breve...");
+								{
+								double x = argArray[1].Dato.Get()-argArray[0].Dato.Get();
+								_out.Dato = new Dat(x);
+								}
 							break;
 						}
 					}
 					break;
 					case Token.TipoTk.Stringa:
-						throw new Exception("Sottrazione tra stringhe, non ancora implementato");
+						{
+						_out = new Token(Token.TipoTk.Stringa,Token.TipoNum.Indefinito,"");			// Crea il token
+						string s1 = argArray[1].Dato.Get();
+						string s2 = argArray[0].Dato.Get();
+						int x = s1.IndexOf(s2);
+						string s = (x!=-1) ? s1.Substring(0, x)+s1.Substring(x+s2.Length) : s1;
+						_out.Dato = new Dat(s);
+						}
+					break;
+					default:
+						throw new Exception("Operatore su tipo di token errato");
+					//break;
+				}
+			}
+			else
+			{
+				throw new Exception("Token incompatibili");	
+			}
+			return _out;
+		}
+		Token _somma(Token[] argArray)
+		{
+			Token _out = new Token();
+			Token.TipoTk tp;
+			Token.TipoNum tn;
+
+			#warning Aggiungere l'indice della tabella di promozione da usare
+			if(CreateTkFromTipoNum(argArray,2, out tp, out tn))
+			{
+				switch(tp)
+				{
+					case Token.TipoTk.Numero:
+					{
+						_out = new Token(tp,tn,"");			// Crea il token
+						switch(tn)
+						{
+							case Token.TipoNum.Intero:
+							{
+								int x = argArray[1].Dato.Get()+argArray[0].Dato.Get();
+								_out.Dato = new Dat(x);
+							}
+							break;
+							case Token.TipoNum.Float:
+								{
+								float x = argArray[1].Dato.Get()+argArray[0].Dato.Get();
+								_out.Dato = new Dat(x);
+								}
+							break;
+							case Token.TipoNum.Double:
+								{
+								double x = argArray[1].Dato.Get()+argArray[0].Dato.Get();
+								_out.Dato = new Dat(x);
+								}
+							break;
+						}
+					}
+					break;
+					case Token.TipoTk.Stringa:
+						{
+						_out = new Token(Token.TipoTk.Stringa,Token.TipoNum.Indefinito,"");			// Crea il token
+						string s = argArray[1].Dato.Get() + argArray[0].Dato.Get();
+						_out.Dato = new Dat(s);
+						}
 					break;
 					default:
 						throw new Exception("Operatore su tipo di token errato");
@@ -211,31 +280,15 @@ namespace Fred68.Parser
 
 
 				}
-
-
-				//Dat	dt1 = argArray[0].Dato.;
-				//Dat	dt2 = argArray[1].Dato;
 			}
 			else
 			{
-
+				throw new Exception("Token incompatibili");	
 			}
-			
-			
-			//if(tk != null)
-			//{
-			//	if(tk.isStringa)
-			//	{
-			//		tk.Dato
-			//	}
-			//}
-			//else
-			//{
-			//	tk = new Token();
-			//	throw new Exception("Sottrazione errata");
-			//}
+
 			return _out;
 		}
+
 
 		#endregion
 		/*******************************************************************************/
@@ -253,6 +306,7 @@ namespace Fred68.Parser
 		/// <exception cref="Exception"></exception>
 		private bool CreateTkFromTipoNum(Token[] argArray, int nargs, out Token.TipoTk tp, out Token.TipoNum tn)
 		{
+			#warning AGGIUNGERE, tra gli argomenti, l'INDICE della tabella di promozione da usare
 			bool ok = false;
 			int numOk = nargs;				// Numero di argomenti (1 o 2), messo a 0 negli altri casi
 			Token? a1, a2;					// Token 1° e 2° argomento
@@ -310,7 +364,7 @@ namespace Fred68.Parser
 						if(tn != Token.TipoNum.Indefinito)
 							ok = true;
 					}
-					else if(a1.isStringa)
+					else if((a1.isStringa)&&(a2.isStringa))
 					{
 						tp = Token.TipoTk.Stringa;
 						ok = true;
@@ -358,10 +412,13 @@ namespace Fred68.Parser
 			Add("*",new Operator(2,29,_notImplemented));
 			Add("/",new Operator(2,28,_notImplemented));
 			
+			#warning Aggiungere operatore '\' divisione intera (senza resto).
+			#warning Aggiungere operatore '%' resto intero.
+
 			// Operatori binari bassa precedenza
 			// TipoTk: Num, TipoNum: I,F,D. Promozione.
 			// TipoTk.Stringa (+ concatena, - toglie i caratteri)
-			Add("+",new Operator(2,20,_notImplemented));	
+			Add("+",new Operator(2,20,_somma));	
 			Add("-",new Operator(2,20,_sottrazione));
 			
 			// Operatore di assegnazione

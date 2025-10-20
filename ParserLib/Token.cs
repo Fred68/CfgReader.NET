@@ -70,9 +70,13 @@ namespace Fred68.Parser
 			}
 
 		#region STATIC
-		static int _tipoStrLength;			// Lunghezza massima della descrizione, per ToString()	
+		static int _tipoStrLength;			// Lunghezza massima della descrizione, per ToString()
+		
+		#warning CREARE ALMENO DUE TABELLE DI PROMOZIONE... la divisione tra interi si promuove a virgola mobile
+		#warning Le tabelle di promozione devono contenere TipoNum.Indefinito per le operazioni non ammesse (es.: div intera tra float)
+		#warning Per gli indici (0, 1 ecc.) delle tabelle di promozione: usare delel costanti pubbliche con il nome della tab.
 		static TipoNum[,]	_pT;			// Tabella di promozione dei tipi numerici
-
+		
 		/// <summary>
 		/// Static Ctor
 		/// </summary>

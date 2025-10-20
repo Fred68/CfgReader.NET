@@ -22,6 +22,7 @@ namespace Fred68.CfgReader
 	{
 
 	#warning Sostituire la chiamata dynamic CfgReader.ConvertString(...) con un parser di espressioni (con variabili): concatenazione, voce singola, somma, differenza)
+	#warning Aggiungere comando KILL per eliminare (alla fine) delle variabili scelte dal dizionario.
 
 	/// <summary>
 	/// Config text file reader
