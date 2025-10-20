@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Fred68.GenDictionary;			// Per Dat
+
+
 namespace Fred68.Parser
 {
 	public class Operators
@@ -161,42 +164,101 @@ namespace Fred68.Parser
 			//return (Token) null;
 		}
 
+		/// <summary>
+		/// Esegue sottrazione
+		/// Gli argomento sono in ordine inverso: Array[0] è l'ultimo, in notazione infissa
+		/// </summary>
+		/// <param name="argArray">Array dei parametri</param>
+		/// <returns></returns>
+		/// <exception cref="NotImplementedException"></exception>
+		/// <exception cref="Exception"></exception>
 		Token _sottrazione(Token[] argArray)
 		{
-			Token? tk = CreateTkFromTipoNum(argArray,2);		// Token incompleto (mancano Dat e testo)
-			if( (a1.isNumero) && (a2.isNumero))
+			Token _out = new Token();
+			Token.TipoTk tp;
+			Token.TipoNum tn;
+
+			if(CreateTkFromTipoNum(argArray,2, out tp, out tn))
 			{
-				#warning Creare Dat del tipo corrispondente a tpN
-				#warning Eseguire l'operazione tra a1.Dato e a2.Dato.
-				#warning Possibili eccezioni matematiche (overflow...)
-				#warning Mettere il risultato in Dat e metterlo nel Token da restituire
+				switch(tp)
+				{
+					case Token.TipoTk.Numero:
+					{
+						_out = new Token(tp,tn,"");			// Crea il token
+						switch(tn)
+						{
+							case Token.TipoNum.Intero:
+							{
+								int x = argArray[1].Dato.Get()-argArray[0].Dato.Get();
+								_out.Dato = new Dat(x);
+							}
+							break;
+							case Token.TipoNum.Float:
+								throw new NotImplementedException("Sottrazione float non implementata da implementare a breve...");
+							break;
+							case Token.TipoNum.Double:
+								throw new NotImplementedException("Sottrazione double non implementata da implementare a breve...");
+							break;
+						}
+					}
+					break;
+					case Token.TipoTk.Stringa:
+						throw new Exception("Sottrazione tra stringhe, non ancora implementato");
+					break;
+					default:
+						throw new Exception("Operatore su tipo di token errato");
+					break;
+
+
+				}
+
+
+				//Dat	dt1 = argArray[0].Dato.;
+				//Dat	dt2 = argArray[1].Dato;
 			}
 			else
-				throw new Exception("Sottrazione tra due tipi non numerici");
-			return new Token();
+			{
+
+			}
+			
+			
+			//if(tk != null)
+			//{
+			//	if(tk.isStringa)
+			//	{
+			//		tk.Dato
+			//	}
+			//}
+			//else
+			//{
+			//	tk = new Token();
+			//	throw new Exception("Sottrazione errata");
+			//}
+			return _out;
 		}
 
 		#endregion
 		/*******************************************************************************/
 
+
 		/// <summary>
-		/// Crea un Token in base agli argomenti dell'array, in base alla tabella di promozione.
-		/// Considera anche le stringhe.
-		/// Solo per operatori binari. Se unari, mantiene il Token.
-		/// Se errore, restituisce null
+		/// Verifica i token dell'array (uno o due argomenti).
+		/// Stabilisce il tipo di token prodotto (numero o stringa) e il tipo di numero (con promozione)
 		/// </summary>
 		/// <param name="argArray"></param>
 		/// <param name="nargs"></param>
-		/// <returns></returns>
-		private Token? CreateTkFromTipoNum(Token[] argArray, int nargs)
+		/// <param name="tp">out Token.TipoTk</param>
+		/// <param name="tn">out Token.TipoNum</param>
+		/// <returns>true se tipi corretti</returns>
+		/// <exception cref="Exception"></exception>
+		private bool CreateTkFromTipoNum(Token[] argArray, int nargs, out Token.TipoTk tp, out Token.TipoNum tn)
 		{
-			
-			Token? tk = null;				// Token restituito (incompleto, senza testo né valore)
+			bool ok = false;
 			int numOk = nargs;				// Numero di argomenti (1 o 2), messo a 0 negli altri casi
 			Token? a1, a2;					// Token 1° e 2° argomento
 			a1 = a2 = null;
-			Token.TipoTk tp = Token.TipoTk.Indefinito;		// Tipo di token in output
-			Token.TipoNum tn = Token.TipoNum.Indefinito;
+			tp = Token.TipoTk.Indefinito;		// Tipo di token in output
+			tn = Token.TipoNum.Indefinito;
 			
 			switch(numOk)					// Verifica il numero di argomenti: uno e due soltanto
 			{
@@ -228,37 +290,42 @@ namespace Fred68.Parser
 					{
 						tp = Token.TipoTk.Numero;
 						tn = (Token.TipoNum)a1.TipoNumero;
+						ok = true;
 					}
 					else if(a1.isStringa)
 					{
 						tp = Token.TipoTk.Stringa;
+						ok = true;
 					}
 					else
 					{
 						throw new Exception("Operazione unaria su token non numerico né stringa");
 					}
-					tk = new Token(tp,tn,"");
 					break;
 				case 2:
 					if((a1.isNumero)&&(a2.isNumero))
 					{
 						tp = Token.TipoTk.Numero;
 						tn = Token.ResTipoNum(a1.TipoNumero, a2.TipoNumero);	// Tabella di promozione
+						if(tn != Token.TipoNum.Indefinito)
+							ok = true;
 					}
 					else if(a1.isStringa)
 					{
 						tp = Token.TipoTk.Stringa;
+						ok = true;
 					}
 					else
 					{
 						throw new Exception("Operazione tra token non numerici né stringa oppure incompatibili");
 					}
-					tk = new Token(tp,tn,"");
 					break;
 				default:
 					break;
 			}
-			return tk;
+
+			
+			return ok;
 		}
 
 		/// <summary>
@@ -461,6 +528,7 @@ namespace Fred68.Parser
 			{		
 			get
 				{
+					#warning TryGetValue è più veloce
 					if(_opers.ContainsKey(opName))
 					{
 						OpBase opb = _opers[opName];

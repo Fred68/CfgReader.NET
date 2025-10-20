@@ -122,10 +122,16 @@ namespace Fred68.Parser
 		#region PROPRIETA
 		public TipoTk Tipo { get { return _tipo; } }
 		public string Testo { get { return _testo; } }
-		public Dat? Dato { get { return _dat; } }
+		public Dat? Dato
+		{
+			get { return _dat; }
+			set { _dat = value; }
+		}
 		public TipoNum? TipoNumero { get { return _tNum; } }
 		public bool isDatNotNull { get {return (_dat!=null); }}
 		
+		
+
 		/// <summary>
 		/// E' un valore numerico, una stringa o una variabile ?
 		/// </summary>
@@ -194,7 +200,6 @@ namespace Fred68.Parser
 		public bool isOperatoreFunzione { get {return ((_tipo==TipoTk.Operatore)||(_tipo==TipoTk.Funzione));} }
 		#endregion
 
-
 		/// <summary>
 		/// Ctor vuoto
 		/// Tipo: indefinito
@@ -229,7 +234,6 @@ namespace Fred68.Parser
 			_tNum = tpN;
 			_testo = testo;
 			_dat = null;
-			//_oper = GetOper(ops, testo);
 		}
 
 		/// <summary>

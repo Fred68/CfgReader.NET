@@ -201,6 +201,87 @@ namespace Fred68.GenDictionary
 		}
 
 		/// <summary>
+		/// Reimposta l'oggetto con un nuovo tipo di dato
+		/// </summary>
+		/// <param name="_d"></param>
+		public void Set(int _d)
+			{
+			_t = TypeVar.INT;
+			_obj = _d;
+			_list = false;
+			}
+		public void Set(List<int> _d)
+			{
+			_t = TypeVar.INT;
+			_obj = _d;
+			_list = true;
+			}
+		public void Set(string _d)
+			{
+			_t = TypeVar.STR;
+			_obj = _d;
+			_list = false;
+			}
+		public void Set(List<string> _d)
+			{
+			_t = TypeVar.STR;
+			_obj = _d;
+			_list = true;
+			}
+		public void Set(bool _d)
+			{
+			_t = TypeVar.BOOL;
+			_obj = _d;
+			_list = false;
+			}
+		public void Set(List<bool> _d)
+			{
+			_t = TypeVar.BOOL;
+			_obj = _d;
+			_list = true;
+			}		
+		public void Set(float _d)
+			{
+			_t = TypeVar.FLOAT;
+			_obj = _d;
+			_list = false;
+			}
+		public void Set(List<float> _d)
+			{
+			_t = TypeVar.FLOAT;
+			_obj = _d;
+			_list = true;
+			}
+		public void Set(double _d)
+			{
+			_t = TypeVar.DOUBLE;
+			_obj = _d;
+			_list = false;
+			}
+		public void Set(List<double> _d)
+			{
+			_t = TypeVar.DOUBLE;
+			_obj = _d;
+			_list = true;
+			}
+		public void Set(DateTime _d)
+			{
+			_t = TypeVar.DATE;
+			_obj = _d;
+			_list = false;
+			}
+		public void Set(List<DateTime> _d)
+			{
+			_t = TypeVar.DATE;
+			_obj = _d;
+			_list = true;
+			}
+
+
+
+
+
+		/// <summary>
 		/// TypeVar
 		/// </summary>
 		public TypeVar Type	{ get { return _t; } }

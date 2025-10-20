@@ -103,6 +103,7 @@ namespace Fred68.Parser
 							}
 
 							Token tslv = op.Solve(_args);	// Esegue in calcolo dell'operatore
+
 							_stack.Push(tslv);
 						}
 						else
@@ -115,7 +116,14 @@ namespace Fred68.Parser
 				}
 			}
 
-
+			if(_stack.Count != 1)
+			{
+				throw new Exception("Errore nel calcolo della RPN");
+			}
+			else
+			{
+				_out = _stack.Pop();
+			}
 			return _out;
 		}
 	
