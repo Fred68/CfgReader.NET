@@ -191,6 +191,8 @@ do
 	//Console.WriteLine(uint.MaxValue);
 	//Console.WriteLine(int.MaxValue);
 } while(ripeti);
+
+Console.WriteLine("2*1.1-- = " + 2*(1.1-1));
 Console.WriteLine("\nFine programma.");
 Console.ReadKey();
 

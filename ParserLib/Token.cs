@@ -16,6 +16,13 @@ namespace Fred68.Parser
 		public const char chSuffissoDouble = 'd';
 		// Nota: il carattere dell'esponenziale 'E' (notazione scientifica) è incluso tra gli operatori binari
 
+		
+		// Numeri delle tabelle di promozione
+		static int _numPromTab = 3;
+		public static int nTabPromoStandard = 0;		// Somma, prodotto ecc...: promuove al livello maggiore
+		public static int nTabPromoDivision = 1;		// Divisione: int,int => virgola mobile
+		public static int nTabPromoInteger  = 2;		// Divisione intera e resto: resta sempre intero
+
 		/// <summary>
 		/// Tipo di token
 		/// </summary>
@@ -72,10 +79,10 @@ namespace Fred68.Parser
 		#region STATIC
 		static int _tipoStrLength;			// Lunghezza massima della descrizione, per ToString()
 		
-		#warning CREARE ALMENO DUE TABELLE DI PROMOZIONE... la divisione tra interi si promuove a virgola mobile
+		#warning CREARE più TABELLE DI PROMOZIONE... la divisione tra interi si promuove a virgola mobile
 		#warning Le tabelle di promozione devono contenere TipoNum.Indefinito per le operazioni non ammesse (es.: div intera tra float)
-		#warning Per gli indici (0, 1 ecc.) delle tabelle di promozione: usare delel costanti pubbliche con il nome della tab.
-		static TipoNum[,]	_pT;			// Tabella di promozione dei tipi numerici
+		#warning Per gli indici (0, 1 ecc.) delle tabelle di promozione: usare delle costanti pubbliche con il nome della tab.
+		static TipoNum[,,]	_pT;			// Tabella di promozione dei tipi numerici
 		
 		/// <summary>
 		/// Static Ctor
@@ -91,19 +98,24 @@ namespace Fred68.Parser
 			}
 			_tipoStrLength = lmax+1;
 
-			// Crea la tabella di promozione
+			// Crea le tabelle di promozione
 			int szpt = Enum.GetNames(typeof(TipoNum)).Length;
-			_pT = new TipoNum[szpt,szpt];
-			for(int i = 0; i < szpt; i++)								// Se uno degli operandi numerici è indefinito...
-				{
-				_pT[(int)TipoNum.Indefinito,i] = TipoNum.Indefinito;	// ...il risultato è indefinito
-				_pT[i,(int)TipoNum.Indefinito] = TipoNum.Indefinito;
-				}
-			for(int i=1; i < szpt; i++)									// Tra due operandi di precisione diversa... 
-				for(int j=1; j < szpt; j++)
+			_pT = new TipoNum[_numPromTab,szpt,szpt];
+			for(int npt = 0; npt < _numPromTab; npt++)			// Riempie le tabelle di promozione con valori standard
+			{
+				for(int i = 0; i < szpt; i++)								// Se uno degli operandi numerici è indefinito...
 					{
-						_pT[i,j] = (TipoNum)int.Max(i,j);				// ...la precisione del risultato è quella maggiore
+					_pT[0,(int)TipoNum.Indefinito,i] = TipoNum.Indefinito;	// ...il risultato è indefinito
+					_pT[0,i,(int)TipoNum.Indefinito] = TipoNum.Indefinito;
 					}
+				for(int i=1; i < szpt; i++)									// Tra due operandi di precisione diversa... 
+					for(int j=1; j < szpt; j++)
+						{
+							_pT[0,i,j] = (TipoNum)int.Max(i,j);				// ...la precisione del risultato è quella maggiore
+						}
+			}
+			#warning COMPLETARE le altre tabelle
+			#warning AGGIUNGERE string ShowTabelle()
 		}
 
 		/// <summary>
@@ -112,7 +124,7 @@ namespace Fred68.Parser
 		/// <param name="t1"></param>
 		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static TipoNum ResTipoNum(TipoNum? t1, TipoNum? t2)
+		public static TipoNum TipoNumRestituito(int tabella, TipoNum? t1, TipoNum? t2)
 		{
 			return ((t1 == null)||(t2 == null)) ? TipoNum.Indefinito : _pT[(int)t1,(int)t2];
 		}
