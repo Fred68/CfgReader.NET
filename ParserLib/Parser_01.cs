@@ -44,7 +44,7 @@ namespace Fred68.Parser
 																	// Ha trovato...
 			bool bPuntoDecimale = false;							// ...il punto decimale
 			bool bCifra = false;									// ...una cifra (evita numeri con solo punto o suffisso)
-			//bool bExp = false;										// ...il carattere dell'esponenziale in un numero
+			bool bLast = false;										// ...raggiunto ultimo carattere mentre analizza un numero
 
 			Token.TipoNum tpNum = Token.TipoNum.Indefinito;			// Suffisso per il tipo di numero (float o double)
 			int nParentesi = 0;										// Contatore di parentesi
@@ -57,7 +57,7 @@ namespace Fred68.Parser
 			
 			for(int i=0; i<input.Length+1;)							// Percorre tutti i caratteri (come ciclo while) ed uno aggiuntivo
 			{
-				char ch = (i < input.Length) ? input[i] : Operators.chSpazio;	// Legge il carattere, se entro il limite
+				char ch = (i < input.Length) ? input[i] : Operators.chSpazio;   // Legge il carattere, se entro il limite
 				switch(statTk)
 				{
 					/*********************************************************/
@@ -149,19 +149,24 @@ namespace Fred68.Parser
 					{
 						if(ch == Operators.chHex)					// Riconosciuto secondo carattere: formato esadecimale...
 						{
-							strTkAttuale.Append((char)ch);			// Memorizza
+							strTkAttuale.Append((char)ch);				// Memorizza
 							i++;										// Passa al carattere successivo
 							statTkNew = Token.TkStat.Esadecimale;		// Imposta esadecimale
 						}
-						else if(ch == Operators.chBin)					// Idem con formato binario
-						{
+						else if(ch == Operators.chBin)				// Riconosciuto formato binario...
+						{												// Idem come sopra
 							strTkAttuale.Append((char)ch);
 							i++;
 							statTkNew = Token.TkStat.Binario;
 						}
-						else if(ch.isIn(chtNumeriReali))			// Se non riconosciuto il secondo carattere speciale:...
-						{												// ...cambia solo lo stato, ma non incrememta.
+						else if(ch.isIn(chtNumeriReali))			// Cifra opunto decimale:...
+						{												// ...cambia solo lo stato, ma non incrementa.
 							statTkNew= Token.TkStat.Numero;				// Al prossimo ciclo for lo analizzerà normalmente
+						}
+						else if( i == input.Length)					// Ultimo carattere...
+						{
+							bLast = true;
+							statTkNew= Token.TkStat.Numero;
 						}
 						else
 						{
@@ -195,7 +200,7 @@ namespace Fred68.Parser
 							i++;
 							statTkNew= Token.TkStat.Numero;
 						}
-						// Se è una lettera suffissa per un numerio in virgola mobile ('f' oppure 'd'):...
+						// Se è una lettera suffissa per un numero in virgola mobile ('f' oppure 'd'):...
 						else if((ch == Token.chSuffissoFloat)||(ch == Token.chSuffissoDouble))	
 						{
 							if(tpNum != Token.TipoNum.Indefinito)
@@ -229,9 +234,9 @@ namespace Fred68.Parser
 						}
 						// Se è un altro carattere, ed è già stata trovata una cifra decimale:....
 						else
-						{						
-							if(bCifra)		// ...completa il token, ma non incrementa il carattere (i++), verrà analizzato al ciclo succ.
-							{
+						{					// Se è un altro carattere...						
+							if(bCifra || bLast)		// ...ed è già stata trovata una cifra decimale oppure è finita la stringa di input:
+							{				// ...completa il token, ma non incrementa il carattere (i++), verrà analizzato al ciclo succ.
 								if(tpNum == Token.TipoNum.Indefinito)	// Se non + stato ancora chiarito il tipo di numero...
 								{										// ...imposta intero o virgola mobile standard in base... 
 									tpNum = bPuntoDecimale ? floatStd : Token.TipoNum.Intero;	// ...al punto decimale
@@ -242,7 +247,7 @@ namespace Fred68.Parser
 								tpNum = Token.TipoNum.Indefinito;
 								bCifra = false;
 							}
-							else
+							else 
 							{
 								throw new Exception("[Analizza] Numero reale senza cifre.");
 							}

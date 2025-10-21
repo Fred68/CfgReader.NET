@@ -30,8 +30,7 @@ namespace Fred68.Parser
 	public partial class Parser
 	{
 		
-	#warning Dopo le prove, impostare a 5 (verrà ridimensionato solo con funzioni particolari)
-
+		#warning Dopo le prove, impostare a 5 (verrà ridimensionato solo con funzioni particolari)
 		const int ini_arg_array_sz = 1;				// Dimensione dell'array degli argomenti
 
 		#if !_LU_TABLES_EXTENSION

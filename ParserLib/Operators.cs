@@ -178,8 +178,7 @@ namespace Fred68.Parser
 			Token.TipoTk tp;
 			Token.TipoNum tn;
 
-			#warning Aggiungere l'indice della tabella di promozione da usare
-			if(CreateTkFromTipoNum(argArray, 2, 0, out tp, out tn))
+			if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Std, out tp, out tn))
 			{
 				switch(tp)
 				{
@@ -236,8 +235,7 @@ namespace Fred68.Parser
 			Token.TipoTk tp;
 			Token.TipoNum tn;
 
-			#warning Aggiungere l'indice della tabella di promozione da usare
-			if(CreateTkFromTipoNum(argArray, 1, 0, out tp, out tn))
+			if(CreateTkFromTipoNum(argArray, 1, Token.PromTable.Std, out tp, out tn))
 			{
 				switch(tp)
 				{
@@ -294,8 +292,7 @@ namespace Fred68.Parser
 			Token.TipoTk tp;
 			Token.TipoNum tn;
 
-			#warning Aggiungere l'indice della tabella di promozione da usare
-			if(CreateTkFromTipoNum(argArray, 1, 0, out tp, out tn))
+			if(CreateTkFromTipoNum(argArray, 1, Token.PromTable.Std, out tp, out tn))
 			{
 				switch(tp)
 				{
@@ -346,15 +343,13 @@ namespace Fred68.Parser
 			}
 			return _out;
 		}
-
 		Token _somma(Token[] argArray)
 		{
 			Token _out = new Token();
 			Token.TipoTk tp;
 			Token.TipoNum tn;
 
-			#warning Aggiungere l'indice della tabella di promozione da usare
-			if(CreateTkFromTipoNum(argArray, 2, 0, out tp, out tn))
+			if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Std, out tp, out tn))
 			{
 				switch(tp)
 				{
@@ -411,8 +406,7 @@ namespace Fred68.Parser
 			Token.TipoTk tp;
 			Token.TipoNum tn;
 
-			#warning Aggiungere l'indice della tabella di promozione da usare
-			if(CreateTkFromTipoNum(argArray, 1, 0, out tp, out tn))
+			if(CreateTkFromTipoNum(argArray, 1, Token.PromTable.Std, out tp, out tn))
 			{
 				switch(tp)
 				{
@@ -452,7 +446,7 @@ namespace Fred68.Parser
 					break;
 					default:
 						throw new Exception("Operatore su tipo di token errato");
-					break;
+					//break;
 
 
 				}
@@ -470,8 +464,7 @@ namespace Fred68.Parser
 			Token.TipoTk tp;
 			Token.TipoNum tn;
 
-			#warning Aggiungere l'indice della tabella di promozione da usare
-			if(CreateTkFromTipoNum(argArray, 1, 0, out tp, out tn))
+			if(CreateTkFromTipoNum(argArray, 1, Token.PromTable.Std, out tp, out tn))
 			{
 				switch(tp)
 				{
@@ -504,7 +497,7 @@ namespace Fred68.Parser
 					break;
 					default:
 						throw new Exception("Operatore su tipo di token errato");
-					break;
+					//break;
 
 
 				}
@@ -516,15 +509,13 @@ namespace Fred68.Parser
 
 			return _out;
 		}
-
 		Token _prodotto(Token[] argArray)
 		{
 			Token _out = new Token();
 			Token.TipoTk tp;
 			Token.TipoNum tn;
 
-			#warning Aggiungere l'indice della tabella di promozione da usare
-			if(CreateTkFromTipoNum(argArray, 2, 0, out tp, out tn))
+			if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Std, out tp, out tn))
 			{
 				switch(tp)
 				{
@@ -557,7 +548,7 @@ namespace Fred68.Parser
 					
 					default:
 						throw new Exception("Operatore su tipo di token errato");
-					break;
+					//break;
 
 
 				}
@@ -567,6 +558,52 @@ namespace Fred68.Parser
 				throw new Exception("Token incompatibili");	
 			}
 
+			return _out;
+		}
+		Token _divisione(Token[] argArray)
+		{
+			Token _out = new Token();
+			Token.TipoTk tp;
+			Token.TipoNum tn;
+
+			if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Div, out tp, out tn))
+			{
+				switch(tp)
+				{
+					case Token.TipoTk.Numero:
+					{
+						_out = new Token(tp,tn,"");			// Crea il token
+						switch(tn)
+						{
+							case Token.TipoNum.Intero:
+							{
+								throw new Exception("Errore nella tabella idi promozione della divisione");
+							}
+							//break;
+							case Token.TipoNum.Float:
+								{
+								float x = ((float)argArray[1].Dato.Get())/((float)argArray[0].Dato.Get());
+								_out.Dato = new Dat(x);
+								}
+							break;
+							case Token.TipoNum.Double:
+								{
+								double x = ((double)argArray[1].Dato.Get())/((double)argArray[0].Dato.Get());
+								_out.Dato = new Dat(x);
+								}
+							break;
+						}
+					}
+					break;
+					default:
+						throw new Exception("Operatore su tipo di token errato");
+					//break;
+				}
+			}
+			else
+			{
+				throw new Exception("Token incompatibili");	
+			}
 			return _out;
 		}
 
@@ -586,7 +623,7 @@ namespace Fred68.Parser
 		/// <param name="tn">out Token.TipoNum</param>
 		/// <returns>true se tipi corretti</returns>
 		/// <exception cref="Exception"></exception>
-		private bool CreateTkFromTipoNum(Token[] argArray, int nargs, int iProm, out Token.TipoTk tp, out Token.TipoNum tn)
+		private bool CreateTkFromTipoNum(Token[] argArray, int nargs, Token.PromTable iProm, out Token.TipoTk tp, out Token.TipoNum tn)
 		{
 			bool ok = false;
 			int numOk = nargs;				// Numero di argomenti (1 o 2), messo a 0 negli altri casi
@@ -691,7 +728,7 @@ namespace Fred68.Parser
 			// TipoTk: Num, TipoNum: I,F,D. Promozione.
 			Add("^",new Operator(2,30,_notImplemented));		// <= DA SCRIVERE !!!
 			Add("*",new Operator(2,29,_prodotto));
-			Add("/",new Operator(2,28,_notImplemented));		// <= DA SCRIVERE !!!
+			Add("/",new Operator(2,28,_divisione));
 			
 			#warning Aggiungere operatore '\' divisione intera (senza resto).
 			#warning Aggiungere operatore '%' resto intero.

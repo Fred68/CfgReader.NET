@@ -15,13 +15,13 @@ namespace Fred68.Parser
 		public const char chSuffissoFloat = 'f';
 		public const char chSuffissoDouble = 'd';
 		// Nota: il carattere dell'esponenziale 'E' (notazione scientifica) è incluso tra gli operatori binari
-
 		
-		// Numeri delle tabelle di promozione
-		static int _numPromTab = 3;
-		public static int nTabPromoStandard = 0;		// Somma, prodotto ecc...: promuove al livello maggiore
-		public static int nTabPromoDivision = 1;		// Divisione: int,int => virgola mobile
-		public static int nTabPromoInteger  = 2;		// Divisione intera e resto: resta sempre intero
+		public enum PromTable
+		{
+			Std = 0,
+			Div,
+			Int
+		}
 
 		/// <summary>
 		/// Tipo di token
@@ -78,10 +78,12 @@ namespace Fred68.Parser
 
 		#region STATIC
 		static int _tipoStrLength;			// Lunghezza massima della descrizione, per ToString()
-		
+		static int _numPromTab;				// Numeri delle tabelle di promozione
+		static TipoNum _tipoDivVM;			// Tipo di dato per operazione di divisione tra interi.
+
 		#warning CREARE più TABELLE DI PROMOZIONE... la divisione tra interi si promuove a virgola mobile
 		#warning Le tabelle di promozione devono contenere TipoNum.Indefinito per le operazioni non ammesse (es.: div intera tra float)
-		#warning Per gli indici (0, 1 ecc.) delle tabelle di promozione: usare delle costanti pubbliche con il nome della tab.
+
 		static TipoNum[,,]	_pT;			// Tabella di promozione dei tipi numerici
 		
 		/// <summary>
@@ -98,6 +100,12 @@ namespace Fred68.Parser
 			}
 			_tipoStrLength = lmax+1;
 
+			// Tipo di dato per divisione tra interi
+			_tipoDivVM = TipoNum.Double;
+
+			// Imposta numero di tabelle di promozione
+			_numPromTab = Enum.GetValues(typeof(TipoTk)).Length;
+
 			// Crea le tabelle di promozione
 			int szpt = Enum.GetNames(typeof(TipoNum)).Length;
 			_pT = new TipoNum[_numPromTab,szpt,szpt];
@@ -111,10 +119,18 @@ namespace Fred68.Parser
 				for(int i=1; i < szpt; i++)									// Tra due operandi di precisione diversa... 
 					for(int j=1; j < szpt; j++)
 						{
-							_pT[0,i,j] = (TipoNum)int.Max(i,j);				// ...la precisione del risultato è quella maggiore
+							if(npt != (int)PromTable.Int)					// Per quasi tutti i casi...
+								_pT[npt,i,j] = (TipoNum)int.Max(i,j);		// ...la precisione del risultato è quella maggiore
+							else
+								_pT[npt,i,j] = TipoNum.Indefinito;			// Per operazioni intere: sempre indefinito.
 						}
 			}
-			#warning COMPLETARE le altre tabelle
+
+			// L'operazione di divisione ha una tabella standard, tranne quella tra interi, che restituisce...
+			_pT[(int)PromTable.Div, (int)TipoNum.Intero, (int) TipoNum.Intero] = _tipoDivVM;	// ...float o double
+			// La tabella per le operazioni tra interi è definita sono per argomenti interi
+			_pT[(int)PromTable.Int, (int)TipoNum.Intero, (int) TipoNum.Intero] = TipoNum.Intero;
+
 			#warning AGGIUNGERE string ShowTabelle()
 		}
 
@@ -124,9 +140,9 @@ namespace Fred68.Parser
 		/// <param name="t1"></param>
 		/// <param name="t2"></param>
 		/// <returns></returns>
-		public static TipoNum TipoNumRestituito(int tabella, TipoNum? t1, TipoNum? t2)
+		public static TipoNum TipoNumRestituito(Token.PromTable tabella, TipoNum? t1, TipoNum? t2)
 		{
-			return ((t1 == null)||(t2 == null)) ? TipoNum.Indefinito : _pT[(int)t1,(int)t2];
+			return ((t1 == null)||(t2 == null)) ? TipoNum.Indefinito : _pT[(int)tabella, (int)t1,(int)t2];
 		}
 		#endregion
 
