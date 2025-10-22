@@ -164,14 +164,9 @@ namespace Fred68.Parser
 			//return (Token) null;
 		}
 
-		/// <summary>
-		/// Esegue sottrazione
-		/// Gli argomento sono in ordine inverso: Array[0] è l'ultimo, in notazione infissa
-		/// </summary>
-		/// <param name="argArray">Array dei parametri</param>
-		/// <returns></returns>
-		/// <exception cref="NotImplementedException"></exception>
-		/// <exception cref="Exception"></exception>
+		// Esecuzione delle operazioni tra token
+		// Gli argomento sono in ordine inverso: Array[0] è l'ultimo, in notazione infissa
+		// Ci sono alcune eccezioni aggiuntive, oltre a quelle matematiche
 		Token _sottrazione(Token[] argArray)
 		{
 			Token _out = new Token();
@@ -606,6 +601,99 @@ namespace Fred68.Parser
 			}
 			return _out;
 		}
+		Token _divisioneInt(Token[] argArray)
+		{
+			Token _out = new Token();
+			Token.TipoTk tp;
+			Token.TipoNum tn;
+
+			if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Int, out tp, out tn))
+			{
+				switch(tp)
+				{
+					case Token.TipoTk.Numero:
+					{
+						_out = new Token(tp,tn,"");			// Crea il token
+						switch(tn)
+						{
+							case Token.TipoNum.Intero:
+							{
+								// Integer division
+								int x = ((int)argArray[1].Dato.Get())/((int)argArray[0].Dato.Get());
+								_out.Dato = new Dat(x);
+							}
+							break;
+							case Token.TipoNum.Float:
+								{
+								throw new Exception("Errore nella tabella di promozione della divisione");
+								}
+							//break;
+							case Token.TipoNum.Double:
+								{
+								throw new Exception("Errore nella tabella di promozione della divisione");
+								}
+							//break;
+						}
+					}
+					break;
+					default:
+						throw new Exception("Operatore su tipo di token errato");
+					//break;
+				}
+			}
+			else
+			{
+				throw new Exception("Token incompatibili");	
+			}
+			return _out;
+		}
+		Token _restoInt(Token[] argArray)
+		{
+			Token _out = new Token();
+			Token.TipoTk tp;
+			Token.TipoNum tn;
+
+			if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Int, out tp, out tn))
+			{
+				switch(tp)
+				{
+					case Token.TipoTk.Numero:
+					{
+						_out = new Token(tp,tn,"");			// Crea il token
+						switch(tn)
+						{
+							case Token.TipoNum.Intero:
+							{
+								// Integer division
+								int x = ((int)argArray[1].Dato.Get())%((int)argArray[0].Dato.Get());
+								_out.Dato = new Dat(x);
+							}
+							break;
+							case Token.TipoNum.Float:
+								{
+								throw new Exception("Errore nella tabella di promozione della divisione");
+								}
+							//break;
+							case Token.TipoNum.Double:
+								{
+								throw new Exception("Errore nella tabella di promozione della divisione");
+								}
+							//break;
+						}
+					}
+					break;
+					default:
+						throw new Exception("Operatore su tipo di token errato");
+					//break;
+				}
+			}
+			else
+			{
+				throw new Exception("Token incompatibili");	
+			}
+			return _out;
+		}
+
 
 		#endregion
 		/*******************************************************************************/
@@ -726,12 +814,16 @@ namespace Fred68.Parser
 
 			// Operatori binari alta precedenza
 			// TipoTk: Num, TipoNum: I,F,D. Promozione.
-			Add("^",new Operator(2,30,_notImplemented));		// <= DA SCRIVERE !!!
+			Add("^",new Operator(2,30,_notImplemented));							// <= DA SCRIVERE !!!
 			Add("*",new Operator(2,29,_prodotto));
 			Add("/",new Operator(2,28,_divisione));
-			
-			#warning Aggiungere operatore '\' divisione intera (senza resto).
-			#warning Aggiungere operatore '%' resto intero.
+			// Operatori binari alta precedenza tra interi
+			Add("\\",new Operator(2,28,_divisioneInt));
+			Add("%",new Operator(2,28,_restoInt));
+
+			#warning Calcoli più complessi: usare Math.func... double,double->double
+			#warning Aggiungere calcolo esponenziale 'E'
+			#warning Aggiungere calcolo elevamento a potenza '^'
 
 			// Operatori binari bassa precedenza
 			// TipoTk: Num, TipoNum: I,F,D. Promozione.
