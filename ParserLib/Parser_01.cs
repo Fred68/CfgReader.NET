@@ -77,7 +77,7 @@ namespace Fred68.Parser
 						{
 							if(ch == Operators.chZero)				// Se inizia per '0': può essere decimale, binario o esadecimale
 							{
-								statTkNew = Token.TkStat.NumeroIndef;   // Imposta lo stato non definito (decimale, esadecimale o binario)
+								statTkNew = Token.TkStat.NumeroIndef;   // Imposta lo stato non definito (decimale, hex o bin)
 								strTkAttuale.Append(ch);
 								i++;
 							}
@@ -159,7 +159,7 @@ namespace Fred68.Parser
 							i++;
 							statTkNew = Token.TkStat.Binario;
 						}
-						else if(ch.isIn(chtNumeriReali))			// Cifra opunto decimale:...
+						else if(ch.isIn(chtNumeriReali))			// Cifra o punto decimale:...
 						{												// ...cambia solo lo stato, ma non incrementa.
 							statTkNew= Token.TkStat.Numero;				// Al prossimo ciclo for lo analizzerà normalmente
 						}
@@ -168,9 +168,27 @@ namespace Fred68.Parser
 							bLast = true;
 							statTkNew= Token.TkStat.Numero;
 						}
-						else
+						else										// Altro carattere: considera il numero finito
 						{
-							throw new Exception("[Analizza] Carattere errato dopo lo zero.");	
+							switch(ch)								// Verifica il suffisso
+							{
+								case Token.chSuffissoFloat:
+									tpNum = Token.TipoNum.Float;
+									i++;
+								break;
+								case Token.chSuffissoDouble:
+									tpNum= Token.TipoNum.Double;
+									i++;
+								break;
+								default:
+									tpNum = Token.TipoNum.Intero;
+								break;
+							}
+
+							tkAttuale = new Token(Token.TipoTk.Numero,tpNum,strTkAttuale.ToString());
+							strTkAttuale.Clear();
+							statTkNew = Token.TkStat.TokenCompletato;
+							bCifra = false;
 						}
 					}
 					break;

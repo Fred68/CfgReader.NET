@@ -182,7 +182,7 @@ do
 	string? inpf2 = Console.ReadLine();
 	if(inpf2 != null)
 		{
-			if((inpf2.ToUpper()=="S") || (inpf2.ToUpper()=="Y"))
+			if((inpf2.ToUpper()!="N") && (inpf2.ToUpper()!="n"))
 			{
 				ripeti = true;
 			}
