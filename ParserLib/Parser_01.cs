@@ -46,7 +46,7 @@ namespace Fred68.Parser
 			bool bCifra = false;									// ...una cifra (evita numeri con solo punto o suffisso)
 			bool bLast = false;										// ...raggiunto ultimo carattere mentre analizza un numero
 
-			Token.TipoNum tpNum = Token.TipoNum.Indefinito;			// Suffisso per il tipo di numero (float o double)
+			Token.TipoNum tpNum = Token.TipoNum.Nd;			// Suffisso per il tipo di numero (float o double)
 			int nParentesi = 0;										// Contatore di parentesi
 			int nBlocchi = 0;										// Contatore di blocchi
 			
@@ -65,7 +65,7 @@ namespace Fred68.Parser
 					{
 						strTkAttuale.Clear();						// Azzera tutto, tranne flag se esponenziale
 						bPuntoDecimale = false;
-						tpNum = Token.TipoNum.Indefinito;
+						tpNum = Token.TipoNum.Nd;
 						bCifra = false;
 
 						if(ch.isIn(chtSpazi))						// Se il carattere è uno spazio...				
@@ -173,15 +173,15 @@ namespace Fred68.Parser
 							switch(ch)								// Verifica il suffisso
 							{
 								case Token.chSuffissoFloat:
-									tpNum = Token.TipoNum.Float;
+									tpNum = Token.TipoNum.Flt;
 									i++;
 								break;
 								case Token.chSuffissoDouble:
-									tpNum= Token.TipoNum.Double;
+									tpNum= Token.TipoNum.Dbl;
 									i++;
 								break;
 								default:
-									tpNum = Token.TipoNum.Intero;
+									tpNum = Token.TipoNum.Int;
 								break;
 							}
 
@@ -221,7 +221,7 @@ namespace Fred68.Parser
 						// Se è una lettera suffissa per un numero in virgola mobile ('f' oppure 'd'):...
 						else if((ch == Token.chSuffissoFloat)||(ch == Token.chSuffissoDouble))	
 						{
-							if(tpNum != Token.TipoNum.Indefinito)
+							if(tpNum != Token.TipoNum.Nd)
 							{
 								throw new Exception("[Analizza] Suffisso di tipo di numero doppio.");
 							}
@@ -235,10 +235,10 @@ namespace Fred68.Parser
 								switch(ch)
 								{
 									case Token.chSuffissoFloat:
-										tpNum = Token.TipoNum.Float;
+										tpNum = Token.TipoNum.Flt;
 									break;
 									case Token.chSuffissoDouble:
-										tpNum= Token.TipoNum.Double;
+										tpNum= Token.TipoNum.Dbl;
 									break;
 								}
 
@@ -255,14 +255,14 @@ namespace Fred68.Parser
 						{					// Se è un altro carattere...						
 							if(bCifra || bLast)		// ...ed è già stata trovata una cifra decimale oppure è finita la stringa di input:
 							{				// ...completa il token, ma non incrementa il carattere (i++), verrà analizzato al ciclo succ.
-								if(tpNum == Token.TipoNum.Indefinito)	// Se non + stato ancora chiarito il tipo di numero...
+								if(tpNum == Token.TipoNum.Nd)	// Se non + stato ancora chiarito il tipo di numero...
 								{										// ...imposta intero o virgola mobile standard in base... 
-									tpNum = bPuntoDecimale ? floatStd : Token.TipoNum.Intero;	// ...al punto decimale
+									tpNum = bPuntoDecimale ? floatStd : Token.TipoNum.Int;	// ...al punto decimale
 								}
 								tkAttuale = new Token(Token.TipoTk.Numero,tpNum,strTkAttuale.ToString());
 								strTkAttuale.Clear();
 								statTkNew = Token.TkStat.TokenCompletato;
-								tpNum = Token.TipoNum.Indefinito;
+								tpNum = Token.TipoNum.Nd;
 								bCifra = false;
 							}
 							else 
@@ -429,7 +429,7 @@ namespace Fred68.Parser
 						}
 						else
 						{
-							#warning MANCA ricerca in dizionari di variabili e parole chiave
+							#warning Aggiungere ricerca in dizionari di variabili, costanti predefinite e parole chiave
 							
 							// Ricerca solo tra funzioni
 							if(operatori.Contains(strTkAttuale.ToString().ToUpper(),Operators.TipoOp.Funzione))

@@ -30,8 +30,9 @@ namespace Fred68.Parser
 	public partial class Parser
 	{
 		
-		#warning Dopo le prove, impostare a 5 (verrà ridimensionato solo con funzioni particolari)
-		const int ini_arg_array_sz = 1;				// Dimensione dell'array degli argomenti
+		#warning Aggiungere dizionari di variabili (+costanti predefinite) e di parole chiave (Fred68.GenDictionary)
+
+		const int ini_arg_array_sz = 3;				// Dimensione (iniziale) dell'array degli argomenti
 
 		#if !_LU_TABLES_EXTENSION
 		
@@ -95,7 +96,7 @@ namespace Fred68.Parser
 			//operatori = new OperatorsOld();
 			//funzioni = new FunctionsOld();
 			operatori = new Operators();
-			floatStd = Token.TipoNum.Float;
+			floatStd = Token.TipoNum.Flt;
 
 			//#if !_LU_TABLES_EXTENSION
 			chtOperatori = new CharLuTable(operatori.UsedCharacters(Operators.TipoOp.Operatore));  //	"!$%^&*+-=#@?|`/\\<>~"

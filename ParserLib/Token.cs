@@ -46,13 +46,15 @@ namespace Fred68.Parser
 			Parola_chiave
 		}
 		
+		/// <summary>
+		/// Tipo di numero
+		/// </summary>
 		public enum TipoNum		// Mantenere l'ordine: da meno preciso a più preciso
 		{
-			Indefinito = 0,
-			Intero,				// vuoto
-			Float,				// f
-			Double				// d
-
+			Nd = 0,				/// Indefinito
+			Int,				/// Intero
+			Flt,				/// Float
+			Dbl					/// Souble
 		}
 		/// <summary>
 		/// Stato della macchina a stati
@@ -101,7 +103,7 @@ namespace Fred68.Parser
 			_tipoStrLength = lmax+1;
 
 			// Tipo di dato per divisione tra interi
-			_tipoDivVM = TipoNum.Double;
+			_tipoDivVM = TipoNum.Flt;
 
 			// Imposta numero di tabelle di promozione
 			_numPromTab = Enum.GetValues(typeof(TipoTk)).Length;
@@ -113,8 +115,8 @@ namespace Fred68.Parser
 			{
 				for(int i = 0; i < szpt; i++)								// Se uno degli operandi numerici è indefinito...
 					{
-					_pT[0,(int)TipoNum.Indefinito,i] = TipoNum.Indefinito;	// ...il risultato è indefinito
-					_pT[0,i,(int)TipoNum.Indefinito] = TipoNum.Indefinito;
+					_pT[0,(int)TipoNum.Nd,i] = TipoNum.Nd;	// ...il risultato è indefinito
+					_pT[0,i,(int)TipoNum.Nd] = TipoNum.Nd;
 					}
 				for(int i=1; i < szpt; i++)									// Tra due operandi di precisione diversa... 
 					for(int j=1; j < szpt; j++)
@@ -122,16 +124,43 @@ namespace Fred68.Parser
 							if(npt != (int)PromTable.Int)					// Per quasi tutti i casi...
 								_pT[npt,i,j] = (TipoNum)int.Max(i,j);		// ...la precisione del risultato è quella maggiore
 							else
-								_pT[npt,i,j] = TipoNum.Indefinito;			// Per operazioni intere: sempre indefinito.
+								_pT[npt,i,j] = TipoNum.Nd;			// Per operazioni intere: sempre indefinito.
 						}
 			}
 
 			// L'operazione di divisione ha una tabella standard, tranne quella tra interi, che restituisce...
-			_pT[(int)PromTable.Div, (int)TipoNum.Intero, (int) TipoNum.Intero] = _tipoDivVM;	// ...float o double
+			_pT[(int)PromTable.Div, (int)TipoNum.Int, (int) TipoNum.Int] = _tipoDivVM;	// ...float o double
 			// La tabella per le operazioni tra interi è definita sono per argomenti interi
-			_pT[(int)PromTable.Int, (int)TipoNum.Intero, (int) TipoNum.Intero] = TipoNum.Intero;
+			_pT[(int)PromTable.Int, (int)TipoNum.Int, (int) TipoNum.Int] = TipoNum.Int;
 
 			#warning AGGIUNGERE string ShowTabelle()
+		}
+
+		public static string TablesToString()
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach(PromTable pt in Enum.GetValues(typeof(PromTable)))
+			{
+				sb.AppendLine(pt.ToString());
+				foreach(TipoNum c in Enum.GetValues(typeof(TipoNum)))		// Intestazioni di colonna
+				{
+					sb.Append("\t"+c.ToString());
+				}
+				sb.AppendLine();
+
+				foreach(TipoNum r in Enum.GetValues(typeof(TipoNum)))		// Righe
+				{
+					sb.Append(r.ToString());								// Intestazione di riga
+					foreach(TipoNum c in Enum.GetValues(typeof(TipoNum)))
+					{
+						sb.Append('\t'+_pT[(int)pt, (int)c, (int)r].ToString()  );
+
+					}
+					sb.AppendLine();
+				}
+				sb.AppendLine();
+			}
+			return sb.ToString();
 		}
 
 		/// <summary>
@@ -142,7 +171,7 @@ namespace Fred68.Parser
 		/// <returns></returns>
 		public static TipoNum TipoNumRestituito(Token.PromTable tabella, TipoNum? t1, TipoNum? t2)
 		{
-			return ((t1 == null)||(t2 == null)) ? TipoNum.Indefinito : _pT[(int)tabella, (int)t1,(int)t2];
+			return ((t1 == null)||(t2 == null)) ? TipoNum.Nd : _pT[(int)tabella, (int)t1,(int)t2];
 		}
 		#endregion
 
@@ -249,7 +278,7 @@ namespace Fred68.Parser
 		public Token(TipoTk tipo, string testo = "")
 		{
 			_tipo = tipo;
-			_tNum = TipoNum.Indefinito;
+			_tNum = TipoNum.Nd;
 			_testo = testo;
 			_dat = null;
 		}
@@ -274,7 +303,7 @@ namespace Fred68.Parser
 		public void Clear()
 		{
 			_tipo = TipoTk.Indefinito;
-			_tNum = TipoNum.Indefinito;
+			_tNum = TipoNum.Nd;
 			_testo = "";
 			_dat = null;
 		}
@@ -297,10 +326,10 @@ namespace Fred68.Parser
 					{
 						switch(_tNum)
 						{
-							case TipoNum.Indefinito:
+							case TipoNum.Nd:
 								throw new Exception("TipoNum.Indefinito");
 							//break;
-							case TipoNum.Intero:
+							case TipoNum.Int:
 							{
 								int x;
 								ok = int.TryParse(_testo, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out x);
@@ -310,7 +339,7 @@ namespace Fred68.Parser
 								}
 							}
 							break;
-							case TipoNum.Float:
+							case TipoNum.Flt:
 							{
 								float x;
 								ok = float.TryParse(_testo, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x);
@@ -320,7 +349,7 @@ namespace Fred68.Parser
 								}
 							}
 							break;
-							case TipoNum.Double:
+							case TipoNum.Dbl:
 							{
 								double x;
 								ok = double.TryParse(_testo, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out x);
@@ -414,13 +443,13 @@ namespace Fred68.Parser
 			{
 				switch(_tNum)
 				{
-					case TipoNum.Float:
+					case TipoNum.Flt:
 						ext = " [f]";
 						break;
-					case TipoNum.Double:
+					case TipoNum.Dbl:
 						ext = " [d]";
 						break;
-					case TipoNum.Intero:
+					case TipoNum.Int:
 						ext = " [i]";
 						break;
 					default:

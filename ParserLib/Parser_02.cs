@@ -50,8 +50,6 @@ namespace Fred68.Parser
 				// --> Se è un operatore...
 				else if(t.isOperatore)
 				{
-					#warning Aggiungere identificazione degli operatori unari postfissi (4++) ??? Forse superfluo...
-
 					if(operatori.IsSpecial(t.Testo))	// Se il testo dell'operatore è unario speciale
 					{
 						

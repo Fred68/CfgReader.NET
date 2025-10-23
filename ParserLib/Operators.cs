@@ -182,19 +182,19 @@ namespace Fred68.Parser
 						_out = new Token(tp,tn,"");			// Crea il token
 						switch(tn)
 						{
-							case Token.TipoNum.Intero:
+							case Token.TipoNum.Int:
 							{
 								int x = argArray[1].Dato.Get()-argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
 							}
 							break;
-							case Token.TipoNum.Float:
+							case Token.TipoNum.Flt:
 								{
 								float x = argArray[1].Dato.Get()-argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
 								}
 							break;
-							case Token.TipoNum.Double:
+							case Token.TipoNum.Dbl:
 								{
 								double x = argArray[1].Dato.Get()-argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
@@ -205,7 +205,7 @@ namespace Fred68.Parser
 					break;
 					case Token.TipoTk.Stringa:
 						{
-						_out = new Token(Token.TipoTk.Stringa,Token.TipoNum.Indefinito,"");			// Crea il token
+						_out = new Token(Token.TipoTk.Stringa,Token.TipoNum.Nd,"");			// Crea il token
 						string s1 = argArray[1].Dato.Get();
 						string s2 = argArray[0].Dato.Get();
 						int x = s1.IndexOf(s2);
@@ -239,19 +239,19 @@ namespace Fred68.Parser
 						_out = new Token(tp,tn,"");			// Crea il token
 						switch(tn)
 						{
-							case Token.TipoNum.Intero:
+							case Token.TipoNum.Int:
 							{
 								int x = -argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
 							}
 							break;
-							case Token.TipoNum.Float:
+							case Token.TipoNum.Flt:
 								{
 								float x = -argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
 								}
 							break;
-							case Token.TipoNum.Double:
+							case Token.TipoNum.Dbl:
 								{
 								double x = -argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
@@ -269,7 +269,7 @@ namespace Fred68.Parser
 					//	string s = (x!=-1) ? s1.Substring(0, x)+s1.Substring(x+s2.Length) : s1;
 					//	_out.Dato = new Dat(s);
 					//	}
-					break;
+					//break;
 					default:
 						throw new Exception("Operatore su tipo di token errato");
 					//break;
@@ -296,19 +296,19 @@ namespace Fred68.Parser
 						_out = new Token(tp,tn,"");			// Crea il token
 						switch(tn)
 						{
-							case Token.TipoNum.Intero:
+							case Token.TipoNum.Int:
 							{
 								int x = argArray[0].Dato.Get()-1;
 								_out.Dato = new Dat(x);
 							}
 							break;
-							case Token.TipoNum.Float:
+							case Token.TipoNum.Flt:
 								{
 								float x = argArray[0].Dato.Get()-1f;
 								_out.Dato = new Dat(x);
 								}
 							break;
-							case Token.TipoNum.Double:
+							case Token.TipoNum.Dbl:
 								{
 								double x = argArray[0].Dato.Get()-1d;
 								_out.Dato = new Dat(x);
@@ -326,7 +326,7 @@ namespace Fred68.Parser
 					//	string s = (x!=-1) ? s1.Substring(0, x)+s1.Substring(x+s2.Length) : s1;
 					//	_out.Dato = new Dat(s);
 					//	}
-					break;
+					//break;
 					default:
 						throw new Exception("Operatore su tipo di token errato");
 					//break;
@@ -353,19 +353,19 @@ namespace Fred68.Parser
 						_out = new Token(tp,tn,"");			// Crea il token
 						switch(tn)
 						{
-							case Token.TipoNum.Intero:
+							case Token.TipoNum.Int:
 							{
 								int x = argArray[1].Dato.Get()+argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
 							}
 							break;
-							case Token.TipoNum.Float:
+							case Token.TipoNum.Flt:
 								{
 								float x = argArray[1].Dato.Get()+argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
 								}
 							break;
-							case Token.TipoNum.Double:
+							case Token.TipoNum.Dbl:
 								{
 								double x = argArray[1].Dato.Get()+argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
@@ -376,14 +376,14 @@ namespace Fred68.Parser
 					break;
 					case Token.TipoTk.Stringa:
 						{
-						_out = new Token(Token.TipoTk.Stringa,Token.TipoNum.Indefinito,"");			// Crea il token
+						_out = new Token(Token.TipoTk.Stringa,Token.TipoNum.Nd,"");			// Crea il token
 						string s = argArray[1].Dato.Get() + argArray[0].Dato.Get();
 						_out.Dato = new Dat(s);
 						}
 					break;
 					default:
 						throw new Exception("Operatore su tipo di token errato");
-					break;
+					//break;
 
 
 				}
@@ -411,19 +411,19 @@ namespace Fred68.Parser
 						_out = new Token(tp,tn,"");			// Crea il token
 						switch(tn)
 						{
-							case Token.TipoNum.Intero:
+							case Token.TipoNum.Int:
 							{
 								int x = argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
 							}
 							break;
-							case Token.TipoNum.Float:
+							case Token.TipoNum.Flt:
 								{
 								float x = argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
 								}
 							break;
-							case Token.TipoNum.Double:
+							case Token.TipoNum.Dbl:
 								{
 								double x = argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
@@ -434,7 +434,7 @@ namespace Fred68.Parser
 					break;
 					case Token.TipoTk.Stringa:
 						{
-						_out = new Token(Token.TipoTk.Stringa,Token.TipoNum.Indefinito,"");			// Crea il token
+						_out = new Token(Token.TipoTk.Stringa,Token.TipoNum.Nd,"");			// Crea il token
 						string s = argArray[0].Dato.Get();
 						_out.Dato = new Dat(s);
 						}
@@ -469,19 +469,19 @@ namespace Fred68.Parser
 						_out = new Token(tp,tn,"");			// Crea il token
 						switch(tn)
 						{
-							case Token.TipoNum.Intero:
+							case Token.TipoNum.Int:
 							{
 								int x = argArray[0].Dato.Get()+1;
 								_out.Dato = new Dat(x);
 							}
 							break;
-							case Token.TipoNum.Float:
+							case Token.TipoNum.Flt:
 								{
 								float x = argArray[0].Dato.Get()+1f;
 								_out.Dato = new Dat(x);
 								}
 							break;
-							case Token.TipoNum.Double:
+							case Token.TipoNum.Dbl:
 								{
 								double x = argArray[0].Dato.Get()+1d;
 								_out.Dato = new Dat(x);
@@ -519,19 +519,19 @@ namespace Fred68.Parser
 						_out = new Token(tp,tn,"");			// Crea il token
 						switch(tn)
 						{
-							case Token.TipoNum.Intero:
+							case Token.TipoNum.Int:
 							{
 								int x = argArray[1].Dato.Get()*argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
 							}
 							break;
-							case Token.TipoNum.Float:
+							case Token.TipoNum.Flt:
 								{
 								float x = argArray[1].Dato.Get()*argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
 								}
 							break;
-							case Token.TipoNum.Double:
+							case Token.TipoNum.Dbl:
 								{
 								double x = argArray[1].Dato.Get()*argArray[0].Dato.Get();
 								_out.Dato = new Dat(x);
@@ -570,18 +570,18 @@ namespace Fred68.Parser
 						_out = new Token(tp,tn,"");			// Crea il token
 						switch(tn)
 						{
-							case Token.TipoNum.Intero:
+							case Token.TipoNum.Int:
 							{
 								throw new Exception("Errore nella tabella idi promozione della divisione");
 							}
 							//break;
-							case Token.TipoNum.Float:
+							case Token.TipoNum.Flt:
 								{
 								float x = ((float)argArray[1].Dato.Get())/((float)argArray[0].Dato.Get());
 								_out.Dato = new Dat(x);
 								}
 							break;
-							case Token.TipoNum.Double:
+							case Token.TipoNum.Dbl:
 								{
 								double x = ((double)argArray[1].Dato.Get())/((double)argArray[0].Dato.Get());
 								_out.Dato = new Dat(x);
@@ -616,19 +616,19 @@ namespace Fred68.Parser
 						_out = new Token(tp,tn,"");			// Crea il token
 						switch(tn)
 						{
-							case Token.TipoNum.Intero:
+							case Token.TipoNum.Int:
 							{
 								// Integer division
 								int x = ((int)argArray[1].Dato.Get())/((int)argArray[0].Dato.Get());
 								_out.Dato = new Dat(x);
 							}
 							break;
-							case Token.TipoNum.Float:
+							case Token.TipoNum.Flt:
 								{
 								throw new Exception("Errore nella tabella di promozione della divisione");
 								}
 							//break;
-							case Token.TipoNum.Double:
+							case Token.TipoNum.Dbl:
 								{
 								throw new Exception("Errore nella tabella di promozione della divisione");
 								}
@@ -662,23 +662,115 @@ namespace Fred68.Parser
 						_out = new Token(tp,tn,"");			// Crea il token
 						switch(tn)
 						{
-							case Token.TipoNum.Intero:
+							case Token.TipoNum.Int:
 							{
 								// Integer division
 								int x = ((int)argArray[1].Dato.Get())%((int)argArray[0].Dato.Get());
 								_out.Dato = new Dat(x);
 							}
 							break;
-							case Token.TipoNum.Float:
+							case Token.TipoNum.Flt:
 								{
 								throw new Exception("Errore nella tabella di promozione della divisione");
 								}
 							//break;
-							case Token.TipoNum.Double:
+							case Token.TipoNum.Dbl:
 								{
 								throw new Exception("Errore nella tabella di promozione della divisione");
 								}
 							//break;
+						}
+					}
+					break;
+					default:
+						throw new Exception("Operatore su tipo di token errato");
+					//break;
+				}
+			}
+			else
+			{
+				throw new Exception("Token incompatibili");	
+			}
+			return _out;
+		}
+		Token _potenza(Token[] argArray)
+		{
+			Token _out = new Token();
+			Token.TipoTk tp;
+			Token.TipoNum tn;
+
+			if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Div, out tp, out tn))
+			{
+				switch(tp)
+				{
+					case Token.TipoTk.Numero:
+					{
+						_out = new Token(tp,tn,"");			// Crea il token
+						switch(tn)
+						{
+							case Token.TipoNum.Int:
+							{
+								throw new Exception("Errore nella tabella di promozione della divisione");
+							}
+							//break;
+							case Token.TipoNum.Flt:
+								{
+								float x = MathF.Pow((float)argArray[1].Dato.Get(),(float)argArray[0].Dato.Get());
+								_out.Dato = new Dat(x);
+								}
+							break;
+							case Token.TipoNum.Dbl:
+								{
+								double x = Math.Pow((double)argArray[1].Dato.Get(),(double)argArray[0].Dato.Get());
+								_out.Dato = new Dat(x);
+								}
+							break;
+						}
+					}
+					break;
+					default:
+						throw new Exception("Operatore su tipo di token errato");
+					//break;
+				}
+			}
+			else
+			{
+				throw new Exception("Token incompatibili");	
+			}
+			return _out;
+		}
+		Token _esponenziale(Token[] argArray)
+		{
+			Token _out = new Token();
+			Token.TipoTk tp;
+			Token.TipoNum tn;
+
+			if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Div, out tp, out tn))
+			{
+				switch(tp)
+				{
+					case Token.TipoTk.Numero:
+					{
+						_out = new Token(tp,tn,"");			// Crea il token
+						switch(tn)
+						{
+							case Token.TipoNum.Int:
+							{
+								throw new Exception("Errore nella tabella di promozione della divisione");
+							}
+							//break;
+							case Token.TipoNum.Flt:
+								{
+								float x = (float)argArray[1].Dato.Get() * MathF.Pow(10f,(float)argArray[0].Dato.Get());
+								_out.Dato = new Dat(x);
+								}
+							break;
+							case Token.TipoNum.Dbl:
+								{
+								double x = (double)argArray[1].Dato.Get() * Math.Pow(10d,(double)argArray[0].Dato.Get());
+								_out.Dato = new Dat(x);
+								}
+							break;
 						}
 					}
 					break;
@@ -718,7 +810,7 @@ namespace Fred68.Parser
 			Token? a1, a2;					// Token 1° e 2° argomento
 			a1 = a2 = null;
 			tp = Token.TipoTk.Indefinito;		// Tipo di token in output
-			tn = Token.TipoNum.Indefinito;
+			tn = Token.TipoNum.Nd;
 			
 			switch(numOk)					// Verifica il numero di argomenti: uno e due soltanto
 			{
@@ -767,7 +859,7 @@ namespace Fred68.Parser
 					{
 						tp = Token.TipoTk.Numero;
 						tn = Token.TipoNumRestituito(iProm,a1.TipoNumero, a2.TipoNumero);	// Tabella di promozione
-						if(tn != Token.TipoNum.Indefinito)
+						if(tn != Token.TipoNum.Nd)
 							ok = true;
 					}
 					else if((a1.isStringa)&&(a2.isStringa))
@@ -800,7 +892,7 @@ namespace Fred68.Parser
 			// Operatore per numeri in notazione esponenziale
 			// TipoTk: Num, TipoNum: I,F,D. Promozione.
 			// Verifica segni ? Eccezione standard durante il calcolo
-			Add(chEsponenziale.ToString(),new Operator(2,100,_notImplemented));		// <= DA SCRIVERE !!!
+			Add(chEsponenziale.ToString(),new Operator(2,100,_esponenziale));
 
 			// Operatori unari, postfissi, con precedenza elevata
 			// TipoTk: Num, TipoNum: I,F,D.
@@ -814,16 +906,13 @@ namespace Fred68.Parser
 
 			// Operatori binari alta precedenza
 			// TipoTk: Num, TipoNum: I,F,D. Promozione.
-			Add("^",new Operator(2,30,_notImplemented));							// <= DA SCRIVERE !!!
+			Add("^",new Operator(2,30,_potenza));
 			Add("*",new Operator(2,29,_prodotto));
 			Add("/",new Operator(2,28,_divisione));
 			// Operatori binari alta precedenza tra interi
 			Add("\\",new Operator(2,28,_divisioneInt));
 			Add("%",new Operator(2,28,_restoInt));
-
-			#warning Calcoli più complessi: usare Math.func... double,double->double
-			#warning Aggiungere calcolo esponenziale 'E'
-			#warning Aggiungere calcolo elevamento a potenza '^'
+			#warning Aggiungere operatori tra bit (solo per gli interi)
 
 			// Operatori binari bassa precedenza
 			// TipoTk: Num, TipoNum: I,F,D. Promozione.
@@ -834,6 +923,7 @@ namespace Fred68.Parser
 			// Operatore di assegnazione
 			// TipoTk: Num, TipoNum: I,F,D. Promozione + conversione 
 			// TipoTk.Stringa
+			#warning Operatore di assegnazione: da scrivere DOPO la creazione del dizionario di variabili
 			Add("=",new Operator(2,10,_notImplemented));		// <= DA SCRIVERE !!!
 
 			/////////////////////////////////////////////////////////
@@ -843,6 +933,7 @@ namespace Fred68.Parser
 			// Funzioni con un argomento
 			Add("sin".ToUpper(),new Function(1,_notImplemented));		// <= DA SCRIVERE !!!
 			Add("max".ToUpper(),new Function(2,_notImplemented));		// <= DA SCRIVERE !!!
+			#warning Aggiungere funzioni di conversione INT() FLOAT()...
 		}
 
 		/// <summary>

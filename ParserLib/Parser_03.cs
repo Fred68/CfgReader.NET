@@ -34,8 +34,6 @@ namespace Fred68.Parser
 
 			#warning Ammesse solo funzioni a numero fisso di argomenti [per ora].
 			#warning Se numero variabile, analizzare il conteggio tra le parentesi e rinominare le funzioni con un numero.
-			#warning Usato array perché più semplice e rapida l'indicizzazione.
-			#warning Usare delegate per fare i calcoli
 
 			/*
 				Ciclo per tutti i token della coda di input

@@ -80,6 +80,9 @@ List<string> formule = new List<string>();
 //formule.Add("3+4*2");
 //formule.Add("(2+3^2)*(5+1)");
 //formule.Add("{2.1+3.2^0.1}");
+
+Console.WriteLine("Tabelle di promozione\n"+Token.TablesToString());
+
 bool ripeti = true;
 do
 {
@@ -109,7 +112,7 @@ do
 	// formule.Add("{2+3^2}*{(5+1)");
 
 	Parser analiz = new Fred68.Parser.Parser();
-	analiz.FloatStd = Token.TipoNum.Double;
+	analiz.FloatStd = Token.TipoNum.Dbl;
 
 	foreach(string f in formule)
 	{
