@@ -108,6 +108,18 @@ namespace Fred68.Parser
 						}
 					}
 				}
+				else if(t.isVariabile)
+				{
+					bool ok = t.ValutaVar(variabili);
+					if(ok)
+					{
+						_stack.Push(t);	
+					}
+					else
+					{
+						throw new Exception("Errore nella valutazione della variabile");
+					}
+				}
 			}
 
 			if(_stack.Count != 1)

@@ -24,9 +24,7 @@ namespace Fred68.Parser
 		public class Variabili : GenDictionary.GenDictionary
 		{
 		
-			public Variabili() : base()
-			{
-			}
+			public Variabili() : base()	{}
 
 		}
 	}

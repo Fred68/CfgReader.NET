@@ -85,9 +85,6 @@ namespace Fred68.Parser
 			static int _numPromTab;				// Numeri delle tabelle di promozione
 			static TipoNum _tipoDivVM;			// Tipo di dato per operazione di divisione tra interi.
 
-			#warning CREARE più TABELLE DI PROMOZIONE... la divisione tra interi si promuove a virgola mobile
-			#warning Le tabelle di promozione devono contenere TipoNum.Indefinito per le operazioni non ammesse (es.: div intera tra float)
-
 			static TipoNum[,,]	_pT;			// Tabella di promozione dei tipi numerici
 		
 			/// <summary>
@@ -135,9 +132,12 @@ namespace Fred68.Parser
 				// La tabella per le operazioni tra interi è definita sono per argomenti interi
 				_pT[(int)PromTable.Int, (int)TipoNum.Int, (int) TipoNum.Int] = TipoNum.Int;
 
-				#warning AGGIUNGERE string ShowTabelle()
 			}
 
+			/// <summary>
+			/// Mostra le tabelle di promozione
+			/// </summary>
+			/// <returns></returns>
 			public static string TablesToString()
 			{
 				StringBuilder sb = new StringBuilder();
@@ -316,7 +316,7 @@ namespace Fred68.Parser
 			/// <summary>
 			/// Valuta il testo del token e lo mette in _dat, se non è null
 			/// Valuta solo se di tipo: numero, esadecimale, binario O stringa
-			/// Se è una variabile, lo valuta con funzione apposita
+			/// Se è una variabile, va valutata con funzione apposita
 			/// </summary>
 			/// <param name="bRivaluta">Forza la valutazione anche se _dat non è nullo</param>
 			/// <returns></returns>
@@ -328,7 +328,7 @@ namespace Fred68.Parser
 				{
 					switch(_tipo)
 					{
-						case TipoTk.Numero:		
+						case TipoTk.Numero:				// Valuta numero, imposta TipoNum		
 						{
 							switch(_tNum)
 							{
@@ -409,10 +409,96 @@ namespace Fred68.Parser
 				return ok;
 			}
 
+			/// <summary>
+			/// Reimposta il token in base alla variabile con il nome del testo del token.
+			/// Il token attuale cambia TipoTk da variabile al tipo di valore (numero, stringa...).
+			/// Non controlla se il Token è del tipo giusto perché la classe sarà privata e...
+			/// ...ValutaVar è chiamato solo da Parser in un case: in cui il token è sempre una variabile
+			/// </summary>
+			/// <param name="vars">Dizionario delle variabili</param>
+			/// <returns>true se l'operazione è completata</returns>
+			/// <exception cref="NotImplementedException"></exception>
+			/// <exception cref="Exception"></exception>
 			public bool ValutaVar(Variabili vars)
 			{
 				bool ok = false;
-
+				if(_testo.Length > 0)
+				{
+					if(vars.ContainsKey(_testo))
+					{
+						Dat dt = vars.GetDat(_testo);	// Invece di vars[_testo], che estrae il valore, qui legge il Dat
+						if(!dt.IsList)
+						{
+							switch(dt.Type)
+							{
+								case TypeVar.INT:
+								{
+									_dat = dt;
+									_tipo = TipoTk.Numero;
+									_tNum = TipoNum.Int;
+									ok = true;
+								}
+								break;
+								case TypeVar.FLOAT:
+								{
+									_dat = dt;
+									_tipo = TipoTk.Numero;
+									_tNum = TipoNum.Flt;
+									ok = true;
+								}
+								break;
+								case TypeVar.DOUBLE:
+								{
+									_dat = dt;
+									_tipo = TipoTk.Numero;
+									_tNum = TipoNum.Dbl;
+									ok = true;
+								}
+								break;
+								case TypeVar.STR:
+								{
+									_dat = dt;
+									_tipo = TipoTk.Stringa;
+									_tNum = TipoNum.Nd;
+									ok = true;
+								}
+								break;
+								case TypeVar.BOOL:
+								{
+									throw new NotImplementedException("BOOL variables are not implemented");
+								}
+								//break;
+								case TypeVar.COLOR:
+								{
+									throw new NotImplementedException("COLOR variables are not implemented");
+								}
+								//break;
+								case TypeVar.DATE:
+								{
+									throw new NotImplementedException("DATE variables are not implemented");
+								}
+								//break;
+								default:
+								{
+									throw new Exception("Variable type not implemented");	
+								}
+								//break;
+							}
+						}
+						else
+						{
+							throw new NotImplementedException("List variables are not implemented");
+						}
+					}
+					else
+					{
+						throw new Exception("Variable name not found");
+					}
+				}
+				else
+				{
+					throw new Exception("Variable name is empty");
+				}
 				return ok;
 			}
 

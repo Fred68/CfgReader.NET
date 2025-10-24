@@ -68,6 +68,21 @@ namespace Fred68.GenDictionary
 					}
 				}
 			}
+		
+		/// <summary>
+		/// Lettura del Dat completo
+		/// </summary>
+		/// <param name="key">Nome</param>
+		/// <returns></returns>
+		/// <exception cref="KeyNotFoundException"></exception>
+		public Dat GetDat(string key)
+		{
+			if(_dict.ContainsKey(key))
+				return _dict[key];
+			else
+				throw new KeyNotFoundException();
+
+		}
 
 		#if DYN_DICTIONARY
 		/// <summary>

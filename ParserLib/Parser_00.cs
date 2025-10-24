@@ -11,8 +11,8 @@ using Fred68.GenDictionary;			// Per usare Dat
 using StringExtension;
 
 
-#warning Creare una classe personalizzata per lanciare ParseException oppure 
-#warning oppure usare una classe per mantenere gli errori senza generare eccezioni
+#warning Creare una classe ParseException:Exception oppure semplice per mantenere gli errori senza generare eccezioni
+
 #warning Rendere private le classi interne a Parser (Operatore, Token...), dopo il debug
 
 
@@ -100,6 +100,7 @@ namespace Fred68.Parser
 			
 			chtOperatori = new CharLuTable(operatori.UsedCharacters(Operators.TipoOp.Operatore));  //	"!$%^&*+-=#@?|`/\\<>~"
 
+			variabili["PI"] = 3.1415926535d;
 			variabili["Pippo"] = 2.4f;
 			variabili["Pluto"] = "Pluto!";
 			

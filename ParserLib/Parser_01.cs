@@ -431,10 +431,14 @@ namespace Fred68.Parser
 						{
 							#warning Aggiungere ricerca in dizionari di variabili, costanti predefinite e parole chiave
 							
-							// Ricerca solo tra funzioni
+							// Ricerca solo tra le funzioni, non gli operatori
 							if(operatori.Contains(strTkAttuale.ToString().ToUpper(),Operators.TipoOp.Funzione))
 							{
 								tkAttuale = new Token(Token.TipoTk.Funzione,strTkAttuale.ToString().ToUpper());
+							}
+							else if(variabili.ContainsKey(strTkAttuale.ToString()))
+							{
+								tkAttuale = new Token(Token.TipoTk.Variabile,strTkAttuale.ToString());
 							}
 							else
 							{	// Se non riconisciuto: classificato come simbolo generico
