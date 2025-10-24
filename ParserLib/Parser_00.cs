@@ -13,6 +13,8 @@ using StringExtension;
 
 #warning Creare una classe personalizzata per lanciare ParseException oppure 
 #warning oppure usare una classe per mantenere gli errori senza generare eccezioni
+#warning Rendere private le classi interne a Parser (Operatore, Token...), dopo il debug
+
 
 namespace Fred68.Parser
 {	
@@ -73,11 +75,10 @@ namespace Fred68.Parser
 			
 		}
 
-		//OperatorsOld operatori;
-		//FunctionsOld funzioni;
 		Operators operatori;
-
-		Token.TipoNum floatStd;
+		Variabili variabili;
+		
+		Token.TipoNum floatStd;						// Tipo float predefinito
 
 		/// <summary>
 		/// Tipo standard per numero in virgola mobile
@@ -93,14 +94,15 @@ namespace Fred68.Parser
 		/// </summary>
 		public Parser()
 		{
-			//operatori = new OperatorsOld();
-			//funzioni = new FunctionsOld();
-			operatori = new Operators();
+			variabili = new Variabili();
+			operatori = new Operators(variabili);				// Le funzioni devono avere acesso alle variabili
 			floatStd = Token.TipoNum.Flt;
-
-			//#if !_LU_TABLES_EXTENSION
+			
 			chtOperatori = new CharLuTable(operatori.UsedCharacters(Operators.TipoOp.Operatore));  //	"!$%^&*+-=#@?|`/\\<>~"
-			//#endif
+
+			variabili["Pippo"] = 2.4f;
+			variabili["Pluto"] = "Pluto!";
+			
 		}
 		
 	}

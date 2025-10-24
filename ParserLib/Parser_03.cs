@@ -58,9 +58,9 @@ namespace Fred68.Parser
 
 			foreach(Token t in input)
 			{	
-				t.ValutaVal();
 				if(t.isNumeroStringa)
 				{
+					t.ValutaVal();
 					_stack.Push(t);
 				}
 				else if(t.isOperatoreFunzione)
@@ -122,102 +122,102 @@ namespace Fred68.Parser
 		}
 	
 		
-		public Token EvaluateRPN_backup(Queue<Token> input)
-		{
-			Token _out = new Token();							// Token finale con il risultato
-			Stack<Token> _stack = new Stack<Token>();			// Stack temporanei per i token letti dalla coda di input
-			Token[] _args = new Token[ini_arg_array_sz];		// Array temporaneo con gli argomenti
+		//public Token EvaluateRPN_backup(Queue<Token> input)
+		//{
+		//	Token _out = new Token();							// Token finale con il risultato
+		//	Stack<Token> _stack = new Stack<Token>();			// Stack temporanei per i token letti dalla coda di input
+		//	Token[] _args = new Token[ini_arg_array_sz];		// Array temporaneo con gli argomenti
 
-			#warning Ammesse solo funzioni a numero fisso di argomenti [per ora].
-			#warning Se numero variabile, analizzare il conteggio tra le parentesi e rinominare le funzioni con un numero.
-			#warning Usato array perché più semplice e rapida l'indicizzazione.
-			#warning Usare delegate per fare i calcoli
+		//	#warning Ammesse solo funzioni a numero fisso di argomenti [per ora].
+		//	#warning Se numero variabile, analizzare il conteggio tra le parentesi e rinominare le funzioni con un numero.
+		//	#warning Usato array perché più semplice e rapida l'indicizzazione.
+		//	#warning Usare delegate per fare i calcoli
 
-			/*
-				Ciclo per tutti i token della coda di input
+		//	/*
+		//		Ciclo per tutti i token della coda di input
 
-				Legge il token
-				Lo valuta, se è intero, float, binario ecc...
-				Se è un numero:
-					lo inserisce nello stack
-				Se è un operatore:
-					legge il testo
-					risale all'operatore
-					legge il numero di operandi
-					se è superiore alle dimensioni dell'array, lo ridimensiona (può azzerarlo).
-					ciclo su 'i' da 0 a numero di operandi -1
-						estrae un token dallo stack (se lo stack è vuoto: errore)
-						controlla che sia un numero o una stringa [in base all'operatore] e che dat non sia nullo
-						lo mette nell'array alla posizione 'i'
-					al termine chiama il puntatore a funzione che accetta un array di token, che restituisce un nuovo token
-					mette il token nello stack
+		//		Legge il token
+		//		Lo valuta, se è intero, float, binario ecc...
+		//		Se è un numero:
+		//			lo inserisce nello stack
+		//		Se è un operatore:
+		//			legge il testo
+		//			risale all'operatore
+		//			legge il numero di operandi
+		//			se è superiore alle dimensioni dell'array, lo ridimensiona (può azzerarlo).
+		//			ciclo su 'i' da 0 a numero di operandi -1
+		//				estrae un token dallo stack (se lo stack è vuoto: errore)
+		//				controlla che sia un numero o una stringa [in base all'operatore] e che dat non sia nullo
+		//				lo mette nell'array alla posizione 'i'
+		//			al termine chiama il puntatore a funzione che accetta un array di token, che restituisce un nuovo token
+		//			mette il token nello stack
 
-				Se è una funzione: idem
+		//		Se è una funzione: idem
 				
 				
 			
-			*/
+		//	*/
 
 			
-			foreach(Token t in input)
-			{	
-				t.ValutaVal();
-				if(t.isNumeroStringa)
-				{
-					_stack.Push(t);
-				}
-				else if(t.isOperatore)
-				{
-					if(operatori.Contains(t.Testo,Operators.TipoOp.Operatore,true))		// Anche operatori speciali, es.: u+
-					{
-						Operators.OpBase? op = operatori[t.Testo,Operators.TipoOp.Operatore];
-						if( op != null)
-						{
-							uint nargs = op.Argomenti;
-							if(nargs > _args.Length)			// Ridimensiona l'array, se necessario
-							{
-								Array.Resize(ref _args, (int)nargs);
-							}
-							for(int i=0; i < nargs;	i++)
-							{
-								if(input.Count > 0)
-								{
-									Token tkq = _stack.Pop();
-									if((tkq.isNumeroStringa)&&(tkq.isDatNotNull))
-									{
-										_args[i] = tkq;
-									}
-									else
-									{
-										if(!tkq.isNumeroStringa)
-											throw new Exception("Il token sullo stack non è un valore: errano numero di argomenti");
-										else if(!tkq.isDatNotNull)
-											throw new Exception("Il token sullo stack non è stato valutato");
-									}
-								}
-								else
-								{
-									throw new Exception("Wrong argument numbers");
-								}
+		//	foreach(Token t in input)
+		//	{	
+		//		t.ValutaVal();
+		//		if(t.isNumeroStringa)
+		//		{
+		//			_stack.Push(t);
+		//		}
+		//		else if(t.isOperatore)
+		//		{
+		//			if(operatori.Contains(t.Testo,Operators.TipoOp.Operatore,true))		// Anche operatori speciali, es.: u+
+		//			{
+		//				Operators.OpBase? op = operatori[t.Testo,Operators.TipoOp.Operatore];
+		//				if( op != null)
+		//				{
+		//					uint nargs = op.Argomenti;
+		//					if(nargs > _args.Length)			// Ridimensiona l'array, se necessario
+		//					{
+		//						Array.Resize(ref _args, (int)nargs);
+		//					}
+		//					for(int i=0; i < nargs;	i++)
+		//					{
+		//						if(input.Count > 0)
+		//						{
+		//							Token tkq = _stack.Pop();
+		//							if((tkq.isNumeroStringa)&&(tkq.isDatNotNull))
+		//							{
+		//								_args[i] = tkq;
+		//							}
+		//							else
+		//							{
+		//								if(!tkq.isNumeroStringa)
+		//									throw new Exception("Il token sullo stack non è un valore: errano numero di argomenti");
+		//								else if(!tkq.isDatNotNull)
+		//									throw new Exception("Il token sullo stack non è stato valutato");
+		//							}
+		//						}
+		//						else
+		//						{
+		//							throw new Exception("Wrong argument numbers");
+		//						}
 
-							}
-						}
-						else
-						{
-							throw new Exception("Operatore non trovato");	
-						}
-					}
-					else if(operatori.Contains(t.Testo,Operators.TipoOp.Funzione))
-					{
-						throw new NotImplementedException("Funzioni non ancora disponibili");
-					}
+		//					}
+		//				}
+		//				else
+		//				{
+		//					throw new Exception("Operatore non trovato");	
+		//				}
+		//			}
+		//			else if(operatori.Contains(t.Testo,Operators.TipoOp.Funzione))
+		//			{
+		//				throw new NotImplementedException("Funzioni non ancora disponibili");
+		//			}
 
-				}
-			}
+		//		}
+		//	}
 
 
-			return _out;
-		}
+		//	return _out;
+		//}
 	
 	}
 }

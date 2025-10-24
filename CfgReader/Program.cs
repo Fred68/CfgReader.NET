@@ -1,9 +1,9 @@
 ﻿
 #define _CFG
-#undef _CFG
+//#undef _CFG
 
 #define _ANALZ
-// #undef _ANALZ
+//#undef _ANALZ
 
 // See https://aka.ms/new-console-template for more information
 
@@ -15,6 +15,7 @@ using Fred68.Parser;
 string filename = "esempio.txt";
 Console.WriteLine("Avvio programma.");
 
+bool ok = true;
 
 #if _CFG
 Console.WriteLine("Utilizzo come dizionario...");
@@ -49,7 +50,7 @@ Console.WriteLine("Utilizzo con classe derivata...");
 CfgR2 cf2 = new CfgR2();							// Crea l'oggetto della classe derivata
 cf2.CHR_ListSeparator = @";";	
 cf2.ReadConfiguration(filename);					// Legge la configurazione (classe base)
-bool ok = cf2.GetNames(true);						// Imposta le variabili (da classe base a derivata), eliminandole dal dizionario
+ok = cf2.GetNames(true);							// Imposta le variabili (da classe base a derivata), eliminandole dal dizionario
 Console.WriteLine(cf2.ToString());					// Visualizza i messaggi (da classe base)
 Console.WriteLine(cf2.Dump());						// Stampa le variabili (funzione della classe derivata)
 Console.WriteLine(cf2.DumpEntries());				// Stampa il contenuto del dizionario
@@ -81,7 +82,7 @@ List<string> formule = new List<string>();
 //formule.Add("(2+3^2)*(5+1)");
 //formule.Add("{2.1+3.2^0.1}");
 
-Console.WriteLine("Tabelle di promozione\n"+Token.TablesToString());
+Console.WriteLine("Tabelle di promozione\n"+ Parser.Token.TablesToString());
 
 bool ripeti = true;
 do
@@ -112,17 +113,17 @@ do
 	// formule.Add("{2+3^2}*{(5+1)");
 
 	Parser analiz = new Fred68.Parser.Parser();
-	analiz.FloatStd = Token.TipoNum.Dbl;
+	analiz.FloatStd = Parser.Token.TipoNum.Dbl;
 
 	foreach(string f in formule)
 	{
-		List<Token> lt = new List<Token>();
-		Queue<Token> qt = new Queue<Token>();
-		Token res = new Token();
+		List<Parser.Token> lt = new List<Parser.Token>();
+		Queue<Parser.Token> qt = new Queue<Parser.Token>();
+		Parser.Token res = new Parser.Token();
 
 		Console.WriteLine(new string('-',20));
 	
-		bool ok = true;
+		ok = true;
 		if(ok)
 		{
 			try
@@ -164,13 +165,13 @@ do
 	
 		Console.WriteLine($"Formula: {f}");
 		Console.WriteLine($"Token (infix):");
-		foreach(Token tk in lt)
+		foreach(Parser.Token tk in lt)
 		{
 			Console.WriteLine(tk.ToString());
 		}
 		Console.WriteLine(new string('-',10));
 		Console.WriteLine($"Token (rpn):");
-		foreach(Token tk in qt)
+		foreach(Parser.Token tk in qt)
 		{
 			Console.WriteLine(tk.ToString());
 		}
@@ -178,7 +179,7 @@ do
 		Console.WriteLine($"Risultato:");
 		Console.WriteLine(res);
 	}
-	#endif
+	
 
 	ripeti = false;
 	Console.Write("\nNuove formule ?");
@@ -194,7 +195,7 @@ do
 	//Console.WriteLine(uint.MaxValue);
 	//Console.WriteLine(int.MaxValue);
 } while(ripeti);
-
+#endif
 Console.WriteLine("2*1.1-- = " + 2*(1.1-1));
 Console.WriteLine("\nFine programma.");
 Console.ReadKey();

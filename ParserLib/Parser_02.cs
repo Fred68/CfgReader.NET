@@ -8,7 +8,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Fred68.Parser.Operators;
 
 namespace Fred68.Parser
 {
