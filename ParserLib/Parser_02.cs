@@ -33,8 +33,8 @@ namespace Fred68.Parser
 
 			foreach(Token t in input)			// Percorre i token in ordine inverso rispetto a come sono stati inseriti nella coda
 			{
-				// --> Se è un valore numerico...
-				if(t.isValore)					// Lo accoda
+				// --> Se è un numero, una stringa o una variabile, o se è un simbolo (i.e. variabile non ancora dichiarata)
+				if((t.isValore) || (t.isSimbolo))		// Lo accoda
 				{
 					_out.Enqueue(t);
 					tkPrec = t;
@@ -51,11 +51,10 @@ namespace Fred68.Parser
 				{
 					if(operatori.IsSpecial(t.Testo))	// Se il testo dell'operatore è unario speciale
 					{
-						
 						if(	(iCicli == 0)					// Se è il primo token (es.: "-4+3") oppure se...
 							||								// ...il token precedente non è né un numero né una stringa...
 							(
-								(!tkPrec.isNumeroStringa)	// per esempio: 1 + 2  oppure  "A" + "B"
+								((!tkPrec.isNumeroStringa) && (!tkPrec.isVariabile) && (!tkPrec.isSimbolo))	// per esempio: 1 + 2  oppure  "A" + "B"
 								&&						
 								(tkPrec.Tipo!=Token.TipoTk.Parentesi_Chiusa)	// ...e non è una parentesi chiusa...
 							)								// per esempio: ) - 2  oppure  ) + "A"	oppure  1.2 E - 2
@@ -65,9 +64,6 @@ namespace Fred68.Parser
 							t.RendiOperatoreSpeciale();		// ...allora modifica il testo in operatore unario speciale
 							//tmp = t;
 						}									// Le eventuali incompatibilità verranno analizzate dopo.
-
-
-						
 					}
 
 					// Finché non trova una parentesi aperta...								

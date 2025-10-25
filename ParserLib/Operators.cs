@@ -39,6 +39,9 @@ namespace Fred68.Parser
 			// Caratteri speciali
 			public const char chUnary = 'u';
 
+			// Assegnazione
+			public const string strAssign = "=";
+
 			public delegate Token pSolver(Token[] argArray);	// Delegate
 
 			/*******************************************************************************/
@@ -148,8 +151,8 @@ namespace Fred68.Parser
 			List<string>					_specOp;		// Lista dei nomi degli operatori speciali (unari)
 			Variabili						_vars;
 
-			#warning AGGIUNGERE (argomenti del costruttore) il dizionario delle variabili
 			#warning AGGIUNGERE (argomenti del costruttore) il dizionario delle parole chiave (in futuro)
+
 			/// <summary>
 			/// Ctor
 			/// </summary>
@@ -179,7 +182,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -236,7 +239,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 1, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 1, Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -293,7 +296,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 1, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 1, Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -350,7 +353,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -407,7 +410,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 1, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 1, Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -465,7 +468,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 1, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 1, Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -516,7 +519,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -567,7 +570,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Div, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Div, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -613,7 +616,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Int, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Int, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -659,7 +662,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Int, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Int, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -705,7 +708,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Div, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Div, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -751,7 +754,7 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Div, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Div, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -798,7 +801,8 @@ namespace Fred68.Parser
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(CreateTkFromTipoNum(argArray, 2, Token.PromTable.Std, out tp, out tn))
+				// Calcola il token di uscita: l'espressione (a=1) deve restituire 1, dopo aver assegnato 1 ad a
+				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -838,9 +842,17 @@ namespace Fred68.Parser
 						default:
 							throw new Exception("Operatore su tipo di token errato");
 						//break;
-
-
 					}
+
+					Token pArg = argArray[1];
+
+					// Verifica il primo operatore, argArray[1]
+					// Se è un simbolo: aggiunge la variabile con quel nome
+					// Se è una variabile esistente: la aggiorna, però...
+					// ...deve aggiornare anche il tipo di variabile o eseguire la conversione del risultato ?
+					// Si decide di aggiornare in toto la variabile, incluso il tipo.
+					// Per le conversioni, usare le funzioni di conversione.
+
 				}
 				else
 				{
@@ -867,7 +879,7 @@ namespace Fred68.Parser
 			/// <param name="tn">out Token.TipoNum</param>
 			/// <returns>true se tipi corretti</returns>
 			/// <exception cref="Exception"></exception>
-			private bool CreateTkFromTipoNum(Token[] argArray, int nargs, Token.PromTable iProm, out Token.TipoTk tp, out Token.TipoNum tn)
+			private bool TipoTkFromPromTable(Token[] argArray, int nargs, Token.PromTable iProm, out Token.TipoTk tp, out Token.TipoNum tn)
 			{
 				bool ok = false;
 				int numOk = nargs;				// Numero di argomenti (1 o 2), messo a 0 negli altri casi
@@ -944,9 +956,8 @@ namespace Fred68.Parser
 				return ok;
 			}
 
-			/// <summary>
-			/// Crea tutti gli operatori e le funzioni
-			/// </summary>
+			/*******************************************************************************/
+			#region RIEMPIE il dizionario degli operatori e delle funzioni
 			private void FillOpFuncDictionary()
 			{
 				/////////////////////////////////////////////////////////
@@ -976,6 +987,7 @@ namespace Fred68.Parser
 				// Operatori binari alta precedenza tra interi
 				Add("\\",new Operator(2,28,_divisioneInt));
 				Add("%",new Operator(2,28,_restoInt));
+				
 				#warning Aggiungere operatori tra bit (solo per gli interi)
 
 				// Operatori binari bassa precedenza
@@ -985,10 +997,9 @@ namespace Fred68.Parser
 				Add("-",new Operator(2,20,_sottrazione));
 			
 				// Operatore di assegnazione
-				// TipoTk: Num, TipoNum: I,F,D. Promozione + conversione 
+				// TipoTk: Num, TipoNum: I,F,D. Promozione + conversione
 				// TipoTk.Stringa
-				#warning Operatore di assegnazione: da scrivere DOPO la creazione del dizionario di variabili
-				Add("=",new Operator(2,10,_notImplemented));		// <= DA SCRIVERE !!!
+				Add(strAssign,new Operator(2,10,_assegnazione));
 
 				/////////////////////////////////////////////////////////
 				/// Funzioni
@@ -997,8 +1008,11 @@ namespace Fred68.Parser
 				// Funzioni con un argomento
 				Add("sin".ToUpper(),new Function(1,_notImplemented));		// <= DA SCRIVERE !!!
 				Add("max".ToUpper(),new Function(2,_notImplemented));		// <= DA SCRIVERE !!!
+				
 				#warning Aggiungere funzioni di conversione INT() FLOAT()...
 			}
+			#endregion
+			/*******************************************************************************/
 
 			/// <summary>
 			/// Aggiunge un operatore
@@ -1150,7 +1164,7 @@ namespace Fred68.Parser
 				{		
 				get
 					{
-						#warning TryGetValue è più veloce
+						#warning TryGetValue è più veloce ?
 						if(_opers.ContainsKey(opName))
 						{
 							OpBase opb = _opers[opName];

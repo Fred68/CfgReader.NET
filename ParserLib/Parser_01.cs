@@ -429,20 +429,19 @@ namespace Fred68.Parser
 						}
 						else
 						{
-							#warning Aggiungere ricerca in dizionari di variabili, costanti predefinite e parole chiave
-							
-							// Ricerca solo tra le funzioni, non gli operatori
+							// Ricerca tra le funzioni
 							if(operatori.Contains(strTkAttuale.ToString().ToUpper(),Operators.TipoOp.Funzione))
 							{
 								tkAttuale = new Token(Token.TipoTk.Funzione,strTkAttuale.ToString().ToUpper());
 							}
+							// Ricerca tra le variabili
 							else if(variabili.ContainsKey(strTkAttuale.ToString()))
 							{
-								tkAttuale = new Token(Token.TipoTk.Variabile,strTkAttuale.ToString());
+								tkAttuale = new Token(Token.TipoTk.Variabile,strTkAttuale.ToString(),true);
 							}
 							else
-							{	// Se non riconisciuto: classificato come simbolo generico
-								tkAttuale = new Token(Token.TipoTk.Simbolo,strTkAttuale.ToString());
+							{	// Se non riconosciuto: classificato come simbolo generico
+								tkAttuale = new Token(Token.TipoTk.Simbolo,strTkAttuale.ToString(),true);
 							}
 							statTkNew = Token.TkStat.TokenCompletato;
 						}

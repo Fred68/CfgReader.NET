@@ -32,8 +32,6 @@ namespace Fred68.Parser
 	public partial class Parser
 	{
 		
-		#warning Aggiungere dizionari di variabili (+costanti predefinite) e di parole chiave (Fred68.GenDictionary)
-
 		const int ini_arg_array_sz = 3;				// Dimensione (iniziale) dell'array degli argomenti
 
 		#if !_LU_TABLES_EXTENSION
@@ -75,8 +73,8 @@ namespace Fred68.Parser
 			
 		}
 
-		Operators operatori;
-		Variabili variabili;
+		Operators operatori;						// Dizionario di operatori e funzioni
+		Variabili variabili;						// Dizionario delle variabili
 		
 		Token.TipoNum floatStd;						// Tipo float predefinito
 
@@ -106,5 +104,15 @@ namespace Fred68.Parser
 			
 		}
 		
+		public string DumpVariabili()
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach(string key in variabili)
+			{
+				sb.AppendLine($"{key} = {variabili[key]}");
+			}
+
+			return sb.ToString();
+		}
 	}
 }

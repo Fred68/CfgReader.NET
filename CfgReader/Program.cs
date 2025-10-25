@@ -57,30 +57,16 @@ Console.WriteLine(cf2.DumpEntries());				// Stampa il contenuto del dizionario
 cf2.Clear();										// Cancella tutti i dati letti (della classe base)
 #endif
 
+Console.WriteLine("2*1.1-- = " + 2*(1.1-1));
+
 #if _ANALZ
 Console.WriteLine(new string('-',20));
 Console.WriteLine("Analizzatore");
 
-
-//Console.WriteLine("Prova ciclo su List<obj>");
-//Dat iDat = new Dat(new List<int>{10,20,30,40,50});
-//Dat dDat = new Dat(new List<double>{1.1,2.2,3.3,4.4,5.5});
-//Console.WriteLine(iDat.ToString());
-//Console.WriteLine(dDat.ToString(true));
-//Console.WriteLine($"char.MinValue= {(int)char.MinValue}\tchar.MaxValue= {(int)char.MaxValue}");
+Parser analiz = new Fred68.Parser.Parser();
+analiz.FloatStd = Parser.Token.TipoNum.Dbl;
 
 List<string> formule = new List<string>();
-
-//formule.Add("");
-//formule.Add("2");
-//formule.Add("2++");
-//formule.Add("\"Pippo\"");
-//formule.Add("2+1");
-
-//formule.Add("3+4*2 / ( 1 − 5 ) ^ 2 ^ 3");
-//formule.Add("3+4*2");
-//formule.Add("(2+3^2)*(5+1)");
-//formule.Add("{2.1+3.2^0.1}");
 
 Console.WriteLine("Tabelle di promozione\n"+ Parser.Token.TablesToString());
 
@@ -112,8 +98,6 @@ do
 	// formule.Add("(2+3^2))*(5+1)");
 	// formule.Add("{2+3^2}*{(5+1)");
 
-	Parser analiz = new Fred68.Parser.Parser();
-	analiz.FloatStd = Parser.Token.TipoNum.Dbl;
 
 	foreach(string f in formule)
 	{
@@ -180,6 +164,9 @@ do
 		Console.WriteLine(res);
 	}
 	
+	Console.WriteLine(new string('-',10));
+	Console.WriteLine("Variabili:");
+	Console.WriteLine(analiz.DumpVariabili());
 
 	ripeti = false;
 	Console.Write("\nNuove formule ?");
@@ -196,7 +183,6 @@ do
 	//Console.WriteLine(int.MaxValue);
 } while(ripeti);
 #endif
-Console.WriteLine("2*1.1-- = " + 2*(1.1-1));
 Console.WriteLine("\nFine programma.");
 Console.ReadKey();
 

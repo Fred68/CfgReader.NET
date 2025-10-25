@@ -15,7 +15,6 @@ namespace Fred68.Parser
 
 			public const char chSuffissoFloat = 'f';
 			public const char chSuffissoDouble = 'd';
-			// Nota: il carattere dell'esponenziale 'E' (notazione scientifica) è incluso tra gli operatori binari
 		
 			#region ENUM
 			public enum PromTable
@@ -26,6 +25,15 @@ namespace Fred68.Parser
 			}
 			/// <summary>
 			/// Tipo di token
+			/// Gli operatori includono l'operatore di assegnazione.
+			/// Un token di tipo 'Variabile', quando viene valutato, è trasformato nel tipo valore (numero, stringa...)
+			/// ...ma mantiene il flag per riconoscerlo per una eventuale riassegnazione.
+			/// Un 'Simbolo' è una stringa non ancora rionosciuta (es.: una variabile nuovo non ancora memorizzata).
+			/// Una 'Funzione' opera su uno o più argomenti tra parentesi. Può svolgere calcoli, es. MAX(1,2),...
+			/// ...conversioni, per es. FLOAT(), oppure altre operazioni, es.: KILL(nomevar), MAKEREADONLY(nomevar)
+			/// NOTA: non aggiungere altri tipi di token, per non complicare gli algoritmi.
+			/// Le costanti si trattano come variabili (con il flag readonly)
+			/// Conversioni, operazioni speciali ecc... come funzioni.
 			/// </summary>
 			public enum TipoTk
 			{
@@ -40,11 +48,10 @@ namespace Fred68.Parser
 				Blocco_Chiuso,		// '}'
 				Fine_Comando,		// ';'
 				Separatore,			// ',' separatore di argomenti tra parentesi
-				Operatore,			// +, +, *, !...
-				Simbolo,			// Stringa simbolica generica (variabile, funzione o parola_chiave)
-				Variabile,
-				Funzione,
-				Parola_chiave
+				Operatore,			// +, +, *, !... incluso l'operatore di assegnazione.
+				Variabile,			// Variabile riconosciuta.
+				Simbolo,			// Stringa simbolica generica (può essere variabile, funzione...)
+				Funzione			// Funzione
 			}
 		
 			/// <summary>
@@ -177,10 +184,13 @@ namespace Fred68.Parser
 			}
 			#endregion
 
-			TipoTk	_tipo;
-			TipoNum _tNum;
-			string	_testo = "";
-			Dat?	_dat;
+			#warning Al posto del flag _var mettere un enum: valore = 0, variabile, readonly...
+
+			TipoTk	_tipo;			// Tipo di token
+			TipoNum _tNum;			// Tipo numerico
+			string	_testo = "";	// Testo del token nell'espressione (valore, nome della variabile, testo dell'operatore...)
+			Dat?	_dat;			// Dato
+			bool	_var;			// E' una variabile oppure il valore della valutazione di una variabile ?
 
 			#region PROPRIETA
 			public TipoTk Tipo { get { return _tipo; } }
@@ -191,10 +201,7 @@ namespace Fred68.Parser
 				set { _dat = value; }
 			}
 			public TipoNum? TipoNumero { get { return _tNum; } }
-			public bool isDatNotNull { get {return (_dat!=null); }}
-		
-		
-
+			
 			/// <summary>
 			/// E' un valore numerico, una stringa o una variabile ?
 			/// </summary>
@@ -210,9 +217,10 @@ namespace Fred68.Parser
 							);
 					}
 			}
-
+			public bool isVar { get { return _var; } }
+			public bool isDatNotNull { get {return (_dat!=null); }}
 			/// <summary>
-			/// E' un numero ?
+			/// E' un numero (intero, float o double), esadecimale o binario ?
 			/// </summary>
 			public bool isNumero
 			{
@@ -224,9 +232,6 @@ namespace Fred68.Parser
 							);
 					}
 			}
-			/// <summary>
-			/// E' una stringa ?
-			/// </summary>
 			public bool isStringa
 			{
 				get
@@ -234,7 +239,6 @@ namespace Fred68.Parser
 					return (_tipo==TipoTk.Stringa);
 					}
 			}
-
 			/// <summary>
 			/// E' un numero o una stringa ?
 			/// </summary>
@@ -248,21 +252,13 @@ namespace Fred68.Parser
 								(_tipo==TipoTk.Stringa)
 							);
 					}
-			}
-		
-			/// <summary>
-			/// E' una funzione ?
-			/// </summary>
+			}	
 			public bool isFunzione { get {return (_tipo==TipoTk.Funzione);} }
-
-			/// <summary>
-			/// E' un operatore
-			/// </summary>
 			public bool isOperatore { get {return (_tipo==TipoTk.Operatore);} }
-		
 			public bool isOperatoreFunzione { get {return ((_tipo==TipoTk.Operatore)||(_tipo==TipoTk.Funzione));} }
-
 			public bool isVariabile { get {return (_tipo==TipoTk.Variabile);} }
+			public bool isSimbolo { get { return (_tipo==TipoTk.Simbolo);} }
+
 			#endregion
 
 
@@ -280,12 +276,13 @@ namespace Fred68.Parser
 			/// </summary>
 			/// <param name="tipo">Tipo</param>
 			/// <param name="testo">Contenuto (string)</param>
-			public Token(TipoTk tipo, string testo = "")
+			public Token(TipoTk tipo, string testo = "", bool simbolo = false)
 			{
 				_tipo = tipo;
 				_tNum = TipoNum.Nd;
 				_testo = testo;
 				_dat = null;
+				_var = simbolo;
 			}
 
 			/// <summary>
@@ -300,6 +297,7 @@ namespace Fred68.Parser
 				_tNum = tpN;
 				_testo = testo;
 				_dat = null;
+				_var = false;
 			}
 
 			/// <summary>
@@ -311,6 +309,7 @@ namespace Fred68.Parser
 				_tNum = TipoNum.Nd;
 				_testo = "";
 				_dat = null;
+				_var = false;
 			}
 
 			/// <summary>
@@ -503,19 +502,6 @@ namespace Fred68.Parser
 			}
 
 			/// <summary>
-			/// Copia il valore della variabile 'bar' nel Token
-			/// e lo imposta con il tipo di dato
-			/// </summary>
-			/// <param name="var">string</param>
-			/// <returns>false se errore</returns>
-			private bool Var2Tok(string var)
-			{
-				bool ok = false;
-
-				string x = var;
-				return ok;
-			}
-			/// <summary>
 			/// Modifica il testo dell'operatore un unario speciale,
 			/// anteponendogli un carattere speciale
 			/// </summary>
@@ -536,6 +522,7 @@ namespace Fred68.Parser
 			{
 				string val;
 				string ext = "";
+				string simb = "";
 				if(_dat != null)
 				{
 					val = _dat.ToString();	//_dat.Get().ToString(out val);
@@ -564,7 +551,9 @@ namespace Fred68.Parser
 					}
 				}
 
-				return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo}{ext} {{{val}}}";
+				if(_var)	simb="Var";
+
+				return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo}{ext} {{{val}}} {simb}";
 
 			}
 		}
