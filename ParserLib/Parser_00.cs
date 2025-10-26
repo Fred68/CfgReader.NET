@@ -11,7 +11,6 @@ using Fred68.GenDictionary;			// Per usare Dat
 using StringExtension;
 
 
-#warning ATTENZIONE: ERRORE nei calcoli con esadecimali o binari: l'operazione (es. somma) non viene eseguita
 #warning Aggiungere intestazioni ai file con Nome, Autore e riepilogo
 
 #warning Creare una classe ParseException:Exception oppure semplice per mantenere gli errori senza generare eccezioni

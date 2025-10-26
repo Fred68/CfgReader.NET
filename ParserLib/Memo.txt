@@ -87,7 +87,6 @@ Tutti gli errori, al momento, vengono segnalati con delle eccezioni: quelli di s
 
 LIMITAZIONI, CORREZIONI E MIGLIORIE
 I seguenti errori e mancanze dovranno esser corretti per primi:
-I numeri esadecimali e binari, non vengono calcolati nelle formule.
 Mancano i calcoli con le funzioni.
 
 In seguito verranno aggiunte le variabili e le operazioni booleane, incluse quelle bit per bit.
