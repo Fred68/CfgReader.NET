@@ -11,6 +11,9 @@ using Fred68.GenDictionary;			// Per usare Dat
 using StringExtension;
 
 
+#warning ATTENZIONE: ERRORE nei calcoli con esadecimali o binari: l'operazione (es. somma) non viene eseguita
+#warning Aggiungere intestazioni ai file con Nome, Autore e riepilogo
+
 #warning Creare una classe ParseException:Exception oppure semplice per mantenere gli errori senza generare eccezioni
 
 #warning Rendere private le classi interne a Parser (Operatore, Token...), dopo il debug
@@ -70,8 +73,8 @@ namespace Fred68.Parser
 
 		Operators operatori;						// Dizionario di operatori e funzioni
 		Variabili variabili;						// Dizionario delle variabili
-		
 		Token.TipoNum floatStd;						// Tipo float predefinito
+
 
 		/// <summary>
 		/// Tipo standard per numero in virgola mobile
@@ -99,6 +102,70 @@ namespace Fred68.Parser
 			
 		}
 		
+		public string Solve(string formula,bool details = false)
+		{
+			StringBuilder sb = new StringBuilder();
+			Token? res = null;	
+			List<Token>? lt = null;
+			Queue<Token>? qt = null;
+			try
+			{
+				lt = Parse(formula);					// Analizza la formula e crea lista di token in notazione infissa
+				if(lt!=null)
+				{
+					if(details)
+					{
+						sb.AppendLine(new string('-',10));
+						sb.AppendLine("Token in notazione infissa:");
+						foreach(Parser.Token tk in lt)
+						{
+							sb.AppendLine(tk.ToString());
+						}
+
+					}
+					qt = ShuntingYardReorder(lt);		// Riordina i token in notazione polacca inversa
+					if(qt!=null)
+					{
+						if(details)
+						{
+							sb.AppendLine(new string('-',10));
+							sb.AppendLine("Token in notazione polacca inversa:");
+							foreach(Parser.Token tk in qt)
+							{
+								sb.AppendLine(tk.ToString());
+							}
+						}
+						res = EvaluateRPN(qt);			// Valuta il risultato
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				sb.AppendLine(ex.Message);	
+			}
+			if(res!=null)
+			{
+				if(details)
+				{
+					sb.AppendLine(new string('-',10));
+					sb.AppendLine("Token risultante:");
+					sb.AppendLine(res.ToString());
+				}
+
+				Dat? dt = res.Dato;
+				if(dt!=null)
+				{
+					sb.AppendLine(new string('-',10));
+					sb.AppendLine("Risultato:");
+					sb.Append(dt.ToString());
+				}
+			}
+
+			return sb.ToString();
+		}
+
+
+
 		public string DumpVariabili()
 		{
 			StringBuilder sb = new StringBuilder();

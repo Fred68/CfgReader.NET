@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Fred68.GenDictionary;			// Per Dat e GenDictionary
 
-#warning Aggiungere pragma disable CS8602, possibile deferenziamento di null, ma assicurarsi che non possa esserlo mai.
+
 
 namespace Fred68.Parser
 {
@@ -164,6 +164,10 @@ namespace Fred68.Parser
 			}
 
 			/*******************************************************************************/
+			// CS8602: possibile deferenziamento di null.
+			// CS8629: il tipo valore nullable non nuò nssere null.
+			// Ma Token[] argArray contiene valori già controllati
+			#pragma warning disable CS8602
 			#region FUNZIONI di calcolo degli operatori Token _func(Token[] argArray)
 
 			Token _notImplemented(Token[] argArray)
@@ -871,9 +875,11 @@ namespace Fred68.Parser
 
 
 			#endregion
+			#pragma warning restore CS8602
 			/*******************************************************************************/
 
-
+			#pragma warning disable CS8602
+			#pragma warning disable CS8629
 			/// <summary>
 			/// Verifica i token dell'array (uno o due argomenti).
 			/// Stabilisce il tipo di token prodotto (numero o stringa) e il tipo di numero (con promozione)
@@ -969,6 +975,8 @@ namespace Fred68.Parser
 			
 				return ok;
 			}
+			#pragma warning restore CS8629
+			#pragma warning restore CS8602
 
 			/*******************************************************************************/
 			#region RIEMPIE il dizionario degli operatori e delle funzioni
@@ -1201,3 +1209,6 @@ namespace Fred68.Parser
 		}
 	}
 }
+
+
+

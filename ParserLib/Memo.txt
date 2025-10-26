@@ -1,0 +1,98 @@
+﻿ParserLib
+
+
+Parser lib
+
+Il programma analizza una stringa contenente una formula in notazione tradizionale (infissa) e calcola il risultato.
+La formula può contenere valori numerici, stringhe, variabili, funzioni ed operatori (inclusa l'assegnazione di variabili).
+
+I dati possono essere di vario tipo, sono gestiti con la classe Dat.
+
+Le variabili sono memorizzate nel dizionario della classe GenDictionary.
+
+I calcoli sono eseguiti con la classe Parser, contenente più classi, elencate di seguito.
+
+La classe CharLuTable serve per velocizzare la ricerca dei caratteri accettati, evitando la ricerca nelle stringhe.
+
+La classe Token contiene gli elementi sintattici della formula (valori numerici, stringhe, operatori e funzioni, parentesi...).
+
+Le classi di Operators contengono i dettagli di funzioni ed operatori, inclusi i delegate delle funzioni che operano sui token.
+
+La formula viene analizzata con tre algoritmi distinti, chiamati dalla funzione pubblica Solve.
+
+
+Il primo algoritmo, che analizza la formula e la suddivide in Token distinti, è svolto dalla funzione: public List<Token> Parse(string input).
+I caratteri della formula vengono letti progressivamente da una macchina a stati, la quale riconosce il tipo di token che viene letto.
+I token sono elencati in questa enumerazione:
+public enum TipoTk
+{
+	Indefinito = 0,
+	Numero,				// 100 0.2
+	Esadecimale,		// 0x2AbF
+	Binario,			// 0b10100
+	Stringa,			// "..."
+	Parentesi_Aperta,	// '('
+	Parentesi_Chiusa,	// ')'
+	Blocco_Aperto,		// '{'
+	Blocco_Chiuso,		// '}'
+	Fine_Comando,		// ';'
+	Separatore,			// ',' separatore di argomenti tra parentesi
+	Operatore,			// +, +, *, !... incluso l'operatore di assegnazione.
+	Variabile,			// Variabile riconosciuta.
+	Simbolo,			// Stringa simbolica generica (può essere variabile, funzione...)
+	Funzione			// Funzione
+}
+
+In base al carattere che viene progressivamente letto (parentesi, carattere di un operatore, carattere numerico o punto decimale...) il lettore passa da uno stato all'altro:
+public enum TkStat
+{
+	TokenNuovo,			// In attesa di nuovo token
+	Numero,				// Numero intero decimale o reale
+	NumeroIndef,		// Numero in corso di identificazione (decimale, esadecimale o binario)
+	Stringa,			// Testo
+	Esadecimale,		// Numero esadecimale intero
+	Binario,			// Numero binario intero
+	ParentesiAperta,	// (
+	ParentesiChiusa,	// )
+	BloccoAperto,		// {
+	BloccoChiuso,		// }
+	FineComando,		// ;
+	Separatore,			// ,
+	Operatore,			// Operatore
+	TokenCompletato,	// Finito token
+	Simbolo				// Stringa simbolica generica (variabile, funzione o parola_chiave)
+	}
+Appena un token viene completato, viene inserito nella lista dei token che viene restituita al termine della funzione.
+Il riconoscimento di un token è semplice per alcuni caratteri (es.: parentesi) ma più complesso per funzioni o operatori di più caratteri o per i formati numerici (intero, binario, in virgola mobile a singola e doppia precisione). Per questa ragione la funzione risulta piuttosto complessa e con molti flag per segnalare alcune condizioni (per esempio se è stato trovato il punto decimale).
+L'algoritmo, seppur riveduto e tradotto dal C++ al C#, è basato sul fantastico lavoro di One Lone Coder (https://github.com/OneLoneCoder), che ringrazio.
+
+
+Il secondo algoritmo legge la lista dei token e li riordina in notazione polacca inversa (RPN). E' l'algoritmo di 'shunting yard' (scalo ferroviario), sviluppato dal famoso matematico Edsger Dijkstra ( https://en.wikipedia.org/wiki/Shunting_yard_algorithm), che legge i token dalla lista e li accoda, parcheggiando però gli operatori in uno stack separato, in base alla loro precedenza. Online si trovano parecchie spiegazioni e video.
+Il ciclo si complica un po' se si considerano anche le parentesi, gli operatori unari, per esempio l'incremento (postisso, es.; 3++), e gli operatori di segno (es.:-4*2 oppure 1.2E+4), che devono essere identificati per distinguerli da somma e sottrazione.
+
+
+Il terzo algoritmo valuta finalmente l'espressione in RPN, memorizzata in una coda, facendo uso di uno stack, in cui impilare via via i valori letti dalla coda. Se invece viene letto non un valore ma un operatore (o una funzione), dallo stack viene prelevato un numero di valori corrispondente al numero di argomenti dell'operatore (o della funzione). Viene effettuato il calcolo ed il risultato viene rimesso nello stack, finché la coda è finita e lo stack con un solo elemento.
+In caso di calcoli tra token di tipo diverso, è necessario usare delle tabelle di promozione, per determinare, in base all'operazione e ai token in ingresso, il tipo di valore in uscita, che di solito è quello di precisione più elevata (la somma tra un intero e un numero in doppia precisione è un numero in doppia precisione). In alcuni casi, come la divisione, il risultato è in virgola mobile, anche se gli operandi sono entrambi interi. Nel caso della divisione intera, l'operazione non è possibile con operandi in virgola mobile.
+Il calcolo viene svolto attraverso dei 'delegate Token pSolver(Token[] argArray)' (memorizzati negli operatori), ossia dei puntatori alle funzioni che eseguono effettivamente le operazioni sui valori dei token.
+
+All'algoritmo 'standard' è stata aggiunta la gestione delle variabili, contenute in un dizionario generico (GenDictionary), che ha come chiave il nome della variabile e come valore un oggetto di classe Dat, in grado di trattare, con un'unica sintassi e la chiave dynamic, dati di tipo diverso nella stessa collezione.
+Ciò richiede alcune modifiche al calcolo dell'espressione in RPN. Quando un token che può contenere un valore (per es. un numero, una stringa ma non una parentesi) viene estratto dalla coda, ne viene subito valutato il testo, calcolandone il valore. Nel caso il testo sia il nome di una variabile, il token viene trasformato nel corrispondente numerico o stringa, mantenendo però traccia (con il flag bool _var), che si tratta di una variabile.
+
+Nel caso dell'operatore '=', oltre al calcolo del risultato dell'espressione (l'espressione x=1 deve restituire 1 come risultato), va eseguita l'assegnazione.
+Se il primo operando (a sinistra del simbolo '=') è una variabile, anche se il token è già stato valutato, viene riconosciuto come tale (con il flag) ed aggiornato il dizionario delle variabili.
+Se invece è un simbolo non riconosciuto tra le variabili, viene semplicemente aggiunto.
+
+
+Tutti gli errori, al momento, vengono segnalati con delle eccezioni: quelli di sintassi (parentesi non bilanciate, tipi non ammessi...) lanciando delle eccezioni con descrizione, quelli numerici (overflow, divisione per zero) affidandosi a quelle di sistema durante le chiamate dei delegate di calcolo.
+
+LIMITAZIONI, CORREZIONI E MIGLIORIE
+I seguenti errori e mancanze dovranno esser corretti per primi:
+I numeri esadecimali e binari, non vengono calcolati nelle formule.
+Mancano i calcoli con le funzioni.
+
+In seguito verranno aggiunte le variabili e le operazioni booleane, incluse quelle bit per bit.
+Dovranno poi essere introdotti i test con gli operatori == >= != ecc...
+
+Poi dovranno esser riviste le eccezioni (probabilmente con un classe specifica).
+
+Infine il progetto dovrà prima esser separato da CfgReader e poi unito nuovamente.

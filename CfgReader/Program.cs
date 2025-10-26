@@ -2,8 +2,8 @@
 #define _CFG
 //#undef _CFG
 
-#define _ANALZ
-//#undef _ANALZ
+#define _ANALIZ
+//#undef _ANALIZ
 
 // See https://aka.ms/new-console-template for more information
 
@@ -59,7 +59,7 @@ cf2.Clear();										// Cancella tutti i dati letti (della classe base)
 
 Console.WriteLine("2*1.1-- = " + 2*(1.1-1));
 
-#if _ANALZ
+#if _ANALIZ
 Console.WriteLine(new string('-',20));
 Console.WriteLine("Analizzatore");
 
@@ -91,76 +91,13 @@ do
 		}
 	
 	} while(bCont);
-	//formule.Add("0xFF");
-	//formule.Add("0b010+100");
-
-
-	// formule.Add("(2+3^2))*(5+1)");
-	// formule.Add("{2+3^2}*{(5+1)");
-
 
 	foreach(string f in formule)
 	{
-		List<Parser.Token> lt = new List<Parser.Token>();
-		Queue<Parser.Token> qt = new Queue<Parser.Token>();
-		Parser.Token res = new Parser.Token();
-
 		Console.WriteLine(new string('-',20));
 	
-		ok = true;
-		if(ok)
-		{
-			try
-			{
-				lt = analiz.Parse(f);
-			}
-			catch(Exception ex)
-			{
-				ok = false;
-				Console.WriteLine(ex.Message);
-			}
-		}
-
-		if(ok)
-		{
-			try
-			{
-				qt = analiz.ShuntingYardReorder(lt);
-			}
-			catch (Exception ex)
-			{
-				ok = false;
-				Console.WriteLine(ex.Message);
-			}
-		}
-
-		if(ok)
-		{
-			try
-			{
-				res = analiz.EvaluateRPN(qt);
-			}
-			catch (Exception ex)
-			{
-				ok = false;
-				Console.WriteLine(ex.Message);
-			}
-		}
-	
 		Console.WriteLine($"Formula: {f}");
-		Console.WriteLine($"Token (infix):");
-		foreach(Parser.Token tk in lt)
-		{
-			Console.WriteLine(tk.ToString());
-		}
-		Console.WriteLine(new string('-',10));
-		Console.WriteLine($"Token (rpn):");
-		foreach(Parser.Token tk in qt)
-		{
-			Console.WriteLine(tk.ToString());
-		}
-		Console.WriteLine(new string('-',10));
-		Console.WriteLine($"Risultato:");
+		string res = analiz.Solve(f,true);
 		Console.WriteLine(res);
 	}
 	
@@ -178,9 +115,6 @@ do
 				ripeti = true;
 			}
 		}
-
-	//Console.WriteLine(uint.MaxValue);
-	//Console.WriteLine(int.MaxValue);
 } while(ripeti);
 #endif
 Console.WriteLine("\nFine programma.");

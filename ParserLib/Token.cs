@@ -383,6 +383,8 @@ namespace Fred68.Parser
 							ok = int.TryParse(_testo, System.Globalization.NumberStyles.AllowHexSpecifier, System.Globalization.CultureInfo.InvariantCulture, out x);
 							if(ok)
 							{
+								_tipo = TipoTk.Numero;
+								_tNum = TipoNum.Int;
 								_dat = new Dat(x);
 							}
 						}
@@ -394,6 +396,8 @@ namespace Fred68.Parser
 							ok = int.TryParse(_testo, System.Globalization.NumberStyles.AllowBinarySpecifier, System.Globalization.CultureInfo.InvariantCulture, out x);
 							if(ok)
 							{
+								_tipo = TipoTk.Numero;
+								_tNum = TipoNum.Int;
 								_dat = new Dat(x);
 							}
 						}
