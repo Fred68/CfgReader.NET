@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Fred68.GenDictionary;			// Per Dat e GenDictionary
 
+#warning Aggiungere pragma disable CS8602, possibile deferenziamento di null, ma assicurarsi che non possa esserlo mai.
 
 namespace Fred68.Parser
 {
@@ -150,8 +151,6 @@ namespace Fred68.Parser
 			Dictionary<string,OpBase>		_opers;			// Dizionario di operatori e funzioni
 			List<string>					_specOp;		// Lista dei nomi degli operatori speciali (unari)
 			Variabili						_vars;
-
-			#warning AGGIUNGERE (argomenti del costruttore) il dizionario delle parole chiave (in futuro)
 
 			/// <summary>
 			/// Ctor
@@ -581,7 +580,7 @@ namespace Fred68.Parser
 							{
 								case Token.TipoNum.Int:
 								{
-									throw new Exception("Errore nella tabella idi promozione della divisione");
+									throw new Exception("Errore nella tabella di promozione della divisione");
 								}
 								//break;
 								case Token.TipoNum.Flt:
@@ -802,7 +801,7 @@ namespace Fred68.Parser
 				Token.TipoNum tn;
 
 				// Calcola il token di uscita: l'espressione (a=1) deve restituire 1, dopo aver assegnato 1 ad a
-				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Std, out tp, out tn,true))
 				{
 					switch(tp)
 					{
@@ -844,14 +843,22 @@ namespace Fred68.Parser
 						//break;
 					}
 
-					Token pArg = argArray[1];
+					Token arg = argArray[1];
+					if(arg.isVar)						// E' un token di tipo 'variabile' (non ancora valutata) ?
+					{
+						string nome = arg.Testo;
+						_vars[nome] = _out.Dato.Get();
+					}
+					else if(arg.isSimbolo)
+					{
+						string nome = arg.Testo;
+						_vars[nome] = _out.Dato.Get();
 
-					// Verifica il primo operatore, argArray[1]
-					// Se è un simbolo: aggiunge la variabile con quel nome
-					// Se è una variabile esistente: la aggiorna, però...
-					// ...deve aggiornare anche il tipo di variabile o eseguire la conversione del risultato ?
-					// Si decide di aggiornare in toto la variabile, incluso il tipo.
-					// Per le conversioni, usare le funzioni di conversione.
+					}
+					else
+					{
+						throw new Exception("L'argomento a sinistra dell'assegnazione deve essere il nome di una variabile");
+					}
 
 				}
 				else
@@ -877,9 +884,10 @@ namespace Fred68.Parser
 			/// <param name="iProm"></param>
 			/// <param name="tp">out Token.TipoTk</param>
 			/// <param name="tn">out Token.TipoNum</param>
+			/// <param name="assign">Assegnazione di un simbolo o di una variabile</param>
 			/// <returns>true se tipi corretti</returns>
 			/// <exception cref="Exception"></exception>
-			private bool TipoTkFromPromTable(Token[] argArray, int nargs, Token.PromTable iProm, out Token.TipoTk tp, out Token.TipoNum tn)
+			private bool TipoTkFromPromTable(Token[] argArray, int nargs, Token.PromTable iProm, out Token.TipoTk tp, out Token.TipoNum tn, bool assign = false)
 			{
 				bool ok = false;
 				int numOk = nargs;				// Numero di argomenti (1 o 2), messo a 0 negli altri casi
@@ -941,6 +949,12 @@ namespace Fred68.Parser
 						else if((a1.isStringa)&&(a2.isStringa))
 						{
 							tp = Token.TipoTk.Stringa;
+							ok = true;
+						}
+						else if(assign && (a2.isSimbolo || a2.isVar))
+						{
+							tp = a1.Tipo;
+							tn = (Token.TipoNum)a1.TipoNumero;
 							ok = true;
 						}
 						else

@@ -217,6 +217,9 @@ namespace Fred68.Parser
 							);
 					}
 			}
+			/// <summary>
+			/// E' una variabile oppure è valore numerico derivato dalla valutazione di una variabile ?
+			/// </summary>
 			public bool isVar { get { return _var; } }
 			public bool isDatNotNull { get {return (_dat!=null); }}
 			/// <summary>
@@ -256,6 +259,9 @@ namespace Fred68.Parser
 			public bool isFunzione { get {return (_tipo==TipoTk.Funzione);} }
 			public bool isOperatore { get {return (_tipo==TipoTk.Operatore);} }
 			public bool isOperatoreFunzione { get {return ((_tipo==TipoTk.Operatore)||(_tipo==TipoTk.Funzione));} }
+			/// <summary>
+			/// E' un token di tipo 'Varianile' ?
+			/// </summary>
 			public bool isVariabile { get {return (_tipo==TipoTk.Variabile);} }
 			public bool isSimbolo { get { return (_tipo==TipoTk.Simbolo);} }
 
