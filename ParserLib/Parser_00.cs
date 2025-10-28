@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Fred68.GenDictionary;			// Per usare Dat
 using StringExtension;
 
+#error LOOP INFINITO CON FUNZIONE: sin(...) operatore valore e non con valore operatore sin() !!!
+
 
 #warning Aggiungere intestazioni ai file con Nome, Autore e riepilogo
 
