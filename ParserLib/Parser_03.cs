@@ -31,7 +31,8 @@ namespace Fred68.Parser
 		{
 			Token _out = new Token();							// Token finale con il risultato
 			Stack<Token> _stack = new Stack<Token>();			// Stack temporanei per i token letti dalla coda di input
-			Token[] _args = new Token[ini_arg_array_sz];		// Array temporaneo con gli argomenti
+			//Token[] _args = new Token[ini_arg_array_sz];		// Array temporaneo con gli argomenti
+			ArgArray<Token> _args = new ArgArray<Token>(ini_arg_array_sz);
 
 			#warning Ammesse solo funzioni a numero fisso di argomenti [per ora].
 			#warning Se numero variabile, analizzare il conteggio tra le parentesi e rinominare le funzioni con un numero.
@@ -50,12 +51,13 @@ namespace Fred68.Parser
 						Operators.OpBase? op = operatori[t.Testo,Operators.TipoOp.Indefinito];	// Ottiene operatore o funzione
 						if( op != null)
 						{
-							uint nargs = op.Argomenti;
+							int nargs = op.Argomenti;					// Numero di argomento dell'operatore
 							if(nargs > _args.Length)					// Ridimensiona l'array, se necessario
 							{
-								Array.Resize(ref _args, (int)nargs);
+								//Array.Resize(ref _args, (int)nargs);
+								_args.Resize(nargs);
 							}
-							
+							_args.nArgs = nargs;
 							for(int i=0; i < nargs;	i++)				// Estrae il numero di argomenti dalla coda di input.
 							{
 								if(input.Count > 0)

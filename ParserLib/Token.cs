@@ -119,18 +119,18 @@ namespace Fred68.Parser
 				_pT = new TipoNum[_numPromTab,szpt,szpt];
 				for(int npt = 0; npt < _numPromTab; npt++)			// Riempie le tabelle di promozione con valori standard
 				{
-					for(int i = 0; i < szpt; i++)								// Se uno degli operandi numerici è indefinito...
+					for(int i = 0; i < szpt; i++)					// Se uno degli operandi numerici è indefinito...
 						{
-						_pT[0,(int)TipoNum.Nd,i] = TipoNum.Nd;	// ...il risultato è indefinito
+						_pT[0,(int)TipoNum.Nd,i] = TipoNum.Nd;		// ...il risultato è indefinito
 						_pT[0,i,(int)TipoNum.Nd] = TipoNum.Nd;
 						}
-					for(int i=1; i < szpt; i++)									// Tra due operandi di precisione diversa... 
+					for(int i=1; i < szpt; i++)						// Tra due operandi di precisione diversa... 
 						for(int j=1; j < szpt; j++)
 							{
 								if(npt != (int)PromTable.Int)					// Per quasi tutti i casi...
 									_pT[npt,i,j] = (TipoNum)int.Max(i,j);		// ...la precisione del risultato è quella maggiore
 								else
-									_pT[npt,i,j] = TipoNum.Nd;			// Per operazioni intere: sempre indefinito.
+									_pT[npt,i,j] = TipoNum.Nd;		// Per operazioni intere: sempre indefinito.
 							}
 				}
 

@@ -43,13 +43,14 @@ namespace Fred68.Parser
 			// Assegnazione
 			public const string strAssign = "=";
 
-			public delegate Token pSolver(Token[] argArray);	// Delegate
+			//public delegate Token pSolver(Token[] argArray);	// Delegate
+			public delegate Token pSolver(ArgArray<Token> argArray);	// Delegate
 
 			/*******************************************************************************/
 			#region CLASSI Operator e Function (+OpBase)
 			public class OpBase
 			{
-				uint _args;
+				int _args;
 				TipoOp _tOp;
 				pSolver _pSolve;
 
@@ -58,7 +59,7 @@ namespace Fred68.Parser
 				/// </summary>
 				/// <param name="argomenti"></param>
 				/// <exception cref="Exception"></exception>
-				protected OpBase(uint argomenti,TipoOp tOp,pSolver pSolve)
+				protected OpBase(int argomenti,TipoOp tOp,pSolver pSolve)
 				{
 					if(!(argomenti > 0))
 						throw new Exception("[GenOperator] argomenti > 0 in Ctor");
@@ -70,7 +71,7 @@ namespace Fred68.Parser
 				/// <summary>
 				/// Numero di argomenti
 				/// </summary>
-				public uint Argomenti {get {return _args;}}
+				public int Argomenti {get {return _args;}}
 
 				public bool IsOperator {get {return _tOp == TipoOp.Operatore;}}
 				public bool IsFunction {get {return _tOp == TipoOp.Funzione;}}
@@ -98,7 +99,8 @@ namespace Fred68.Parser
 				/// </summary>
 				/// <param name="argArray"></param>
 				/// <returns>Token</returns>
-				public Token Solve(Token[] argArray)
+				
+				public Token Solve(ArgArray<Token> argArray)		// public Token Solve(Token[] argArray)
 				{
 					return _pSolve(argArray);
 				}
@@ -108,7 +110,7 @@ namespace Fred68.Parser
 			{
 				uint _prec = 0;
 
-				public Operator(uint argomenti, uint precedenza, pSolver pSolve) : base(argomenti,TipoOp.Operatore,pSolve)
+				public Operator(int argomenti, uint precedenza, pSolver pSolve) : base(argomenti,TipoOp.Operatore,pSolve)
 				{
 					if(!(precedenza < int.MaxValue))
 						throw new Exception("[Operatori] precedenza < int.MaxValue 0 in Ctor");
@@ -134,7 +136,7 @@ namespace Fred68.Parser
 				/// Ctor
 				/// </summary>
 				/// <param name="argomenti"></param>
-				public Function(uint argomenti, pSolver pSolve) : base(argomenti,TipoOp.Funzione,pSolve)
+				public Function(int argomenti, pSolver pSolve) : base(argomenti,TipoOp.Funzione,pSolve)
 				{}
 
 				/// <summary>
@@ -170,7 +172,7 @@ namespace Fred68.Parser
 			#pragma warning disable CS8602
 			#region FUNZIONI di calcolo degli operatori Token _func(Token[] argArray)
 
-			Token _notImplemented(Token[] argArray)
+			Token _notImplemented(ArgArray<Token> argArray)
 			{
 				throw new NotImplementedException("Operatore o funzione non implementato, al momento...");
 				//return (Token) null;
@@ -179,13 +181,13 @@ namespace Fred68.Parser
 			// Esecuzione delle operazioni tra token
 			// Gli argomento sono in ordine inverso: Array[0] è l'ultimo, in notazione infissa
 			// Ci sono alcune eccezioni aggiuntive, oltre a quelle matematiche
-			Token _sottrazione(Token[] argArray)
+			Token _sottrazione(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*2,*/ Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -236,13 +238,13 @@ namespace Fred68.Parser
 				}
 				return _out;
 			}
-			Token _sottrazione_unaria(Token[] argArray)
+			Token _sottrazione_unaria(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 1, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*1,*/ Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -293,13 +295,13 @@ namespace Fred68.Parser
 				}
 				return _out;
 			}
-			Token _decremento(Token[] argArray)
+			Token _decremento(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 1, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*1,*/ Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -350,13 +352,13 @@ namespace Fred68.Parser
 				}
 				return _out;
 			}
-			Token _somma(Token[] argArray)
+			Token _somma(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*2,*/ Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -407,13 +409,13 @@ namespace Fred68.Parser
 
 				return _out;
 			}
-			Token _somma_unaria(Token[] argArray)
+			Token _somma_unaria(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 1, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*1,*/ Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -465,13 +467,13 @@ namespace Fred68.Parser
 
 				return _out;
 			}
-			Token _incremento(Token[] argArray)
+			Token _incremento(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 1, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*1,*/ Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -516,13 +518,13 @@ namespace Fred68.Parser
 
 				return _out;
 			}
-			Token _prodotto(Token[] argArray)
+			Token _prodotto(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Std, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*2,*/ Token.PromTable.Std, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -567,13 +569,13 @@ namespace Fred68.Parser
 
 				return _out;
 			}
-			Token _divisione(Token[] argArray)
+			Token _divisione(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Div, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*2,*/ Token.PromTable.Div, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -613,13 +615,13 @@ namespace Fred68.Parser
 				}
 				return _out;
 			}
-			Token _divisioneInt(Token[] argArray)
+			Token _divisioneInt(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Int, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*2,*/ Token.PromTable.Int, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -659,13 +661,13 @@ namespace Fred68.Parser
 				}
 				return _out;
 			}
-			Token _restoInt(Token[] argArray)
+			Token _restoInt(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Int, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*2,*/ Token.PromTable.Int, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -705,13 +707,13 @@ namespace Fred68.Parser
 				}
 				return _out;
 			}
-			Token _potenza(Token[] argArray)
+			Token _potenza(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Div, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*2,*/ Token.PromTable.Div, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -751,13 +753,13 @@ namespace Fred68.Parser
 				}
 				return _out;
 			}
-			Token _esponenziale(Token[] argArray)
+			Token _esponenziale(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
-				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Div, out tp, out tn))
+				if(TipoTkFromPromTable(argArray, /*2,*/ Token.PromTable.Div, out tp, out tn))
 				{
 					switch(tp)
 					{
@@ -798,14 +800,14 @@ namespace Fred68.Parser
 				return _out;
 			}
 		
-			Token _assegnazione(Token[] argArray)
+			Token _assegnazione(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
 				Token.TipoTk tp;
 				Token.TipoNum tn;
 
 				// Calcola il token di uscita: l'espressione (a=1) deve restituire 1, dopo aver assegnato 1 ad a
-				if(TipoTkFromPromTable(argArray, 2, Token.PromTable.Std, out tp, out tn,true))
+				if(TipoTkFromPromTable(argArray, /*2,*/ Token.PromTable.Std, out tp, out tn,true))
 				{
 					switch(tp)
 					{
@@ -875,6 +877,82 @@ namespace Fred68.Parser
 
 
 			#endregion
+			/*******************************************************************************/
+			#region FUNZIONI di calcolo delle funzioni Token _func(Token[] argArray)
+			Token _sin(ArgArray<Token> argArray)
+			{
+				Token _out = new Token();
+				if(CheckNumericArgs(argArray,1))
+				{
+					
+					switch(argArray[0].TipoNumero)
+					{
+						case Token.TipoNum.Int:
+						case Token.TipoNum.Flt:
+						{
+							_out = new Token(Token.TipoTk.Numero,Token.TipoNum.Flt,"");
+							float x = MathF.Sin((float)argArray[0].Dato.Get());
+							_out.Dato = new Dat(x);
+						}
+						break;
+						case Token.TipoNum.Dbl:
+						{
+							_out = new Token(Token.TipoTk.Numero,Token.TipoNum.Dbl,"");
+							double x = Math.Sin((double)argArray[0].Dato.Get());
+							_out.Dato = new Dat(x);
+
+						}
+						break;
+						default:
+							throw new Exception("Operazione su token numerico errato");
+						//break;
+					}
+				}
+				else
+				{
+					throw new Exception("Operazione su token non numerico");	
+				}
+				return _out;
+			}
+
+			Token _max(ArgArray<Token> argArray)
+			{
+				Token _out = new Token();
+				if(CheckNumericArgs(argArray,1))
+				{
+					
+					switch(argArray[0].TipoNumero)
+					{
+						case Token.TipoNum.Int:
+						case Token.TipoNum.Flt:
+						{
+							_out = new Token(Token.TipoTk.Numero,Token.TipoNum.Flt,"");
+							float x = MathF.Sin((float)argArray[0].Dato.Get());
+							_out.Dato = new Dat(x);
+						}
+						break;
+						case Token.TipoNum.Dbl:
+						{
+							_out = new Token(Token.TipoTk.Numero,Token.TipoNum.Dbl,"");
+							double x = Math.Sin((double)argArray[0].Dato.Get());
+							_out.Dato = new Dat(x);
+
+						}
+						break;
+						default:
+							throw new Exception("Operazione su token numerico errato");
+						//break;
+					}
+				}
+				else
+				{
+					throw new Exception("Operazione su token non numerico");	
+				}
+				return _out;
+			}
+
+			
+			#endregion
 			#pragma warning restore CS8602
 			/*******************************************************************************/
 
@@ -893,10 +971,10 @@ namespace Fred68.Parser
 			/// <param name="assign">Assegnazione di un simbolo o di una variabile</param>
 			/// <returns>true se tipi corretti</returns>
 			/// <exception cref="Exception"></exception>
-			private bool TipoTkFromPromTable(Token[] argArray, int nargs, Token.PromTable iProm, out Token.TipoTk tp, out Token.TipoNum tn, bool assign = false)
+			private bool TipoTkFromPromTable(ArgArray<Token> argArray, /*int nargs,*/ Token.PromTable iProm, out Token.TipoTk tp, out Token.TipoNum tn, bool assign = false)
 			{
 				bool ok = false;
-				int numOk = nargs;				// Numero di argomenti (1 o 2), messo a 0 negli altri casi
+				int numOk = argArray.nArgs;		// Numero di argomenti (1 o 2), messo a 0 negli altri casi
 				Token? a1, a2;					// Token 1° e 2° argomento
 				a1 = a2 = null;
 				tp = Token.TipoTk.Indefinito;		// Tipo di token in output
@@ -975,6 +1053,37 @@ namespace Fred68.Parser
 			
 				return ok;
 			}
+
+			/// <summary>
+			/// Verifica che tutti gli argomenti siano numerici
+			/// </summary>
+			/// <param name="argArray"></param>
+			/// <param name="nargs"></param>
+			/// <returns></returns>
+			private bool CheckNumericArgs(ArgArray<Token> argArray, int nargs)
+			{
+				bool ok = true;
+				Token tk;
+				for(int i=0; i < nargs;	i++)
+				{
+					tk = argArray[i];
+					if(tk != null)
+					{
+						if(!tk.isNumero)
+						{
+							ok = false;
+							break;
+						}
+					}
+					else
+					{
+						ok = false;
+						throw new Exception("Argomento null");
+					}
+
+				}
+				return ok;
+			}
 			#pragma warning restore CS8629
 			#pragma warning restore CS8602
 
@@ -1028,7 +1137,7 @@ namespace Fred68.Parser
 				/////////////////////////////////////////////////////////
 
 				// Funzioni con un argomento
-				Add("sin".ToUpper(),new Function(1,_notImplemented));		// <= DA SCRIVERE !!!
+				Add("sin".ToUpper(),new Function(1,_sin));
 				Add("max".ToUpper(),new Function(2,_notImplemented));		// <= DA SCRIVERE !!!
 				
 				#warning Aggiungere funzioni di conversione INT() FLOAT()...
