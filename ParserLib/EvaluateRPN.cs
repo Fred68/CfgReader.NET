@@ -37,7 +37,9 @@ namespace Fred68.Parser
 			#warning Se numero variabile, analizzare il conteggio tra le parentesi e rinominare le funzioni con un numero.
 
 			foreach(Token t in input)
+			//while(input.Count > 0) 
 			{	
+				//Token t = input.Dequeue();
 				if(t.isNumeroStringa)
 				{
 					t.ValutaVal();

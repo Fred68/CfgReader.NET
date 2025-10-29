@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Fred68.GenDictionary;			// Per usare Dat
+using StringExtension;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Data;
@@ -6,9 +9,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using Fred68.GenDictionary;			// Per usare Dat
-using StringExtension;
 
 #warning LOOP INFINITO CON FUNZIONE: sin(...) in Shuntig Yard...: sin(PI)*2 !!!
 
@@ -32,6 +32,8 @@ namespace Fred68.Parser
 	{
 		
 		const int ini_arg_array_sz = 3;				// Dimensione (iniziale) dell'array degli argomenti
+
+		public delegate void ShowData(Token? tk, Queue<Token>? inpQ, Stack<Token>? stk, Queue<Token>? outQ);
 
 		#if !_LU_TABLES_EXTENSION
 		
@@ -76,10 +78,18 @@ namespace Fred68.Parser
 		Variabili variabili;						// Dizionario delle variabili
 		Token.TipoNum floatStd;						// Tipo float predefinito
 
-		Queue<Token>? _queShow = null;
-		Stack<Token>? _stkShow = null;
-		Token? _tkShow = null;
+		ShowData? pShow = null;
+		bool _showEnabled;
+		Token? _showTk = null;
+		Queue<Token>? _showInp = null;
+		Stack<Token>? _showStk = null;
+		Queue<Token>? _showOut = null;
 		
+		public bool ShowEnabled
+			{
+				get { return _showEnabled; }
+				set { _showEnabled = value; }	
+			}
 
 		/// <summary>
 		/// Tipo standard per numero in virgola mobile
@@ -93,7 +103,7 @@ namespace Fred68.Parser
 		/// <summary>
 		/// Ctor
 		/// </summary>
-		public Parser()
+		public Parser(ShowData? show = null)
 		{
 			variabili = new Variabili();
 			operatori = new Operators(variabili);				// Le funzioni devono avere acesso alle variabili
@@ -105,14 +115,26 @@ namespace Fred68.Parser
 			variabili["Pippo"] = 2.4f;
 			variabili["Pluto"] = "Pluto!";
 			
+			pShow = show;
+			if(pShow != null)	_showEnabled = true;
 		}
 		
+		public void Show()
+		{
+			if((pShow != null) && _showEnabled)
+			{
+				pShow(_showTk, _showInp, _showStk, _showOut);
+				Console.ReadKey();
+			}
+		}
+
 		public string Solve(string formula,bool details = false)
 		{
 			StringBuilder sb = new StringBuilder();
 			Token? res = null;	
 			Queue<Token>? lt = null;
 			Queue<Token>? qt = null;
+
 			try
 			{
 				lt = ParseFormula(formula);					// Analizza la formula e crea lista di token in notazione infissa

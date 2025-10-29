@@ -7,10 +7,11 @@
 
 // See https://aka.ms/new-console-template for more information
 
-using System.Text;
 using Fred68.CfgReader;
 using Fred68.GenDictionary;
 using Fred68.Parser;
+using System.Text;
+using static Fred68.Parser.Parser;
 
 string filename = "esempio.txt";
 Console.WriteLine("Avvio programma.");
@@ -66,8 +67,10 @@ Console.WriteLine("2*1.1-- = " + 2*(1.1-1));
 Console.WriteLine(new string('-',20));
 Console.WriteLine("Analizzatore");
 
-Parser analiz = new Fred68.Parser.Parser();
+Parser analiz = new Fred68.Parser.Parser(ShowData);
 analiz.FloatStd = Parser.Token.TipoNum.Dbl;
+
+analiz.ShowEnabled = true;
 
 List<string> formule = new List<string>();
 
@@ -90,7 +93,6 @@ do
 		{
 			if(inpf.Length > 0)
 			{
-
 				formule.Add(inpf);
 				bCont = true;
 			}
@@ -103,7 +105,12 @@ do
 		Console.WriteLine(new string('-',40));
 	
 		Console.WriteLine($"Formula: {f}");
+		
+		int cursorLeft = Console.CursorLeft;
+		int cursorTop = Console.CursorTop;
 		string res = analiz.Solve(f,true);
+		Console.SetCursorPosition(cursorLeft,cursorTop);
+
 		Console.WriteLine(res);
 	}
 	
@@ -111,32 +118,98 @@ do
 	Console.WriteLine("Variabili:");
 	Console.WriteLine(analiz.DumpVariabili());
 
-	ripeti = false;
-	Console.Write("\nNuove formule ?");
-	string? inpf2 = Console.ReadLine();
-	if(inpf2 != null)
-		{
-			if((inpf2.ToUpper()!="N") && (inpf2.ToUpper()!="n"))
-			{
-				ripeti = true;
-			}
-		}
+	ripeti = (formule.Count > 0) ? true : false;
+
 } while(ripeti);
+
 #endif
 Console.WriteLine("\nFine programma.");
 Console.ReadKey();
 
-
+void ShowData(Token? tk, Queue<Token>? inpQ, Stack<Token>? stk, Queue<Token>? outQ)
+{
+	StringBuilder sb = new StringBuilder();
+	if(tk != null)
+	{
+		sb.Clear();
+		Console.SetCursorPosition(0,0);
+		sb.Append("Token: ");
+		sb.Append(tk.ToString());
+		sb.Append(new string(' ',Console.WindowWidth-sb.Length-1));
+		Console.Write(sb.ToString());
+	}
+	else
+	{
+		Console.SetCursorPosition(0,0);
+		Console.Write(new string(' ',Console.WindowWidth-1));
+	}
+	if(inpQ != null)
+	{
+		sb.Clear();
+		Console.SetCursorPosition(0,1);
+		sb.Append("InpQ: ");
+		foreach(Token t in inpQ)
+		{
+			sb.Append(t.ToString("s")+" ");
+		}
+		int x = Console.WindowWidth-sb.Length-1;
+		if(x>0) sb.Append(new string(' ',x));
+		Console.Write(sb.ToString());
+	}
+	else
+	{
+		Console.SetCursorPosition(0,1);
+		Console.Write(new string(' ',Console.WindowWidth-1));
+	}
+	if(stk != null)
+	{
+		sb.Clear();
+		Console.SetCursorPosition(0,2);
+		sb.Append("Stk: ");
+		foreach(Token t in stk.Reverse())
+		{
+			sb.Append(t.ToString("s")+" ");
+		}
+		int x = Console.WindowWidth-sb.Length-1;
+		if(x>0) sb.Append(new string(' ',x));
+		Console.Write(sb.ToString());
+	}
+	else
+	{
+		Console.SetCursorPosition(0,2);
+		Console.Write(new string(' ',Console.WindowWidth-1));
+	}
+	if(outQ != null)
+	{
+		sb.Clear();
+		Console.SetCursorPosition(0,3);
+		sb.Append("outQ: ");
+		foreach(Token t in outQ)
+		{
+			sb.Append(t.ToString("s")+" ");
+		}
+		int x = Console.WindowWidth-sb.Length-1;
+		if(x>0) sb.Append(new string(' ',x));
+		Console.Write(sb.ToString());
+	}
+	else
+	{
+		Console.SetCursorPosition(0,3);
+		Console.Write(new string(' ',Console.WindowWidth-1));
+	}
+	Console.SetCursorPosition(0,4);
+	Console.Write(new string('-',Console.WindowWidth-1));
+}
 
 
 class CfgR2 : CfgReader
-	{
+{
 	public int Paperino;
 	public float ccc;
 	public List<int> ddd;
 
 	public string Dump()
-		{
+	{
 		StringBuilder sb = new StringBuilder();
 		sb.AppendLine($"CfgR2.Dump():");
 		sb.AppendLine($"Paperino={Paperino}");
@@ -144,6 +217,6 @@ class CfgR2 : CfgReader
 		sb.AppendLine($"ddd={ddd}");
 
 		return sb.ToString();
-		}
 	}
+}
 

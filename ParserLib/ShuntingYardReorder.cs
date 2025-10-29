@@ -27,27 +27,37 @@ namespace Fred68.Parser
 		public Queue<Token> ShuntingYardReorder(Queue<Token> input)
 		{
 			Queue<Token> _out = new Queue<Token>();		// Coda (di uscita)
-			Stack<Token> _ops = new Stack<Token>();		// Pila (di operatori)
+			Stack<Token> _ops = new Stack<Token>();		// Pila (di operatori)			
+
+			_showInp = input;
+			_showOut = _out;
+			_showStk = _ops;
 
 			int iCicli = 0;									// Contatore e token precedente...
 			Token tkPrec = new Token(Token.TipoTk.Numero);	// ...usati per identificare operatori prefissi unari (es.: +5, -2)
-
+			
+			Show();
+			
 			while(input.Count > 0)
 			{
-				
 				Token t = input.Dequeue();	// Estrae i token dalla coda, in ordine inverso rispetto a come sono stati inseriti
+
+				_showTk = t;
+				Show();
 
 				// --> Se è un numero, una stringa o una variabile, o se è un simbolo (i.e. variabile non ancora dichiarata)
 				if((t.isValore) || (t.isSimbolo))		// Lo accoda
 				{
 					_out.Enqueue(t);
 					tkPrec = t;
+					Show();
 				}
 				// --> Se è una funzione...
 				else if(t.isFunzione)			// La impila
 				{
 					_ops.Push(t);
 					tkPrec = t;
+					Show();
 					
 				}
 				// --> Se è un operatore...
@@ -83,7 +93,7 @@ namespace Fred68.Parser
 								if(opStack.Precedenza >= opAttuale.Precedenza)		// Confronta le precedenze
 								{
 									_out.Enqueue(_ops.Pop());						// Accoda i token tra le parentesi
-									
+									Show();
 								}
 								else
 								{
@@ -94,6 +104,7 @@ namespace Fred68.Parser
 					} // Fine while
 					_ops.Push(t);				// Impila il token 
 					tkPrec = t;
+					Show();
 				}
 				// --> Se è un separatore...
 				else if(t.Tipo == Token.TipoTk.Separatore)
@@ -102,6 +113,7 @@ namespace Fred68.Parser
 					{
 						_out.Enqueue(_ops.Pop());			// Accoda i token prendendolo dalla pila
 						tkPrec = t;
+						Show();
 					}
 				}
 				// --> Parentesi aperta... la impila
@@ -109,7 +121,7 @@ namespace Fred68.Parser
 				{
 					_ops.Push(t);
 					tkPrec = t;
-					
+					Show();
 				}
 				// --> Parentesi chiusa... 
 				else if(t.Tipo == Token.TipoTk.Parentesi_Chiusa)
@@ -121,7 +133,7 @@ namespace Fred68.Parser
 					while(	(_ops.Count > 0) &&	(_ops.Peek().Tipo != Token.TipoTk.Parentesi_Aperta) )
 					{
 						_out.Enqueue(_ops.Pop());			// Accoda i token prendendolo dalla pila
-						
+						Show();
 					}
 
 					if(_ops.Count == 0 )
@@ -131,7 +143,8 @@ namespace Fred68.Parser
 															// Scarta parentesi aperta rimasta sulla pila
 					if( (_ops.Count > 0) && (_ops.Peek().Tipo == Token.TipoTk.Parentesi_Aperta) )
 					{
-						_ops.Pop();	
+						_ops.Pop();
+						Show();
 					}
 					tkPrec = t;
 				}
@@ -144,6 +157,7 @@ namespace Fred68.Parser
 						throw new Exception("[RiordinaSY] C'è una parentesi aperta di troppo");
 					}
 					_out.Enqueue(_ops.Pop());				// Accoda il resto della pila.
+					Show();
 				}
 
 			return _out;
