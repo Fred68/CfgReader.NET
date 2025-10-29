@@ -566,6 +566,34 @@ namespace Fred68.Parser
 				return $"{_tipo.ToString().Replace('_',' ').PadRight(_tipoStrLength,' ')} {_testo}{ext} {{{val}}} {simb}";
 
 			}
+			public string ToString(string format) 
+			{
+				string ret;
+				if(format.Length > 0)
+				{
+					switch(format)
+					{
+						case "s":
+						{
+							if(_testo.Length>0)
+								ret = _testo;
+							else if(_dat!=null)
+								ret = _dat.ToString();
+							else
+								ret = "-";
+						}
+						break;
+						default:
+						throw new Exception("Wrong string format");
+						break;
+					}
+				}
+				else
+				{
+					ret = this.ToString();
+				}
+				return ret;
+			}
 		}
 	}
 }

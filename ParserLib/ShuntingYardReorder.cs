@@ -23,7 +23,8 @@ namespace Fred68.Parser
 		/// Classe che riordina in RPN una lista di token
 		/// <param name="input">Lista di token di un'espressione</param>
 		/// <returns>Coda di toker in RPN (notazione polacca inversa)</returns>
-		public Queue<Token> ShuntingYardReorder(List<Token> input)
+		//public Queue<Token> ShuntingYardReorder(List<Token> input)
+		public Queue<Token> ShuntingYardReorder(Queue<Token> input)
 		{
 			Queue<Token> _out = new Queue<Token>();		// Coda (di uscita)
 			Stack<Token> _ops = new Stack<Token>();		// Pila (di operatori)
@@ -31,8 +32,11 @@ namespace Fred68.Parser
 			int iCicli = 0;									// Contatore e token precedente...
 			Token tkPrec = new Token(Token.TipoTk.Numero);	// ...usati per identificare operatori prefissi unari (es.: +5, -2)
 
-			foreach(Token t in input)			// Percorre i token in ordine inverso rispetto a come sono stati inseriti nella coda
+			while(input.Count > 0)
 			{
+				
+				Token t = input.Dequeue();	// Estrae i token dalla coda, in ordine inverso rispetto a come sono stati inseriti
+
 				// --> Se è un numero, una stringa o una variabile, o se è un simbolo (i.e. variabile non ancora dichiarata)
 				if((t.isValore) || (t.isSimbolo))		// Lo accoda
 				{
@@ -49,7 +53,7 @@ namespace Fred68.Parser
 				// --> Se è un operatore...
 				else if(t.isOperatore)
 				{
-					if(operatori.IsSpecial(t.Testo))	// Se il testo dell'operatore è unario speciale
+					if(operatori.IsSpecial(t.Testo))	// Se il testo è unario speciale, rende speciale l'operatore
 					{
 						if(	(iCicli == 0)					// Se è il primo token (es.: "-4+3") oppure se...
 							||								// ...il token precedente non è né un numero né una stringa...
@@ -73,7 +77,6 @@ namespace Fred68.Parser
 						{
 							Operators.Operator? opAttuale = (Operators.Operator?)operatori[t.Testo,Operators.TipoOp.Operatore];	// Cerca l'operatore attuale...
 							Operators.Operator? opStack = (Operators.Operator?)operatori[_ops.Peek().Testo,Operators.TipoOp.Operatore];	// ... e quello sullo stack
-
 
 							if( (opAttuale != null) && (opStack != null) )
 							{

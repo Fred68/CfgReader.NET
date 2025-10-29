@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Fred68.GenDictionary;			// Per usare Dat
 using StringExtension;
 
-#error LOOP INFINITO CON FUNZIONE: sin(...) operatore valore e non con valore operatore sin() !!!
+#warning LOOP INFINITO CON FUNZIONE: sin(...) in Shuntig Yard...: sin(PI)*2 !!!
 
 
 #warning Aggiungere intestazioni ai file con Nome, Autore e riepilogo
@@ -76,6 +76,10 @@ namespace Fred68.Parser
 		Variabili variabili;						// Dizionario delle variabili
 		Token.TipoNum floatStd;						// Tipo float predefinito
 
+		Queue<Token>? _queShow = null;
+		Stack<Token>? _stkShow = null;
+		Token? _tkShow = null;
+		
 
 		/// <summary>
 		/// Tipo standard per numero in virgola mobile
@@ -107,13 +111,15 @@ namespace Fred68.Parser
 		{
 			StringBuilder sb = new StringBuilder();
 			Token? res = null;	
-			List<Token>? lt = null;
+			Queue<Token>? lt = null;
 			Queue<Token>? qt = null;
 			try
 			{
-				lt = Parse(formula);					// Analizza la formula e crea lista di token in notazione infissa
+				lt = ParseFormula(formula);					// Analizza la formula e crea lista di token in notazione infissa
+
 				if(lt!=null)
 				{
+					sb.AppendLine($"Analizzati {lt.Count} token");
 					if(details)
 					{
 						sb.AppendLine(new string('-',10));
@@ -125,8 +131,12 @@ namespace Fred68.Parser
 
 					}
 					qt = ShuntingYardReorder(lt);		// Riordina i token in notazione polacca inversa
+
+					//throw new Exception("SUPERATO SHUNTING YARD");
+
 					if(qt!=null)
 					{
+						sb.AppendLine($"Riordinati {qt.Count} token");
 						if(details)
 						{
 							sb.AppendLine(new string('-',10));
@@ -138,6 +148,14 @@ namespace Fred68.Parser
 						}
 						res = EvaluateRPN(qt);			// Valuta il risultato
 					}
+					else
+					{
+						throw new Exception("Riordino in RPN fallito");
+					}
+				}
+				else
+				{
+					throw new Exception("Lista token nulla dopo Parse()");
 				}
 			}
 			catch (Exception ex)

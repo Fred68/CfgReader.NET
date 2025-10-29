@@ -31,9 +31,9 @@ namespace Fred68.Parser
 		/// <param name="input"></param>
 		/// <returns></returns>
 		/// <exception cref="Exception"></exception>
-		public List<Token> Parse(string input)
+		public Queue<Token> ParseFormula(string input)
 		{
-			List<Token> tokens = new List<Token>();					// Lista dei Token da restituire
+			Queue<Token> tokens = new Queue<Token>();				// Coda dei Token da restituire
 						
 			Token.TkStat statTk = Token.TkStat.TokenNuovo;			// Stato attuale della macchina a stati...
 			Token.TkStat statTkNew = Token.TkStat.TokenNuovo;		// e nuovo stato per il prossimo carattere
@@ -450,7 +450,7 @@ namespace Fred68.Parser
 					/*********************************************************/					
 					case Token.TkStat.TokenCompletato:			// Token completato: lo aggiunge alla lista e inizia con ricerca di nuovo token
 					{
-						tokens.Add(tkAttuale);
+						tokens.Enqueue(tkAttuale);
 						statTkNew = Token.TkStat.TokenNuovo;
 					}
 					break;

@@ -57,6 +57,9 @@ Console.WriteLine(cf2.DumpEntries());				// Stampa il contenuto del dizionario
 cf2.Clear();										// Cancella tutti i dati letti (della classe base)
 #endif
 
+Console.ReadKey();
+Console.Clear();
+
 Console.WriteLine("2*1.1-- = " + 2*(1.1-1));
 
 #if _ANALIZ
@@ -69,6 +72,9 @@ analiz.FloatStd = Parser.Token.TipoNum.Dbl;
 List<string> formule = new List<string>();
 
 Console.WriteLine("Tabelle di promozione\n"+ Parser.Token.TablesToString());
+
+Console.ReadKey();
+Console.Clear();
 
 bool ripeti = true;
 do
@@ -94,7 +100,7 @@ do
 
 	foreach(string f in formule)
 	{
-		Console.WriteLine(new string('-',20));
+		Console.WriteLine(new string('-',40));
 	
 		Console.WriteLine($"Formula: {f}");
 		string res = analiz.Solve(f,true);
