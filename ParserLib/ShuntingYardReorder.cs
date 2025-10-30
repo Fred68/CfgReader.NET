@@ -67,22 +67,20 @@ namespace Fred68.Parser
 					{
 						if(	(iCicli == 0)					// Se è il primo token (es.: "-4+3") oppure se...
 							||								// ...il token precedente non è né un numero né una stringa...
-							(
-								((!tkPrec.isNumeroStringa) && (!tkPrec.isVariabile) && (!tkPrec.isSimbolo))	// per esempio: 1 + 2  oppure  "A" + "B"
+							(								// per esempio: 1 + 2  oppure  "A" + "B"
+								((!tkPrec.isNumeroStringa) && (!tkPrec.isVariabile) && (!tkPrec.isSimbolo))	
 								&&						
 								(tkPrec.Tipo!=Token.TipoTk.Parentesi_Chiusa)	// ...e non è una parentesi chiusa...
 							)								// per esempio: ) - 2  oppure  ) + "A"	oppure  1.2 E - 2
 						   )
 						{
-							//Token tmp = t;
 							t.RendiOperatoreSpeciale();		// ...allora modifica il testo in operatore unario speciale
-							//tmp = t;
 						}									// Le eventuali incompatibilità verranno analizzate dopo.
 					}
 
 					// Finché non trova una parentesi aperta...								
 					while(	(_ops.Count > 0) &&	(_ops.Peek().Tipo != Token.TipoTk.Parentesi_Aperta) )
-					{									
+					{		
 						if(_ops.Peek().isOperatore)		// ...e c'é un operatore...
 						{
 							Operators.Operator? opAttuale = (Operators.Operator?)operatori[t.Testo,Operators.TipoOp.Operatore];	// Cerca l'operatore attuale...
@@ -100,6 +98,11 @@ namespace Fred68.Parser
 									break;	// Finisce il ciclo while
 								}
 							}
+						}
+						else if(_ops.Peek().isFunzione)
+						{
+							_out.Enqueue(_ops.Pop());								// Accoda la funzione
+							Show();
 						}
 					} // Fine while
 					_ops.Push(t);				// Impila il token 
