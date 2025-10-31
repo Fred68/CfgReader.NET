@@ -177,7 +177,6 @@ namespace Fred68.Parser
 				throw new NotImplementedException("Operatore o funzione non implementato, al momento...");
 				//return (Token) null;
 			}
-
 			// Esecuzione delle operazioni tra token
 			// Gli argomento sono in ordine inverso: Array[0] è l'ultimo, in notazione infissa
 			// Ci sono alcune eccezioni aggiuntive, oltre a quelle matematiche
@@ -798,8 +797,7 @@ namespace Fred68.Parser
 					throw new Exception("Token incompatibili");	
 				}
 				return _out;
-			}
-		
+			}		
 			Token _assegnazione(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
@@ -875,17 +873,17 @@ namespace Fred68.Parser
 				return _out;
 			}
 
-
 			#endregion
 			/*******************************************************************************/
 			#region FUNZIONI di calcolo delle funzioni Token _func(Token[] argArray)
+
 			Token _sin(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
-				if(CheckNumericArgs(argArray,1))
+				Token.TipoNum tnProm;
+				if(CheckNumericArgs(argArray, out tnProm))
 				{
-					
-					switch(argArray[0].TipoNumero)
+					switch(tnProm)
 					{
 						case Token.TipoNum.Int:
 						case Token.TipoNum.Flt:
@@ -914,29 +912,41 @@ namespace Fred68.Parser
 				}
 				return _out;
 			}
-
 			Token _max(ArgArray<Token> argArray)
 			{
 				Token _out = new Token();
-				if(CheckNumericArgs(argArray,1))
+				Token.TipoNum tnProm;
+				if(CheckNumericArgs(argArray, out tnProm))
 				{
-					
-					switch(argArray[0].TipoNumero)
+					_out = new Token(Token.TipoTk.Numero,tnProm,"");		// Token con TipoNum della promozione
+					int nargs = argArray.nArgs;
+					switch(tnProm)
 					{
 						case Token.TipoNum.Int:
+						{
+							int x = int.MinValue;
+							foreach(Token tk in argArray)
+								if((int)tk.Dato.Get() > x)
+									x = tk.Dato.Get();
+							_out.Dato = new Dat(x);
+						}
+						break;
 						case Token.TipoNum.Flt:
 						{
-							_out = new Token(Token.TipoTk.Numero,Token.TipoNum.Flt,"");
-							float x = MathF.Sin((float)argArray[0].Dato.Get());
+							float x = float.MinValue;
+							foreach(Token tk in argArray)
+								if((float)tk.Dato.Get() > x)
+									x = (float)tk.Dato.Get();	
 							_out.Dato = new Dat(x);
 						}
 						break;
 						case Token.TipoNum.Dbl:
 						{
-							_out = new Token(Token.TipoTk.Numero,Token.TipoNum.Dbl,"");
-							double x = Math.Sin((double)argArray[0].Dato.Get());
+							double x = double.MinValue;
+							foreach(Token tk in argArray)
+								if((double)tk.Dato.Get() > x)
+									x = (double)tk.Dato.Get();	
 							_out.Dato = new Dat(x);
-
 						}
 						break;
 						default:
@@ -950,7 +960,6 @@ namespace Fred68.Parser
 				}
 				return _out;
 			}
-
 			
 			#endregion
 			#pragma warning restore CS8602
@@ -971,7 +980,7 @@ namespace Fred68.Parser
 			/// <param name="assign">Assegnazione di un simbolo o di una variabile</param>
 			/// <returns>true se tipi corretti</returns>
 			/// <exception cref="Exception"></exception>
-			private bool TipoTkFromPromTable(ArgArray<Token> argArray, /*int nargs,*/ Token.PromTable iProm, out Token.TipoTk tp, out Token.TipoNum tn, bool assign = false)
+			private bool TipoTkFromPromTable(ArgArray<Token> argArray, Token.PromTable iProm, out Token.TipoTk tp, out Token.TipoNum tn, bool assign = false)
 			{
 				bool ok = false;
 				int numOk = argArray.nArgs;		// Numero di argomenti (1 o 2), messo a 0 negli altri casi
@@ -1055,24 +1064,33 @@ namespace Fred68.Parser
 			}
 
 			/// <summary>
-			/// Verifica che tutti gli argomenti siano numerici
+			/// Verifica che tutti gli argmenti siano numerici e
+			/// trova il tipo di numero più elevato (con tabella di promozione)
 			/// </summary>
 			/// <param name="argArray"></param>
-			/// <param name="nargs"></param>
+			/// <param name="tn"></param>
 			/// <returns></returns>
-			private bool CheckNumericArgs(ArgArray<Token> argArray, int nargs)
+			/// <exception cref="Exception"></exception>
+			private bool CheckNumericArgs(ArgArray<Token> argArray, out Token.TipoNum tn)
 			{
 				bool ok = true;
-				Token tk;
-				for(int i=0; i < nargs;	i++)
+				int nargs = argArray.nArgs;
+				//Token tk;
+				tn = Token.TipoNum.Int;
+				//for(int i=0; i < nargs;	i++)
+				foreach(Token tk in argArray)
 				{
-					tk = argArray[i];
+					//tk = argArray[i];
 					if(tk != null)
 					{
 						if(!tk.isNumero)
-						{
+						{					// Se non è un numero: restituisce false
 							ok = false;
 							break;
+						}
+						else				
+						{					// Se è un numero, lo promuove con la tabella standard
+							tn = Token.TipoNumRestituito(Token.PromTable.Std, tn, tk.TipoNumero);
 						}
 					}
 					else
@@ -1081,6 +1099,11 @@ namespace Fred68.Parser
 						throw new Exception("Argomento null");
 					}
 
+				}
+				if((!ok) || (tn == Token.TipoNum.Nd))	// Controllo finale
+				{
+					ok = false;
+					tn = Token.TipoNum.Nd;
 				}
 				return ok;
 			}
@@ -1114,7 +1137,7 @@ namespace Fred68.Parser
 				// TipoTk: Num, TipoNum: I,F,D. Promozione.
 				Add("^",new Operator(2,30,_potenza));
 				Add("*",new Operator(2,29,_prodotto));
-				Add("/",new Operator(2,28,_divisione));
+				Add("/",new Operator(2,29,_divisione));
 				// Operatori binari alta precedenza tra interi
 				Add("\\",new Operator(2,28,_divisioneInt));
 				Add("%",new Operator(2,28,_restoInt));
@@ -1138,7 +1161,8 @@ namespace Fred68.Parser
 
 				// Funzioni con un argomento
 				Add("sin".ToUpper(),new Function(1,_sin));
-				Add("max".ToUpper(),new Function(2,_notImplemented));		// <= DA SCRIVERE !!!
+				Add("max".ToUpper(),new Function(2,_max));
+				Add("max3".ToUpper(),new Function(3,_max));
 				
 				#warning Aggiungere funzioni di conversione INT() FLOAT()...
 			}
